@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "indetbench"
+version = "0.0.1.dev0"
+description = "Benchmark primitives for answer determinability in language models"
+requires-python = ">=3.10"
+readme = "README.md"
+authors = [{name = "Simona Vargiu"}]
+keywords = ["language-models", "uncertainty", "answerability", "benchmark"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
