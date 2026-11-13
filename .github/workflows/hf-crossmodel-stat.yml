@@ -1,0 +1,92 @@
+name: IndetBench Qwen2.5 and TinyLlama statistical evaluation (CPU)
+
+on:
+  push:
+    branches: [feature/initial-cpu-metrics]
+    paths: ['.github/workflows/hf-crossmodel-stat.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inference:
+    name: ${{ matrix.model }} / shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [qwen05, tinyllama11]
+        shard: [0, 1, 2, 3]
+    env:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      TOKENIZERS_PARALLELISM: 'false'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HOME: /tmp/indetbench-crossmodel-hf
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen dataset SHA-256
+        run: echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install fixed CPU inference environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'transformers==4.57.1' 'accelerate==1.12.0' -e '.[replay]'
+      - name: Select 60 complete frozen B/C pairs
+        run: |
+          python tests/integration/shard_smol_stat.py --input data/smol_stat_v01_frozen.jsonl --shard ${{ matrix.shard }} --total 4 --output shard_${{ matrix.shard }}.jsonl
+      - name: Run real external model inference
+        run: |
+          case "${{ matrix.model }}" in
+            qwen05) MODEL_ID='Qwen/Qwen2.5-0.5B-Instruct'; REV='7ae557604adf67be50417f59c2c2f167def9a775';;
+            tinyllama11) MODEL_ID='TinyLlama/TinyLlama-1.1B-Chat-v1.0'; REV='fe8a4ea1ffedaf415f4da2f062534de366a451e6';;
+            *) exit 1;;
+          esac
+          python -m indetbench.hf_runner --model-id "$MODEL_ID" --revision "$REV" --model-key other --input shard_${{ matrix.shard }}.jsonl --output scores_${{ matrix.model }}_${{ matrix.shard }}.csv --max-input-tokens 768 --max-new-tokens 12
+      - name: Preserve raw scores privately
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-${{ matrix.model }}-shard-${{ matrix.shard }}
+          path: scores_${{ matrix.model }}_${{ matrix.shard }}.csv
+          retention-days: 14
+          if-no-files-found: error
+  analyze:
+    name: Final statistical report / ${{ matrix.model }}
+    needs: inference
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [qwen05, tinyllama11]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[replay]'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cross-${{ matrix.model }}-shard-*
+          path: cross_scores
+          merge-multiple: true
+      - name: Verify frozen dataset and compute identical original statistics
+        run: |
+          echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check
+          python tests/integration/analyze_crossmodel_stat.py --input data/smol_stat_v01_frozen.jsonl --scores cross_scores/scores_${{ matrix.model }}_0.csv cross_scores/scores_${{ matrix.model }}_1.csv cross_scores/scores_${{ matrix.model }}_2.csv cross_scores/scores_${{ matrix.model }}_3.csv --model-key '${{ matrix.model }}' --output cross_${{ matrix.model }}_report.json
+          python -m json.tool cross_${{ matrix.model }}_report.json > /dev/null
+      - name: Preserve full statistical report privately
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-${{ matrix.model }}-statistical-report
+          path: cross_${{ matrix.model }}_report.json
+          retention-days: 14
+          if-no-files-found: error
