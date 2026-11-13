@@ -1,0 +1,82 @@
+name: SmolLM2-360M external-model smoke test (CPU)
+
+on:
+  push:
+    branches: [feature/initial-cpu-metrics]
+    paths:
+      - '.github/workflows/smolllm2-smoke.yml'
+      - 'src/indetbench/hf_runner.py'
+      - 'examples/smolllm2_smoke.jsonl'
+      - 'tests/integration/verify_smollm2_cpu.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smollm2-cpu-\${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smollm2-cpu:
+    name: Pinned SmolLM2 inference + CSV verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      TOKENIZERS_PARALLELISM: 'false'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HOME: \${{ runner.temp }}/indetbench-smollm2-cache
+
+    steps:
+      - name: Check out draft branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install CPU-only PyTorch and pinned model dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'transformers==4.57.1' 'accelerate==1.12.0' -e .
+
+      - name: Run real SmolLM2 inference on 4 synthetic B/C pairs
+        run: |
+          python -m indetbench.hf_runner \
+            --model-id 'HuggingFaceTB/SmolLM2-360M-Instruct' \
+            --revision 'c15f933c73438218a2bc078446c513173cc4f06a' \
+            --model-key other \
+            --input examples/smolllm2_smoke.jsonl \
+            --output smolllm2_scores.csv \
+            --max-input-tokens 512 \
+            --max-new-tokens 12
+
+      - name: Independently validate CSV, probabilities and pair identities
+        run: |
+          python tests/integration/verify_smollm2_cpu.py \
+            --input examples/smolllm2_smoke.jsonl \
+            --scores smolllm2_scores.csv \
+            --report smolllm2_smoke_report.json
+
+      - name: Exercise the public IndetBench CLI on model-generated scores
+        run: |
+          python -m indetbench \
+            --scores smolllm2_scores.csv \
+            --bootstrap 2000 \
+            --seed 20261108 > smolllm2_indetbench_report.json
+          python -m json.tool smolllm2_indetbench_report.json > /dev/null
+
+      - name: Upload private reproducibility evidence
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: smolllm2-360m-cpu-smoke
+          path: |
+            smolllm2_scores.csv
+            smolllm2_smoke_report.json
+            smolllm2_indetbench_report.json
+          retention-days: 7
