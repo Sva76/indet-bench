@@ -37,8 +37,10 @@ def win(b,c):
 
 
 def sign_p(wins):
-    npos=sum(x>0.5 for x in wins)
-    nneg=sum(x<0.5 for x in wins)
+    # Cast NumPy bool sums to Python ints. numpy.int64 exponentiation
+    # silently wraps 2**n to zero when n >= 64, falsely giving p=1.
+    npos=int(sum(x>0.5 for x in wins))
+    nneg=int(sum(x<0.5 for x in wins))
     n=npos+nneg
     if n==0:
         return 1.0
