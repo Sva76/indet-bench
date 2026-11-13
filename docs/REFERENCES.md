@@ -10,3 +10,7 @@
 Models used in the original experiments: Qwen3-8B, Qwen3-4B judge, Mistral-Nemo-Instruct-2407, OLMo-2-1124-7B-Instruct, Llama-3.1-8B-Instruct. Link their exact model cards and pinned revisions in the release bibliography.
 
 IndetBench's underlying Test U, U2, M (A/B), C protocols and frozen reports are not yet fully imported into this repository. Do not assert parity until the archived raw outputs and exact scripts are validated.
+
+## Verified core bibliography
+
+The checked bibliographic entries for LM-Polygraph (EMNLP 2023 and TACL 2025), SIRIN (arXiv 2026), Obeso et al. (arXiv 2025), and SQuAD 2.0 (ACL 2018) are in [REFERENCES.bib](REFERENCES.bib). Each is linked to a publisher/project source. Versioned software citations, exact repository SHAs, Hugging Face model cards and legal notices still need a final audit before any public release.
