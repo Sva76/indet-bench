@@ -1,6 +1,6 @@
 # Test your own model (experimental Hugging Face runner)
 
-This is a **working adapter API and CLI**, not yet validated on a new real-world model run. It requires a separate GPU/CPU environment suitable for the weights.
+This is an **experimental adapter API and CLI**; it has now passed a CPU smoke test on SmolLM2-360M-Instruct, but general model support and semantic answer correctness are not yet validated. It requires a separate GPU/CPU environment suitable for the weights.
 
 ## Input schema
 
@@ -33,4 +33,8 @@ Scores are **not** renormalized to the three possible labels. The user must supp
 
 ## Known limits
 
-Model cards, gated access conditions and third-party licenses still apply. No weights are distributed. GPU memory requirements depend on the selected model. The adapter has unit tests with fake inputs/tokenizers but **has not yet passed a fresh inference smoke test** against a real Hugging Face model in this version. The exact archived Test U/M/C model revisions, tokenizer and package versions are needed to claim historical bit-for-bit parity.
+Model cards, gated access conditions and third-party licenses still apply. No weights are distributed. GPU memory requirements depend on the selected model. The adapter has unit tests with fake inputs/tokenizers but **has passed a pinned CPU inference smoke test on one Hugging Face model** against a real Hugging Face model in this version. The exact archived Test U/M/C model revisions, tokenizer and package versions are needed to claim historical bit-for-bit parity.
+
+## Verified external-model smoke test
+
+A pinned run on [SmolLM2-360M-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct) passed all technical checks on 2026-11-13. It used 4 synthetic B/C pairs and produced 8 valid score rows. W was 0.50 (not a scientific model-performance conclusion). See [smoke-test report](SMOLLM2_EXTERNAL_SMOKE.md) and the linked GitHub Actions artifact.
