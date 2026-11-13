@@ -60,8 +60,8 @@ The first Hugging Face runner is now available as an **opt-in** feature. It load
 
 ```bash
 python -m pip install -e '.[hf]'
-python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --model-key qwen --input examples/hf_pairs.jsonl --output my_scores.csv
+python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --revision YOUR_40_CHARACTER_COMMIT_SHA --model-key qwen --input examples/hf_pairs.jsonl --output my_scores.csv
 python -m indetbench --scores my_scores.csv
 ```
 
-Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's integration tests currently use a fake tokenizer; **a real GPU smoke test is still pending**.
+Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's integration tests currently use a fake tokenizer; **a real GPU smoke test is still pending**.
