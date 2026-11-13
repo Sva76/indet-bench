@@ -2,7 +2,7 @@
 
 **A reproducible benchmark and validation protocol for answer determinability in language models.**
 
-> **Status: private development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation and a real-model inference smoke test are still pending. This project does not certify hallucination detection.
+> **Status: private development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation, method-card/release checks and broader model compatibility are still pending; a first external-model CPU inference smoke test has passed. This project does not certify hallucination detection.
 
 ## Research question
 
@@ -27,7 +27,7 @@ python -m indetbench --scores examples/sample_scores.csv --reference examples/sa
 
 The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using **common complete pairs**, and block-bootstrap confidence intervals. The example files contain invented demonstration values, not actual experiment scores.
 
-**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and has matched 508 Test C and 176 Test M notebook B checks in local development. A separate Test M notebook A CPU check matched **400 independent scalar comparisons** from the archived raw scores; the integrated CLI needs its own archived-file execution check. See [Test your model](docs/RUN_YOUR_MODEL.md) for the new, still GPU-untested Hugging Face runner.
+**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and has matched 508 Test C and 176 Test M notebook B checks in local development. A separate Test M notebook A CPU check matched **400 independent scalar comparisons** from the archived raw scores; the integrated CLI needs its own archived-file execution check. See [Test your model](docs/RUN_YOUR_MODEL.md) for the Hugging Face runner, which has now passed one real CPU-model smoke test.
 
 ## Scientific, licensing and AI transparency
 
@@ -65,4 +65,4 @@ python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --revision YOUR_40_CHARA
 python -m indetbench --scores my_scores.csv
 ```
 
-Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's integration tests currently use a fake tokenizer; **a real GPU smoke test is still pending**.
+Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's unit tests use a fake tokenizer and **one real external-model CPU smoke test has now passed**. Further model-family coverage and semantic answer validation are still pending. See [the verified run and limitations](docs/SMOLLM2_EXTERNAL_SMOKE.md).
