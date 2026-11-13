@@ -14,10 +14,20 @@
 2. Reproduce **all** frozen W and delta-W point estimates on CPU; match the original confidence intervals within a documented tolerance after matching seed, resampling and preprocessing exactly.
 3. Verify SHA-256 for frozen inputs; report dropped pairs, model/score conventions, versions and source lineage.
 4. Provide optional first-token p(UNKNOWN) computation under exact pinned chat templates/tokenizers; GPU runs are optional and separate from CPU reproduction.
-5. Complete real-model GPU testing of the new optional Hugging Face runner, enabling outside researchers to test **their own models** rather than only import scores.
+5. A first external-model CPU smoke test now passes on pinned SmolLM2-360M-Instruct. Before v0.1, validate broader user-model compatibility and any remaining release-level criteria; report semantic grading separately.
 6. Keep LM-Polygraph/SIRIN/Obeso external and optional; do not bundle their weights or source.
 7. Produce method cards that distinguish **measured** from **self-reported** positive controls, family-level divergences, coverage, baseline ceiling, and limits.
 
 ## Scientific cautions
 
 Four English-language mid-size open-weight models, mostly template-generated data; baseline ceiling; strong operator/format effects. HC4 within B cannot be evaluated with zero wrong B answers; within C is confounded by family and annotation uncertainty. Natural DUE sample human review was not fully documented. Exploratory subgroup findings require independent replication.
+
+## External-model execution checkpoint
+
+- [x] Pinned Hugging Face model downloaded from original provider with safetensors; no weights committed.
+- [x] Actual CPU inference on 8 synthetic B/C prompts and CSV export.
+- [x] Pairs, probability masses, model provenance, and IndetBench CLI output checked automatically.
+- [ ] Cross-model/tokenizer compatibility and independent answer correctness verification.
+- [ ] v0.1 release readiness review and owner approval.
+
+Evidence: [SmolLM2 external CPU smoke report](SMOLLM2_EXTERNAL_SMOKE.md).
