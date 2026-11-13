@@ -2,7 +2,7 @@
 
 **A reproducible benchmark and validation protocol for answer determinability in language models.**
 
-> **Status: private development / pre-alpha.** The first proposed release supplies CPU-only evaluation primitives. It does **not yet** reproduce the complete Test M/C reports, provide a model runner, or certify hallucination detection.
+> **Status: private development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebook B**, plus an experimental Hugging Face model runner. **Test M notebook A**, full U/U2 replay, HC4 validation and a real-model smoke test are still pending. This project does not certify hallucination detection.
 
 ## Research question
 
@@ -27,13 +27,13 @@ python -m indetbench --scores examples/sample_scores.csv --reference examples/sa
 
 The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using **common complete pairs**, and block-bootstrap confidence intervals. The example files contain invented demonstration values, not actual experiment scores.
 
-**Important:** exact replay of the archived Test M and C pipelines is the next acceptance test. The current bootstrap uses its own deterministic Python implementation and must not yet be described as reproducing the original confidence intervals. An **experimental** Hugging Face runner is included, but has not yet completed its own real-model GPU smoke test. See [Test your model](docs/RUN_YOUR_MODEL.md).
+**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and has matched 508 Test C and 176 Test M notebook B checks in local development. See [Test your model](docs/RUN_YOUR_MODEL.md) for the new, still GPU-untested Hugging Face runner.
 
 ## Scientific, licensing and AI transparency
 
 - [Development plan, acceptance and limits](docs/ROADMAP.md).
 - [AI assistance disclosure](docs/AI_USAGE.md) — AI-assisted planning, coding, analysis and writing, with human oversight and documented limits.
-- [References and attribution](docs/REFERENCES.md) — bibliography requiring final verification before release.
+- [References and attribution](docs/REFERENCES.md) — verified core paper citations in [BibTeX](docs/REFERENCES.bib); model revisions and remaining references require further checks.
 - [Third-party terms](docs/THIRD_PARTY.md) — per-model, library and dataset licensing.
 - [Root license](LICENSE) — **PolyForm Noncommercial 1.0.0**, original IndetBench code only. Commercial use needs a separate agreement; this is **source-available, not OSI open source**.
 
