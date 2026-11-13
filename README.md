@@ -27,7 +27,7 @@ python -m indetbench --scores examples/sample_scores.csv --reference examples/sa
 
 The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using **common complete pairs**, and block-bootstrap confidence intervals. The example files contain invented demonstration values, not actual experiment scores.
 
-**Important:** exact replay of the archived Test M and C pipelines is the next acceptance test. The current bootstrap uses its own deterministic Python implementation and must not yet be described as reproducing the original confidence intervals. Optional loading of new language models, including `p(UNKNOWN)` generation, is planned but **not implemented in this first change**.
+**Important:** exact replay of the archived Test M and C pipelines is the next acceptance test. The current bootstrap uses its own deterministic Python implementation and must not yet be described as reproducing the original confidence intervals. An **experimental** Hugging Face runner is included, but has not yet completed its own real-model GPU smoke test. See [Test your model](docs/RUN_YOUR_MODEL.md).
 
 ## Scientific, licensing and AI transparency
 
@@ -53,3 +53,15 @@ python -m indetbench.replay /path/to/testM_B_risultati_completo.zip --kind M-B -
 ```
 
 The replayer recomputes statistics from scores for individual pairs, rather than trusting the precomputed tables. [Exact scope and evidence](docs/REPRODUCIBILITY_STATUS.md). The Test M **notebook A** archive, Test U/U2 replication and **HC4 annotation reliability** remain separate unfinished checks.
+
+## Test a new language model (experimental)
+
+The first Hugging Face runner is now available as an **opt-in** feature. It loads an external causal LM under that model's own terms and scores user-authored B/C prompts without modifying the source model:
+
+```bash
+python -m pip install -e '.[hf]'
+python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --model-key qwen --input examples/hf_pairs.jsonl --output my_scores.csv
+python -m indetbench --scores my_scores.csv
+```
+
+Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's integration tests currently use a fake tokenizer; **a real GPU smoke test is still pending**.
