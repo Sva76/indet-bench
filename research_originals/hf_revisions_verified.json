@@ -1,0 +1,120 @@
+{
+  "verified_on": "2026-11-13",
+  "method": "Hugging Face Hub API /api/{models|datasets}/<id>/revision/<sha> (metadata only, no download); the returned sha equals the pinned revision in every case",
+  "original_experiments": [
+    {
+      "role": "generator, Tests U/U2/M/C",
+      "id": "Qwen/Qwen3-8B",
+      "type": "model",
+      "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-07-26T03:49:13Z",
+      "note": "enable_thinking=False"
+    },
+    {
+      "role": "generator, Tests U/U2/M/C",
+      "id": "mistralai/Mistral-Nemo-Instruct-2407",
+      "type": "model",
+      "revision": "04d8a90549d23fc6bd7f642064003592df51e9b3",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-07-28T17:16:02Z"
+    },
+    {
+      "role": "generator, Tests U/U2/M/C",
+      "id": "allenai/OLMo-2-1124-7B-Instruct",
+      "type": "model",
+      "revision": "470b1fba1ae01581f270116362ee4aa1b97f4c84",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-01-06T01:02:35Z",
+      "note": "several summaries write the short name OLMo-2-7B-Instruct; the exact repository is OLMo-2-1124-7B-Instruct"
+    },
+    {
+      "role": "generator, Tests U/U2/M/C; base model of M4 probes",
+      "id": "meta-llama/Llama-3.1-8B-Instruct",
+      "type": "model",
+      "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+      "license": "llama3.1 (Llama 3.1 Community License + Acceptable Use Policy)",
+      "gated": "manual",
+      "last_modified": "2024-09-25T17:00:57Z"
+    },
+    {
+      "role": "M3 zero-shot judge (SIRIN)",
+      "id": "Qwen/Qwen3-4B",
+      "type": "model",
+      "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-07-26T03:46:39Z"
+    },
+    {
+      "role": "M4 probes (Obeso et al.)",
+      "id": "obalcells/hallucination-probes",
+      "type": "model",
+      "revision": "db581ce2166d9faf611ad1f45955dcea94c96f85",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-10-15T11:36:47Z",
+      "note": "folders llama3_1_8b_linear and llama3_1_8b_lora_lambda_kl_0_05 exist at this revision; the LoRA folder's metrics file is named eval_metrics_llama3_1_8b_lora_lambda_kl=0.5.json, consistent with training_config lambda_KL = 0.5 despite the folder name"
+    },
+    {
+      "role": "M2 training/HM0 (Test M B), Test C natural set",
+      "id": "rajpurkar/squad_v2",
+      "type": "dataset",
+      "revision": "3ffb306f725f7d2ce8394bc1873b24868140c412",
+      "license": "cc-by-sa-4.0",
+      "gated": false,
+      "last_modified": "2024-03-04T13:55:27Z"
+    },
+    {
+      "role": "M4 HM0 positive control",
+      "id": "obalcells/longfact-annotations",
+      "type": "dataset",
+      "revision": "949fd2f71b3efd403350e38539340d9d9ceefc9d",
+      "license": "not declared in dataset card",
+      "gated": false,
+      "last_modified": "2025-09-06T01:26:48Z"
+    },
+    {
+      "role": "M4 HM0 reserve control",
+      "id": "obalcells/triviaqa-balanced",
+      "type": "dataset",
+      "revision": "620117a4967fd4a45f3536c46579830fc98e5e22",
+      "license": "not declared in dataset card",
+      "gated": false,
+      "last_modified": "2025-07-13T20:51:31Z"
+    }
+  ],
+  "external_cpu_studies_13_november": [
+    {
+      "id": "HuggingFaceTB/SmolLM2-360M-Instruct",
+      "type": "model",
+      "revision": "c15f933c73438218a2bc078446c513173cc4f06a",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2025-01-07T16:15:55Z"
+    },
+    {
+      "id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "type": "model",
+      "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2024-09-25T12:32:56Z"
+    },
+    {
+      "id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+      "type": "model",
+      "revision": "fe8a4ea1ffedaf415f4da2f062534de366a451e6",
+      "license": "apache-2.0",
+      "gated": false,
+      "last_modified": "2024-03-17T05:07:08Z"
+    }
+  ],
+  "not_checked_here": [
+    "TriviaQA questions used for the M1 HM0 control (loaded through LM-Polygraph): source and revision not checked on the Hub here",
+    "code commits: SIRIN ef3bed143890dbee56b34755f8c27a218aef0aa2 and hallucination-probes code 295450e2c24db7ecac1229e21783d2ebd08f9582 are GitHub commits, not Hub revisions"
+  ]
+}

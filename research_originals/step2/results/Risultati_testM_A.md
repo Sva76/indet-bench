@@ -2,16 +2,16 @@
 
 Protocollo: `Protocollo_testM_metodi_v2.md`. Notebook: `TestM_A_metodi_v8.ipynb` (versione M-A-notebook-8), modalità completo, 4 modelli su 4. Tutti i lavori sono ESEGUITI su NVIDIA A100-SXM4-80GB, nella stessa sessione (avvio 13:38, fine 20:08 UTC).
 Dati: `testM_risultati/` (esiti_A.json, tabella_A.csv, rapporto_A.txt e testM_A_risultati_completo.zip, che contiene log, ambienti, dati di input e uscite di ogni lavoro).
-Stato: **bozza per la revisione di Simona**. M2 (notebook B) non è ancora eseguito, quindi questo non è il resoconto finale del Test M.
+Stato: **rivisto da Simona il 10 novembre** (versione 2, con le sue quattro correzioni e la distinzione tra risultato confermato ed esplorativo). M2 (notebook B) non è ancora eseguito, quindi questo non è il resoconto finale del Test M.
 
 ## In breve
 
 1. **Nessun metodo di LM-Polygraph (M1) riconosce l'indeterminatezza logica secondo la regola dei 3 su 4.** Gli stimatori migliori, MeanTokenEntropy e SemanticEntropy, confermano HM1 in 2 modelli su 4 (Qwen e Llama). MSP e Perplexity non la confermano in nessun modello. PTrue passa HM0 solo su OLMo.
-2. **Nessuno stimatore di M1 fa meglio di p(UNKNOWN).** HM2 non è confermata in nessuna delle 16 celle valutabili, e in tutte ΔW è negativo, con l'IC tutto sotto 0 (da −0.09 a −0.49).
-3. **Su Mistral gli stimatori di M1 sono rovesciati.** W vale circa 0.30 per tutti e quattro gli stimatori valutabili, con l'IC tutto sotto 0.5: Mistral risulta *più sicuro* sui casi indeterminati che su quelli decidibili. Formula preregistrata: «funziona sul suo dominio ma non riconosce l'indeterminatezza logica delle coppie B/C».
+2. **Nessuno stimatore di M1 fa meglio di p(UNKNOWN).** Le celle valutabili sono 17: quattro stimatori su quattro modelli, più PTrue su OLMo. HM2 non è confermata in nessuna, e in tutte e 17 ΔW è negativo, con l'IC interamente sotto 0 (da −0.09 a −0.49). Per PTrue: HM2 0 su 1, con tre celle NON VALUTABILI.
+3. **Su Mistral i quattro stimatori valutabili di M1 assegnano punteggi di incertezza più bassi ai casi indeterminati delle coppie** (C) che a quelli decidibili (B). W vale circa 0.30, con l'IC interamente sotto 0.5. È ciò che misura W. Formula preregistrata: «funziona sul suo dominio ma non riconosce l'indeterminatezza logica delle coppie B/C». La spiegazione dell'astensione sicura (sezione «Descrittivi») resta un'interpretazione plausibile.
 4. **Il giudice zero-shot di SIRIN (M3) conferma HM1**: W 0.693 [0.648, 0.738]. Resta però sotto p(UNKNOWN) di tutti e 4 i modelli su P−S (ΔW descrittivo da −0.005 a −0.29).
-5. **La sonda LoRA di Obeso et al. (M4-LoRA) conferma HM1 e HM2 su Llama**: W 0.823 [0.792, 0.851], ΔW +0.086 [+0.039, +0.135] rispetto a p(UNKNOWN) di Llama. È l'unico metodo del notebook A che fa meglio di p(UNKNOWN) in una cella. Vale per un solo modello e, per protocollo, non si generalizza. La sonda lineare (M4-lin) è al caso (0.481, NON CONCLUSIVA).
-6. **Descrittivo, non preregistrato: i risultati dipendono molto dall'operatore logico.** Quasi tutti i metodi, p(UNKNOWN) compresa, sono vicini a 1 su una famiglia (AND, OR o IMPLIES) e sotto 0.5 su un'altra. Il vantaggio di M4-LoRA viene tutto dalla famiglia AND, dove p(UNKNOWN) di Llama fallisce (sezione «Descrittivi»).
+5. **Risultato confermato dal protocollo: la sonda LoRA di Obeso et al. (M4-LoRA) conferma HM1 e HM2 su Llama.** Sulle 800 coppie in prosa migliora l'ordinamento dei casi appaiati rispetto a p(UNKNOWN) di Llama di 8.6 punti: W 0.823 [0.792, 0.851], ΔW +0.086 [+0.039, +0.135]. È l'unico metodo del notebook A che fa meglio di p(UNKNOWN) in una cella. Vale per un solo modello e, per protocollo, non si generalizza. La sonda lineare (M4-lin) è compatibile con il caso: W 0.481, con IC [0.447, 0.514] che include 0.5 (NON CONCLUSIVA).
+6. **Risultato esplorativo, non preregistrato: i risultati dipendono molto dall'operatore logico.** Diversi metodi, p(UNKNOWN) compresa, mostrano forti differenze tra famiglie: vicini a 1 su una (AND, OR o IMPLIES) e sotto 0.5 su un'altra. Il guadagno complessivo di M4-LoRA è trainato da AND, dove W passa da 0.433 (p(UNKNOWN)) a 0.901. Su OR e IMPLIES il riferimento resta migliore. Anche nel confronto fra tutti i casi C e B senza appaiamento (AUROC C contro B) il riferimento è più alto: 0.773 contro 0.750 (sezione «Descrittivi»).
 
 ## Controlli tecnici
 
@@ -23,7 +23,7 @@ Stato: **bozza per la revisione di Simona**. M2 (notebook B) non è ancora esegu
 | Riferimento in `env_sirin` | scarto massimo 0.024–0.060, risposte uguali 98.6–99.5%, W entro 0.009 dal Test U2 (descrittivo, versione di transformers richiesta da SIRIN) |
 | Riferimento in `env_obeso` (Llama) | scarto massimo 0.028, risposte uguali 99.0%, W 0.7375 (Test U2 0.746) |
 | Token di LM-Polygraph diversi dal riferimento | 0 su 4800 per ogni modello |
-| Risposta greedy di LM-Polygraph uguale al riferimento | 98.5–99.2% |
+| Risposta greedy di LM-Polygraph uguale al riferimento | 98.4–99.2% (Llama 98.4%, Qwen 98.5%, OLMo 98.8%, Mistral 99.2%) |
 | Copertura su P−S | 800 coppie valide su 800 in ogni cella, nessuno scarto (minimo richiesto 760) |
 | M3 | prefisso senza thinking (`<think>\n\n</think>`), come corretto nella v6 |
 | M4 HM0 | LongFact test annotato, codice degli autori, batch 4, Llama alla revisione `0e9e39f` (uguale a quella del protocollo) |
@@ -48,7 +48,7 @@ M4 (AUC span-max su LongFact test, codice degli autori): **M4-lin 0.848**, **M4-
 
 ## Ipotesi preregistrate su P−S
 
-W è la quota di coppie in cui il punteggio di incertezza di C supera quello di B, mediata per storia, con IC al 95% su 2000 ricampionamenti delle storie (200 storie, 800 coppie). ΔW è W(metodo) − W(p(UNKNOWN)) sulle stesse 800 coppie, nello stesso ambiente.
+W è la quota di coppie in cui il punteggio di incertezza di C supera quello di B (i pareggi valgono mezzo punto), mediata per storia, con IC al 95% su 2000 ricampionamenti delle storie (200 storie, 800 coppie). ΔW è W(metodo) − W(p(UNKNOWN)) sulle stesse 800 coppie, nello stesso ambiente.
 
 ### M1 (LM-Polygraph)
 
@@ -73,7 +73,7 @@ W è la quota di coppie in cui il punteggio di incertezza di C supera quello di 
 | PTrue | OLMo | 0.562 [0.521, 0.604] | NC | −0.131 [−0.206, −0.055] | NON CONF |
 | | Qwen, Mistral, Llama | NON VALUTABILE (HM0) | | | |
 
-Conferme per la lettura della libreria (almeno 3 su 4): HM1 2 su 4 per MeanTokenEntropy e SemanticEntropy, 0 su 4 per MSP e Perplexity, 0 su 1 per PTrue. HM2 0 su 4 per tutti. Il limite di Qwen per HM2 (margine massimo +0.025) non conta qui, perché ΔW è negativo in ogni modello.
+Conferme per la lettura della libreria (almeno 3 su 4): HM1 2 su 4 per MeanTokenEntropy e SemanticEntropy, 0 su 4 per MSP e Perplexity, 0 su 1 per PTrue. HM2 0 su 4 per i quattro stimatori e 0 su 1 per PTrue (tre celle NON VALUTABILI): 0 su 17 celle valutabili, tutte con ΔW negativo e IC interamente sotto 0. Il limite di Qwen per HM2 (margine massimo +0.025) non conta qui, perché ΔW è negativo in ogni modello.
 
 Per lo stimatore, MSP e Perplexity danno lo stesso W su Qwen e OLMo. Con risposte di pochi token i due punteggi ordinano le righe quasi allo stesso modo.
 
@@ -104,7 +104,7 @@ In prosa il giudice non supera p(UNKNOWN) di nessun modello. Nel formato simboli
 
 Riferimento: p(UNKNOWN) di Llama in `env_obeso`, W 0.7375, margine massimo 0.262. Per protocollo, M4 vale solo per Llama e non si generalizza. La cartella della LoRA si chiama λ = 0.05, ma la sua configurazione di addestramento dice λ_KL = 0.5.
 
-Formulazioni: per M4-lin quella preregistrata, «non ha superato il criterio HM1 in questo test». Per un esito confermato il protocollo non prevede una frase. Propongo: «su Llama, unico modello provato, M4-LoRA conferma HM1 e HM2 in questo test».
+Formulazioni: per M4-lin quella preregistrata, «non ha superato il criterio HM1 in questo test». Il suo W è compatibile con il caso (IC [0.447, 0.514], che include 0.5). Per un esito confermato il protocollo non prevede una frase. Propongo: «su Llama, unico modello provato, M4-LoRA conferma HM1 e HM2 in questo test».
 
 ## Descrittivi (non preregistrati)
 
@@ -126,18 +126,19 @@ Formulazioni: per M4-lin quella preregistrata, «non ha superato il criterio HM1
 | M4-LoRA | Llama | 0.901 | 0.655 | 0.910 |
 
 - Solo p(UNKNOWN) di Qwen è alto su tutte e tre le famiglie. Negli altri casi un metodo può essere quasi perfetto su una famiglia e sotto il caso su un'altra, e il W complessivo è una media di comportamenti opposti.
-- Il vantaggio di M4-LoRA su Llama viene dalla famiglia AND: +0.47 rispetto a p(UNKNOWN) di `env_obeso` (0.433). Su IMPLIES (−0.13) e OR (−0.08) la sonda fa peggio di p(UNKNOWN). Ricorda il Test 6, dove il vantaggio degli stati interni veniva tutto da un solo sottoinsieme (OR NOT).
+- Il guadagno di M4-LoRA su Llama è trainato dalla famiglia AND: W da 0.433 (p(UNKNOWN) di `env_obeso`) a 0.901, +0.468. Su IMPLIES perde 13.3 punti (0.655 contro 0.788) e su OR 8.2 punti (0.910 contro 0.993). Nel confronto fra tutti i casi C e B senza appaiamento (AUROC C contro B), p(UNKNOWN) vale 0.773 e la sonda 0.750. Ricorda il Test 6, dove il vantaggio degli stati interni veniva tutto da un solo sottoinsieme (OR NOT).
 - Il giudice M3 è quasi perfetto su OR (0.994) e sotto il caso su AND (0.310).
 
-**Perché M1 è rovesciato su Mistral.** Su P−S Mistral risponde UNKNOWN al 45% dei C e al 30% dei B, e quando dice UNKNOWN è molto sicuro. MSP medio: 0.32 sui C con UNKNOWN e 0.45 sui B con UNKNOWN, contro 0.81 sui C e 1.58 sui B con altre risposte. Gli stimatori di M1 misurano quanto il modello è sicuro della risposta che genera, non se la risposta è «non si può sapere». Una astensione sicura conta quindi come bassa incertezza. È una mia interpretazione dai valori medi, non un test. Va nella stessa direzione l'AUROC descrittivo di M1 su SQuAD per Mistral (0.27–0.37): anche lì Mistral è più sicuro sulle domande senza risposta.
+**Una spiegazione plausibile per Mistral.** Su P−S Mistral risponde UNKNOWN al 45% dei C e al 30% dei B, e quando dice UNKNOWN è molto sicuro. MSP medio: 0.32 sui C con UNKNOWN e 0.45 sui B con UNKNOWN, contro 0.81 sui C e 1.58 sui B con altre risposte. Gli stimatori di M1 misurano quanto il modello è sicuro della risposta che genera, non se la risposta è «non si può sapere». Una astensione sicura conta quindi come bassa incertezza. È un'interpretazione plausibile dai valori medi, non un test. Va nella stessa direzione l'AUROC descrittivo di M1 su SQuAD per Mistral (0.27–0.37): anche lì Mistral è più sicuro sulle domande senza risposta.
 
 **Risposta generata su P−S** (risposta greedy di LM-Polygraph, uguale al riferimento nel 98–99% dei casi): UNKNOWN sui C / sui B. Qwen 25% / 0%, Mistral 45% / 30%, OLMo 1% / 0%, Llama 34% / 5%.
 
 ## Lettura
 
-- I metodi di LM-Polygraph passano i loro controlli positivi su TriviaQA (0.78–0.87, tranne PTrue) ma non separano in modo stabile le coppie B/C, e in nessun modello fanno meglio di p(UNKNOWN). Su Mistral sono rovesciati.
+- I metodi di LM-Polygraph passano i loro controlli positivi su TriviaQA (0.78–0.87, tranne PTrue) ma non separano in modo stabile le coppie B/C, e in nessuna delle 17 celle valutabili fanno meglio di p(UNKNOWN). Su Mistral assegnano punteggi di incertezza più bassi ai C che ai B.
 - Il giudice di SIRIN riconosce l'indeterminatezza (HM1 confermata), ma in prosa resta sotto p(UNKNOWN) del modello che risponde.
-- La sonda LoRA di Obeso et al. è l'unico metodo che batte p(UNKNOWN), su Llama. Il vantaggio viene da una sola famiglia logica, e la stessa sonda sul formato simbolico scende a 0.55.
+- **Confermato:** la sonda LoRA di Obeso et al. è l'unico metodo che batte p(UNKNOWN), su Llama: +8.6 punti di W sulle 800 coppie in prosa, IC [3.9, 13.5].
+- **Esplorativo:** quel guadagno è trainato da AND. Su OR e IMPLIES il riferimento resta migliore, e anche nel confronto fra tutti i casi C e B senza appaiamento l'AUROC è più alta per il riferimento (0.773 contro 0.750). Sul formato simbolico la sonda scende a 0.55.
 - p(UNKNOWN) resta il segnale più robusto fra quelli provati, coerente con lo Step 1 e il Test U2. Però anche p(UNKNOWN) dipende molto dall'operatore logico in 3 modelli su 4.
 
 ## Limiti
@@ -150,4 +151,8 @@ Formulazioni: per M4-lin quella preregistrata, «non ha superato il criterio HM1
 
 ## Prossimo passo
 
-Dopo la revisione di Simona: la nota di protocollo con la configurazione esatta di M2, poi il notebook B. Se Simona lo approva, si potrebbe preregistrare per il notebook B anche l'analisi per famiglia (W per AND, IMPLIES, OR con IC), da applicare a tutti i metodi.
+La domanda di ricerca che emerge è precisa: il vantaggio sulle coppie AND in prosa si ripete su storie nuove, quando il confronto è fissato prima di vedere i dati?
+
+Decisione di Simona (10 novembre): per M2, prima di vedere i risultati del notebook B, la nota di protocollo fissa come si calcolano W e ΔW per AND, OR e IMPLIES. L'analisi per famiglia del notebook A resta esplorativa. Poi viene il notebook B.
+
+Questa preregistrazione verifica il comportamento di M2 per famiglia. Non replica il vantaggio della LoRA su AND: per quello bisogna provare di nuovo M4-LoRA e il suo riferimento p(UNKNOWN) su storie nuove, con il confronto per famiglia fissato prima.
