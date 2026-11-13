@@ -41,6 +41,14 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 
 Copyright © 2026 Simona Vargiu.
 
+## Historical research archive — source material preserved
+
+The owner's **original Step 1 and Step 2** research material is archived in [`research_originals/`](research_originals/README.md), separate from new Hugging Face synthetic studies. It includes original summaries, protocols, written results, two Test C notebooks, **seven exact historical generator/selection/verification scripts**, and frozen synthetic datasets from Test M and Test C compressed without changing their bytes.
+
+The provenance and original-input SHA-256 values are in [`research_originals/manifest_originals.json`](research_originals/manifest_originals.json). The M-A and M-B original frozen inputs were checked to be identical. **This is a substantial partial recovery, not yet the entire historical research archive:** complete natural SQuAD-derived rows, several original U/U2 and Step 1 files, model-output ZIPs, environment captures and weights remain excluded pending byte access or rights review. The original full ZIPs are retained separately in the owner's private ChatGPT Library.
+
+**The 240-pair `data/smol_stat_v01_frozen.jsonl` dataset was created for a separate experiment on 13 November 2026; it is NOT original Step 1 or Step 2 data.** Repository remains private and the PR is still draft; no change to owner licensing is implied by archiving sources.
+
 ## Reproduce frozen experiments without GPU
 
 Install the NumPy-only optional analysis dependencies: `python -m pip install -e '.[replay]'`.
@@ -71,6 +79,6 @@ Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider'
 
 A preregistered 240-pair (480-inference) test on the external **SmolLM2-360M-Instruct** model found **no evidence** that its raw first-token `p(UNKNOWN)` reliably ranked underdetermined cases above determined cases: **W = 0.479** (95% bootstrap CI **0.417–0.546**), AUROC **0.501**. The exact two-sided sign-test p-value is **0.561**, independently recomputed after correcting a NumPy integer-overflow bug in the first archived report.
 
-Generated abstention also struggled: 68/240 correct abstentions on C; the model gave no `NO` responses in this dataset. Formatting and prompt-length effects are unresolved confounds, so this **cannot** be interpreted as epistemic detection, proof of generalization or a new model capability.
+**Interpretation gate failed:** SmolLM2 answered only **92/240 answerable B cases correctly (38.3%)**, never generated `NO` on B or C, and abstained correctly in only 68/240 C cases. The software calculation is reproducible, but the model did not demonstrate the prerequisite task competence: the result is **not scientifically evaluable as an uncertainty-detector validation**, despite the descriptive W/AUROC values. Formatting and prompt-length effects are unresolved confounds, so this **cannot** be interpreted as epistemic detection, proof of generalization or a new model capability.
 
 See [preregistered protocol](docs/SMOLLM2_STAT_STUDY_PREREG.md), [original model scores, statistical results and correction](docs/SMOLLM2_STAT_STUDY_RESULTS.md), and [closest 2018–2026 scientific precedents](docs/NOVELTY_AND_RELATED_WORK_2026.md). IndetBench is **not** the first or broadest benchmark on abstention and uncertainty.
