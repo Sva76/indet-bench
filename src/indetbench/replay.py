@@ -19,6 +19,8 @@ from zipfile import ZipFile
 
 import numpy as np
 
+from .archive_safety import check_zip_archive
+
 SEED = 20261108
 BOOT = 2000
 FAMILIES_C = ("DUE", "CONF", "LOG")
@@ -40,11 +42,13 @@ def read_json(z, name):
 def c_archive(path):
     """Accept outer complete ZIP and compact nested result ZIP."""
     with ZipFile(path) as outer:
+        check_zip_archive(outer)
         names = set(outer.namelist())
         if {"esiti_C.json", "dati/righe_C_selezionate.json"} <= names:
             yield outer
         elif "completo/testC_completo_risultati.zip" in names:
             with ZipFile(BytesIO(outer.read("completo/testC_completo_risultati.zip"))) as inner:
+                check_zip_archive(inner)
                 yield inner
         else:
             raise ValueError("Not the original Test C complete-results archive")
@@ -251,6 +255,7 @@ def replay_c(path, seed=SEED, n_boot=BOOT):
 def replay_m_b(path, seed=SEED, n_boot=BOOT):
     errors, checked = [], 0
     with ZipFile(path) as z:
+        check_zip_archive(z)
         if not {"esiti_B.json", "dati/righe.json"} <= set(z.namelist()):
             raise ValueError("Not the original Test M notebook B results ZIP")
         original = read_json(z, "esiti_B.json")
