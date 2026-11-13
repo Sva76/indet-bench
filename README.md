@@ -2,7 +2,7 @@
 
 **A reproducible benchmark and validation protocol for answer determinability in language models.**
 
-> **Status: private development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebook B**, plus an experimental Hugging Face model runner. **Test M notebook A**, full U/U2 replay, HC4 validation and a real-model smoke test are still pending. This project does not certify hallucination detection.
+> **Status: private development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation and a real-model inference smoke test are still pending. This project does not certify hallucination detection.
 
 ## Research question
 
@@ -27,7 +27,7 @@ python -m indetbench --scores examples/sample_scores.csv --reference examples/sa
 
 The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using **common complete pairs**, and block-bootstrap confidence intervals. The example files contain invented demonstration values, not actual experiment scores.
 
-**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and has matched 508 Test C and 176 Test M notebook B checks in local development. See [Test your model](docs/RUN_YOUR_MODEL.md) for the new, still GPU-untested Hugging Face runner.
+**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and has matched 508 Test C and 176 Test M notebook B checks in local development. A separate Test M notebook A CPU check matched **400 independent scalar comparisons** from the archived raw scores; the integrated CLI needs its own archived-file execution check. See [Test your model](docs/RUN_YOUR_MODEL.md) for the new, still GPU-untested Hugging Face runner.
 
 ## Scientific, licensing and AI transparency
 
@@ -49,10 +49,11 @@ Given the original complete-results archives (not redistributed here):
 
 ```bash
 python -m indetbench.replay /path/to/completo-20261113T082301Z-1-001.zip --kind C --expected-sha256 da84d9bfb81df8ef15c39524b9e507ffa13eb1e563ce18715b432a1638b5bbed --json-out testC_parity.json
+python -m indetbench.replay /path/to/testM_A_risultati_completo.zip --kind M-A --expected-sha256 5f2922d73d3f8921600d082c92201975faea97cf3d078ab49e6ec51565661cbc --json-out testM_A_parity.json
 python -m indetbench.replay /path/to/testM_B_risultati_completo.zip --kind M-B --expected-sha256 a78cf5a02566d22de80acf8fff6caff0fa0049c697abbbf27667b807648cea3a --json-out testM_B_parity.json
 ```
 
-The replayer recomputes statistics from scores for individual pairs, rather than trusting the precomputed tables. [Exact scope and evidence](docs/REPRODUCIBILITY_STATUS.md). The Test M **notebook A** archive, Test U/U2 replication and **HC4 annotation reliability** remain separate unfinished checks.
+The replayer recomputes statistics from scores for individual pairs, rather than trusting the precomputed tables. [Exact scope and evidence](docs/REPRODUCIBILITY_STATUS.md). Test U/U2 replication and **HC4 annotation reliability** remain separate unfinished checks. The new Test M notebook A CLI is ready for validation against the full original ZIP.
 
 ## Test a new language model (experimental)
 
