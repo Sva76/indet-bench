@@ -4,7 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from indetbench.hf_runner import chat_prompt, load_pairs, parse_label, token_label_ids
+from indetbench.hf_runner import chat_prompt, load_pairs, parse_label, token_label_ids, validate_revision
 
 
 class FakeTokenizer:
@@ -29,6 +29,12 @@ class HFRunnerTests(unittest.TestCase):
     def test_parse_label(self):
         self.assertEqual(parse_label("  'UNKNOWN'"), "UNKNOWN")
         self.assertEqual(parse_label("Maybe UNKNOWN"), "ALTRO")
+
+    def test_revision_must_be_immutable_commit(self):
+        self.assertEqual(validate_revision("A" * 40), "a" * 40)
+        for invalid in (None, "", "main", "v1.0.0", "a" * 39, "z" * 40):
+            with self.assertRaisesRegex(ValueError, "commit SHA"):
+                validate_revision(invalid)
 
     def test_input_requires_complete_matched_pairs(self):
         rows = [
