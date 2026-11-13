@@ -13,6 +13,10 @@ These files preserve the original research provenance of **Step 1** (tests 4–7
 - `step2/scripts/`: seven original Python scripts extracted from the `%%writefile` cells of the C-sel-8 notebook. All seven were independently compared *byte-for-byte* with the named scripts in the owner's original `testC_selezione.zip`; no changes were made.
 - `step2/frozen/`: **five GZIP-compressed copies of unchanged frozen synthetic JSON files** (Test M 4,800 source rows; Test C synthetic definitive, technical test and deterministic reserves). These were copied from the original experiment ZIP members; decompression recovers the original JSON byte-for-byte.
 
+## Original machine-readable statistical reports
+
+The folder `step2/numeric_reports/` contains **eight original result/table reports**, GZIP-compressed without altering their source bytes: the M-A/M-B/Test C `esiti_*.json`, the Test C narrative report and A/B/C CSV tables (including the M-B per-family table). Decompress with `gzip -dc`; all original SHA-256 values are in the manifest. These are historical experiment outputs, NOT reanalyses.
+
 ## Validate source file integrity
 
 ```bash

@@ -77,5 +77,63 @@
     "M-A/M-B complete raw model outputs, environments and probe weights",
     "Test C full raw model outputs and natural data (third-party rights review)"
   ],
-  "separation": "Hugging Face SmolLM2/Qwen/TinyLlama experiments from November 13 live under data/ and docs/, not in research_originals/"
+  "separation": "Hugging Face SmolLM2/Qwen/TinyLlama experiments from November 13 live under data/ and docs/, not in research_originals/",
+  "numeric_original_reports": [
+    {
+      "path": "research_originals/step2/numeric_reports/M_esiti_A.json.gz",
+      "source_archive": "testM_A_risultati_completo.zip",
+      "source_member": "esiti_A.json",
+      "sha256_decompressed_original": "aae347d27c5a6beceec71061da910a1fd54254c0abaf24825bef8cf214560eba",
+      "git_blob_sha": "1c2aafb678ffc565de6cb100c572707863f17b49"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_esiti_B.json.gz",
+      "source_archive": "testM_B_risultati_completo.zip",
+      "source_member": "esiti_B.json",
+      "sha256_decompressed_original": "349c0284f80e6945eccfa099caf7930236a0a2f79c4f86e9617f55e7eaab1ead",
+      "git_blob_sha": "393504569a70be703ac68c1eded44b31fb2dd0eb"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/C_esiti_C.json.gz",
+      "source_archive": "completo-20261113T082301Z-1-001.zip",
+      "source_member": "completo/esiti_C.json",
+      "sha256_decompressed_original": "6644e91bbc527479523db6d658ddde8fd5d21d5f080de8682584828157ba67e2",
+      "git_blob_sha": "a43cb1ecf47c7299c918a4e1c58ef46213353546"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/C_rapporto_C.txt.gz",
+      "source_archive": "completo-20261113T082301Z-1-001.zip",
+      "source_member": "completo/rapporto_C.txt",
+      "sha256_decompressed_original": "495587f87e80743e9d45e3b5f56fbdaecb76f05697964e9345ab11fa38318213",
+      "git_blob_sha": "5235aeb6531eb36cb556900bfc8f7aaaba4baf06"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_tabella_A.csv.gz",
+      "source_archive": "testM_A_risultati_completo.zip",
+      "source_member": "tabella_A.csv",
+      "sha256_decompressed_original": "40d4668b13badb5f191bd28318f68d5c0f1da921479a388668b954de1efb2f4e",
+      "git_blob_sha": "29e3ead446e4ca165249c7b878bf4590663888fd"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_tabella_B.csv.gz",
+      "source_archive": "testM_B_risultati_completo.zip",
+      "source_member": "tabella_B.csv",
+      "sha256_decompressed_original": "042e5a100be849c8b226c728e935b0aa684674bfc0edf1a0e6312aa621a0f3df",
+      "git_blob_sha": "73f8aa2212ea1c3af0c96ac922a9f17114a643d0"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/C_tabella_C.csv.gz",
+      "source_archive": "completo-20261113T082301Z-1-001.zip",
+      "source_member": "completo/tabella_C.csv",
+      "sha256_decompressed_original": "cef4c107b663726d1a097377a3476e526f6898fb234d72fa1a32115286e99708",
+      "git_blob_sha": "1c69922b8a3375d9f8742c7520147188bc9b39df"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_tabella_famiglie_B.csv.gz",
+      "source_archive": "testM_B_risultati_completo.zip",
+      "source_member": "tabella_famiglie_B.csv",
+      "sha256_decompressed_original": "7752f749d2a371b5d9086b6e000c3c8e5ab56149a7912a0b67abf5b7edfcbda0",
+      "git_blob_sha": "75d489e81790507eb00882e2e5957ecbca82be18"
+    }
+  ]
 }
