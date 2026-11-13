@@ -1,0 +1,81 @@
+{
+  "status": "historical originals recovered from owner-provided experimental ZIP archives; not a substitute for full independent scientific audit",
+  "archive_date": "2026-11-13",
+  "compression": "gzip level 9; mtime=0; source content is unchanged after decompression",
+  "sources": [
+    {
+      "archive": "testM_A_risultati_completo.zip",
+      "sha256": "5f2922d73d3f8921600d082c92201975faea97cf3d078ab49e6ec51565661cbc"
+    },
+    {
+      "archive": "testM_B_risultati_completo.zip",
+      "sha256": "a78cf5a02566d22de80acf8fff6caff0fa0049c697abbbf27667b807648cea3a"
+    },
+    {
+      "archive": "testC_selezione.zip",
+      "sha256": "aaad5c5e6150e2c29b16220fa26fa895d8a7b2bb1688800011c3b8cdbaf4d21d"
+    },
+    {
+      "archive": "completo-20261113T082301Z-1-001.zip",
+      "sha256": "da84d9bfb81df8ef15c39524b9e507ffa13eb1e563ce18715b432a1638b5bbed"
+    }
+  ],
+  "frozen_files": [
+    {
+      "path": "research_originals/step2/frozen/M_Original_4800_righe.json.gz",
+      "source_archive": "testM_A_risultati_completo.zip",
+      "source_member": "dati/righe.json",
+      "sha256_decompressed_original": "906c01bf2988607247b4b06f92b15d189bcb49278a6964ae2479b2236f96d459",
+      "sha256_gzip": "4908cd9e9e55df3bcf8167518f86a71819e5c36ff7f49c12dd36d347b37bd0bc",
+      "git_blob_sha": "d074101e5ecac01395835156056a345759c70b19",
+      "rows": 4800
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_sintetico_definitivo.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "dati/testC_sintetico_definitivo.json",
+      "sha256_decompressed_original": "97b255b51d7229da1cfda00c54b93d6fcc66bbc37e307d969ba9274f29fe26b6",
+      "sha256_gzip": "238c8fe0a9a10485217e081308904523e561d96807f1e69d656232a2814b851f",
+      "git_blob_sha": "64d87dcbcdfd99b4f064b591192101d476d3ed3d"
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_sintetico_prova.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "dati/testC_sintetico_prova.json",
+      "sha256_decompressed_original": "6c429023a18a9f2537eb2e120454d2a475451b7ede5cf4965a7c6152ae40c502",
+      "sha256_gzip": "bbc908a63921c975bafc59162100b867b23b685746224fdab1bd680de40397ab",
+      "git_blob_sha": "f656e45eb9e060474426db08148f7560283f7621"
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_sintetico_riserva.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "testC_sintetico_definitivo_riserva.json",
+      "sha256_decompressed_original": "32007443261cb4205d774f23ffc327c4b2b0ef3d2c162a3897fee93053c30937",
+      "sha256_gzip": "5d5f9054178d54d5e805853d31aaa6e76ec89d727891c4fab77864dc3c2dd554",
+      "git_blob_sha": "b5f12b5e0e75c73dfa1a58c7a8f468463a4a3d93"
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_prova_riserva.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "testC_sintetico_prova_riserva.json",
+      "sha256_decompressed_original": "cdecb33aeaef00989f4c8dc6bf423a41072138c68c4f8898b2449f47df2eeb9d",
+      "sha256_gzip": "18493a9bd09ac7bd5f35bd0fb68d849f4df71c2c7a282317a9b0b2e1bed53b6c",
+      "git_blob_sha": "9d52f6dce7d1df51b4d82af09bb35a5fc32ac958"
+    }
+  ],
+  "additional_frozen_data_awaiting_rights_review": [
+    {
+      "source": "testC_selezione.zip",
+      "member": "dati/righe_C.json",
+      "sha256": "4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42",
+      "reason": "includes synthetic plus natural passages derived from SQuAD; do not distribute without separate rights audit"
+    }
+  ],
+  "not_yet_recovered": [
+    "Step 1 original generator/source notebooks and frozen score archives",
+    "Step 2 Test U/U2 complete frozen outputs and original notebooks where library bytes are unavailable",
+    "M-A/M-B complete raw model outputs, environments and probe weights",
+    "Test C full raw model outputs and natural data (third-party rights review)"
+  ],
+  "separation": "Hugging Face SmolLM2/Qwen/TinyLlama experiments from November 13 live under data/ and docs/, not in research_originals/"
+}
