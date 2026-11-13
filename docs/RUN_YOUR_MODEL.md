@@ -14,11 +14,11 @@ An invented example is in `examples/hf_pairs.jsonl`. It contains **no natural be
 
 ```bash
 python -m pip install -e '.[hf]'
-python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --model-key qwen --input examples/hf_pairs.jsonl --output my_scores.csv --max-new-tokens 8
+python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --revision YOUR_40_CHARACTER_COMMIT_SHA --model-key qwen --input examples/hf_pairs.jsonl --output my_scores.csv --max-new-tokens 8
 python -m indetbench --scores my_scores.csv --bootstrap 2000
 ```
 
-For restricted model repositories, obtain access from the model provider and set `HF_TOKEN` in your own environment (do not store it in the repository). To reproduce a particular experiment, **pin `--revision` to a model commit SHA**.
+Replace YOUR_40_CHARACTER_COMMIT_SHA with a full immutable commit SHA from the model provider's revision history. Branch names such as `main` are not accepted; this also enables safe supply-chain auditing. The runner currently requires `safetensors` weights and refuses pickle-only models.\n\nFor restricted model repositories, obtain access from the model provider and set `HF_TOKEN` in your own environment (do not store it in the repository). The runner **requires** `--revision` to be a full 40-character commit SHA for every execution.
 
 ## What gets measured
 
