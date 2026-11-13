@@ -16,7 +16,7 @@ Only the latest reviewed development branch is maintained; there is no productio
 
 ## Important boundaries
 
-- Installing or downloading external model files is **opt-in**. Always review the model provider's terms and source before loading weights or tokenizers.
+- Installing or downloading external model files is **opt-in**. IndetBench's Hugging Face runner requires a 40-hex commit SHA and `safetensors` rather than mutable branches or pickle weights. Always review the model provider's terms and source before loading weights or tokenizers.
 - Do not commit `HF_TOKEN`, cloud credentials, model-gated tokens or confidential dataset files.
 - Treat JSONL/CSV and compressed experiment archives supplied by strangers as **untrusted input**. Run them with ordinary user privileges, in an isolated environment.
 - No CodeQL or Copilot Autofix claim is made while this private personal-account repository is ineligible for GitHub Code Security.
