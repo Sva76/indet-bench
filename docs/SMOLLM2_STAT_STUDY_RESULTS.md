@@ -1,6 +1,6 @@
 # External statistical validation — SmolLM2-360M-Instruct (13 November 2026)
 
-**Result: negative on the preregistered primary endpoint.** One fixed external model, 240 controlled synthetic B/C pairs, 480 genuine model inferences. No claim that IndetBench is the first abstention benchmark or more comprehensive than LM-Polygraph/AbstentionBench.
+**Result: primary numeric endpoint not confirmed; model-task competence gate failed, making substantive uncertainty-detection validation NOT EVALUABLE.** One fixed external model, 240 controlled synthetic B/C pairs, 480 genuine model inferences. No claim that IndetBench is the first abstention benchmark or more comprehensive than LM-Polygraph/AbstentionBench.
 
 ## Frozen study and evidence
 
@@ -20,7 +20,7 @@
 | Exact two-sided sign-test p-value (corrected) | **0.5613667387** |
 | AUROC of p_UNKNOWN across B/C | **0.50106 [0.48422, 0.51819]** |
 
-The data **do not support** W > 0.5. The sign-test p-value is the *unadjusted* exact test; any multiple-testing adjustment cannot make it more significant.
+The data **do not support** W > 0.5 numerically. **Scientific interpretation is NOT EVALUABLE for this model**, because the model fails the prerequisite of answering straightforward determined questions (B: 92/240 correct, 0 NO generations). This is not evidence of a lack of an uncertainty signal in otherwise competent models. The sign-test p-value is the *unadjusted* exact test; any multiple-testing adjustment cannot make it more significant.
 
 ### Statistical software correction — transparent disclosure
 
@@ -67,7 +67,7 @@ The score changes greatly across family structure. The two **separately generate
 
 ## Scientific conclusion and next independent gates
 
-The code can run a real external Hugging Face model and produce reproducible score-based and behavioral reports. **On this small model, the intended signal does not reliably distinguish underdetermined from determined cases.** That is a valid **negative** result for this frozen setting, not evidence against every model or every uncertainty method.
+The code can run a real external Hugging Face model and produce reproducible score-based and behavioral reports. **On this small model, the intended signal does not reliably distinguish underdetermined from determined cases.** That is a reproducible **numerical null result** for this frozen setting, but NOT a substantive validation of uncertainty detection: the model did not execute the base YES/NO/UNKNOWN task adequately. It is not evidence against other models or other uncertainty methods.
 
 Before publication or broader generalization:
 1. Double-blind or at least independent two-person semantic audit of a stratified sample, recording agreement.
