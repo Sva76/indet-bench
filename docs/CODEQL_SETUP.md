@@ -13,4 +13,4 @@ If Code Security later becomes available for this repository, the owner can enab
 
 Copilot Autofix may suggest patches for some code-scanning findings but is **not** a formal correctness proof. Always review generated modifications and rerun tests.
 
-In the meantime `.github/workflows/security.yml` runs Bandit medium-and-higher severity/confidence checks in CI; `.github/workflows/ci.yml` runs the unit tests. Neither replaces a thorough review of model-loading, archive parsing, prompt injection or dependency vulnerabilities.
+In the meantime `.github/workflows/security.yml` runs Bandit medium-and-higher severity/confidence checks in CI. The runner uses a narrowly documented Bandit B615 suppression on `from_pretrained` calls **only after** runtime validation of an exact 40-hex commit SHA; older Bandit versions cannot statically infer that a variable is pinned (https://github.com/PyCQA/bandit/issues/1345). The validation is unit tested; `.github/workflows/ci.yml` runs the unit tests. Neither replaces a thorough review of model-loading, archive parsing, prompt injection or dependency vulnerabilities.
