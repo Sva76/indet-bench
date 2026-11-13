@@ -66,3 +66,11 @@ python -m indetbench --scores my_scores.csv
 ```
 
 Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's unit tests use a fake tokenizer and **one real external-model CPU smoke test has now passed**. Further model-family coverage and semantic answer validation are still pending. See [the verified run and limitations](docs/SMOLLM2_EXTERNAL_SMOKE.md).
+
+## External statistical evaluation — SmolLM2 (13 November 2026)
+
+A preregistered 240-pair (480-inference) test on the external **SmolLM2-360M-Instruct** model found **no evidence** that its raw first-token `p(UNKNOWN)` reliably ranked underdetermined cases above determined cases: **W = 0.479** (95% bootstrap CI **0.417–0.546**), AUROC **0.501**. The exact two-sided sign-test p-value is **0.561**, independently recomputed after correcting a NumPy integer-overflow bug in the first archived report.
+
+Generated abstention also struggled: 68/240 correct abstentions on C; the model gave no `NO` responses in this dataset. Formatting and prompt-length effects are unresolved confounds, so this **cannot** be interpreted as epistemic detection, proof of generalization or a new model capability.
+
+See [preregistered protocol](docs/SMOLLM2_STAT_STUDY_PREREG.md), [original model scores, statistical results and correction](docs/SMOLLM2_STAT_STUDY_RESULTS.md), and [closest 2018–2026 scientific precedents](docs/NOVELTY_AND_RELATED_WORK_2026.md). IndetBench is **not** the first or broadest benchmark on abstention and uncertainty.
