@@ -6,7 +6,7 @@
 - Minimal B/C pair scoring with ties as half a win.
 - Block-weighted W(C>B); paired delta-W on *common complete pairs*, block-level bootstrap, AUROC helper.
 - Strict CSV validation and six unit tests.
-- **Partially reproduced:** local replay matched 508 Test C and 176 Test M notebook B archived statistics. **Test M notebook A** and remaining scope are not yet verified.
+- **Archived CPU comparisons:** 508 Test C metric checks, 176 Test M notebook B metric checks and 400 individually compared Test M notebook A scalar fields matched the original scores. The `--kind M-A` CLI still needs a full archived-file execution check; real-model smoke tests remain pending.
 
 ## Version 0.1 acceptance (not yet reached)
 
