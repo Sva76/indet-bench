@@ -7,6 +7,7 @@ The root PolyForm Noncommercial License covers **original IndetBench source only
 | LM-Polygraph | MIT | External optional integration; preserve license/notice if vendored |
 | SIRIN, Obeso hallucination-probes | Apache-2.0 | External optional integration; preserve license/notice if vendored |
 | Qwen3, Mistral Nemo | Apache-2.0 (model cards) | Download from model provider; pin model revisions |
+| HuggingFaceTB/SmolLM2-360M-Instruct | Apache-2.0 (official model card) | Used only in opt-in CPU smoke at pinned SHA; no weights redistributed |
 | OLMo-2 | Apache-2.0 declaration plus model-card considerations | Check exact card and training-output notes |
 | Llama 3.1 | Meta Llama 3.1 Community License and Acceptable Use Policy | No weights redistributed; review output terms separately |
 | SQuAD 2.0 | CC BY-SA 4.0 | No derived passage data shipped in initial source |
