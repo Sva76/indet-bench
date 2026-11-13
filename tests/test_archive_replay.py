@@ -6,6 +6,7 @@ import unittest
 from zipfile import ZipFile
 
 from indetbench.replay import W, delta_W, make_pairs, sha256, verify, c_archive
+from indetbench.archive_safety import check_zip_archive
 
 
 class ReplayTests(unittest.TestCase):
@@ -48,6 +49,25 @@ class ReplayTests(unittest.TestCase):
             self.assertEqual(sha256(path), hashlib.sha256(b"abc").hexdigest())
             path.write_text("abcd", encoding="utf-8")
             self.assertNotEqual(sha256(path), hashlib.sha256(b"abc").hexdigest())
+
+    def test_zip_archive_size_limits_and_member_paths(self):
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / "sample.zip"
+            with ZipFile(path, "w") as archive:
+                archive.writestr("data/observations.json", "test input")
+            with ZipFile(path) as archive:
+                check_zip_archive(archive)
+                with self.assertRaisesRegex(ValueError, "member uncompressed size"):
+                    check_zip_archive(archive, max_member_bytes=4)
+                with self.assertRaisesRegex(ValueError, "total uncompressed size"):
+                    check_zip_archive(archive, max_archive_bytes=4)
+
+            unsafe = Path(folder) / "unsafe.zip"
+            with ZipFile(unsafe, "w") as archive:
+                archive.writestr("../outside.txt", "bad")
+            with ZipFile(unsafe) as archive:
+                with self.assertRaisesRegex(ValueError, "unsafe member path"):
+                    check_zip_archive(archive)
 
     def test_incorrect_archive_type_is_rejected(self):
         with TemporaryDirectory() as folder:
