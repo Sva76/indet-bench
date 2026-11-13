@@ -18,6 +18,7 @@ classifiers = [
 
 [project.optional-dependencies]
 replay = ["numpy>=1.26"]
+hf = ["torch>=2.2", "transformers>=4.56,<6", "accelerate>=1.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
