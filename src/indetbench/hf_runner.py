@@ -134,11 +134,18 @@ def load_hf(model_id, *, revision=None, model_key="auto", hf_token=None):
     tokenizer.padding_side = "left"
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         tokenizer.pad_token = tokenizer.eos_token
+    import torch
+
+    # Small CPU smoke tests should use float32. Native BF16 on generic
+    # GitHub-hosted CPUs is not guaranteed and may be unusually slow.
+    device = "auto" if torch.cuda.is_available() else "cpu"
+    wanted_dtype = "auto" if torch.cuda.is_available() else torch.float32
     ver = tuple(int(x) for x in transformers.__version__.split(".")[:2])
     dtype_arg = "dtype" if ver >= (4, 56) else "torch_dtype"
     model = AutoModelForCausalLM.from_pretrained(model_id, revision=revision,  # nosec B615
                                                  token=hf_token, trust_remote_code=False,
-                                                 device_map="auto", use_safetensors=True, **{dtype_arg: "auto"}).eval()
+                                                 device_map=device, use_safetensors=True,
+                                                 **{dtype_arg: wanted_dtype}).eval()
     return model, tokenizer
 
 
