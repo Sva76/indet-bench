@@ -113,30 +113,39 @@ def score_pairs(model, tokenizer, rows, *, model_key="auto", model_id="local",
         }
 
 
+def validate_revision(revision):
+    """Require an immutable 40-character HF Hub commit SHA (not a branch/tag)."""
+    if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-fA-F]{40}", revision):
+        raise ValueError("Model revision must be a 40-character hexadecimal commit SHA")
+    return revision.lower()
+
+
 def load_hf(model_id, *, revision=None, model_key="auto", hf_token=None):
     """Opt-in third-party download, under the original model's own license."""
     from transformers import AutoModelForCausalLM, AutoTokenizer
     import transformers
 
+    revision = validate_revision(revision)
+
     key = model_key if model_key != "auto" else ("mistral" if "mistral" in model_id.lower() else "other")
     extra = {"fix_mistral_regex": True} if key == "mistral" else {}
-    tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, token=hf_token,
+    tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, token=hf_token,  # nosec B615
                                               trust_remote_code=False, **extra)
     tokenizer.padding_side = "left"
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         tokenizer.pad_token = tokenizer.eos_token
     ver = tuple(int(x) for x in transformers.__version__.split(".")[:2])
     dtype_arg = "dtype" if ver >= (4, 56) else "torch_dtype"
-    model = AutoModelForCausalLM.from_pretrained(model_id, revision=revision,
+    model = AutoModelForCausalLM.from_pretrained(model_id, revision=revision,  # nosec B615
                                                  token=hf_token, trust_remote_code=False,
-                                                 device_map="auto", **{dtype_arg: "auto"}).eval()
+                                                 device_map="auto", use_safetensors=True, **{dtype_arg: "auto"}).eval()
     return model, tokenizer
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Run a local Hugging Face causal LM on B/C pairs")
     parser.add_argument("--model-id", required=True)
-    parser.add_argument("--revision", help="Pin a model commit SHA for reproducibility")
+    parser.add_argument("--revision", required=True, help="Exact 40-character model commit SHA (required)")
     parser.add_argument("--model-key", choices=("auto", "qwen", "mistral", "other"), default="auto")
     parser.add_argument("--input", required=True, help="JSONL with row_id,pair_id,block_id,side,prompt")
     parser.add_argument("--output", required=True, help="CSV for indetbench scoring")
