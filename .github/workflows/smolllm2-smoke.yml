@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: smollm2-cpu-\${{ github.ref }}
+  group: smollm2-cpu-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       MKL_NUM_THREADS: '2'
       TOKENIZERS_PARALLELISM: 'false'
       HF_HUB_DISABLE_TELEMETRY: '1'
-      HF_HOME: \${{ runner.temp }}/indetbench-smollm2-cache
+      HF_HOME: ${{ runner.temp }}/indetbench-smollm2-cache
 
     steps:
       - name: Check out draft branch
