@@ -40,3 +40,16 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 **No third-party model weights, training data, natural SQuAD passages, or proprietary probe files are distributed with this package.**
 
 Copyright © 2026 Simona Vargiu.
+
+## Reproduce frozen experiments without GPU
+
+Install the NumPy-only optional analysis dependencies: `python -m pip install -e '.[replay]'`.
+
+Given the original complete-results archives (not redistributed here):
+
+```bash
+python -m indetbench.replay /path/to/completo-20261113T082301Z-1-001.zip --kind C --expected-sha256 da84d9bfb81df8ef15c39524b9e507ffa13eb1e563ce18715b432a1638b5bbed --json-out testC_parity.json
+python -m indetbench.replay /path/to/testM_B_risultati_completo.zip --kind M-B --expected-sha256 a78cf5a02566d22de80acf8fff6caff0fa0049c697abbbf27667b807648cea3a --json-out testM_B_parity.json
+```
+
+The replayer recomputes statistics from scores for individual pairs, rather than trusting the precomputed tables. [Exact scope and evidence](docs/REPRODUCIBILITY_STATUS.md). The Test M **notebook A** archive, Test U/U2 replication and **HC4 annotation reliability** remain separate unfinished checks.
