@@ -1,4 +1,4 @@
-"""CPU replay of frozen Test C and Test M notebook B, from per-row scores.
+"""CPU replay of frozen Test C and Test M notebooks A/B, from per-row scores.
 
 This module recalculates W, paired ΔW, confidence intervals, domain controls,
 and family breakdowns. It deliberately does NOT validate HC4 class labels.
@@ -301,16 +301,20 @@ def replay_m_b(path, seed=SEED, n_boot=BOOT):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="CPU replay of Test C or Test M B archived statistics")
+    p = argparse.ArgumentParser(description="CPU replay of Test C or Test M A/B archived statistics")
     p.add_argument("archive")
-    p.add_argument("--kind", choices=("C", "M-B"), default="C")
+    p.add_argument("--kind", choices=("C", "M-A", "M-B"), default="C")
     p.add_argument("--expected-sha256")
     p.add_argument("--json-out")
     args = p.parse_args(argv)
     actual = sha256(args.archive)
     if args.expected_sha256 and actual != args.expected_sha256.lower():
         p.error(f"Archive SHA-256 mismatch: {actual} vs {args.expected_sha256}")
-    report = (replay_c if args.kind == "C" else replay_m_b)(args.archive)
+    if args.kind == "M-A":
+        from .replay_m_a import replay_m_a
+        report = replay_m_a(args.archive)
+    else:
+        report = (replay_c if args.kind == "C" else replay_m_b)(args.archive)
     report["sha256"] = actual
     encoded = json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)
     if args.json_out:
