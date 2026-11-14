@@ -1,4 +1,6 @@
-# Pre-answer hidden states — protocol v2 (DRAFT, awaiting owner approval)
+# Pre-answer hidden states — protocol v2 (ARCHIVED DRAFT, NOT RUN)
+
+**Not run, by the owner's decision of 2026-11-14.** Reason: Step 1 (Tests 6 and 7) already showed that hidden-state probes work in domain but do not transfer to new formulations, and that raw p(UNKNOWN) is the most robust reference. This document is kept as a record; the decisions in §8 are no longer needed. No data were generated. The branch `experiment/hidden-uncertainty-probe` and its technical smoke test (run 43604933969: 2 pairs, Qwen2.5-0.5B, finite pre-answer vectors) are exploratory work not continued; nothing is deleted.
 
 Status: **design only; no inference, no result.** The endpoint and criteria in §5 are **proposals** to be approved by the owner before any data are generated. This replaces v1, which did not take Step 1 into account and set an unapproved primary endpoint (+0.03 AUROC). Italian master copy: `PHI/Step3_libreria/Protocollo_stati_interni_v2_bozza.md` (owner's project files).
 

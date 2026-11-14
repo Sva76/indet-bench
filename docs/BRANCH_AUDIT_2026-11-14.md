@@ -45,7 +45,8 @@ Unchanged analyzer, 480 rows, 240 pairs (B gold: 120 YES, 120 NO), pinned revisi
 ### TinyLlama-1.1B — NOT MEASURED
 - First tokens of YES/NO/UNKNOWN overlap; the runner correctly refuses. Applicability limit of the first-token measurement, not a result about the model.
 
-### Hidden-state experiment (`experiment/hidden-uncertainty-probe`) — design + technical smoke test only
+### Hidden-state experiment (`experiment/hidden-uncertainty-probe`) — EXPLORATORY, NOT CONTINUED (owner's decision, 2026-11-14)
+- Not run: Step 1 Tests 6–7 already showed that probes do not transfer; protocol v2 is archived as a record. Nothing deleted.
 - Done: extraction of the last-prompt-token state and output baselines; smoke test on 2 pairs with Qwen2.5-0.5B (4 rows, finite values). No scientific result.
 - **Fixed defect**: `--model-key auto` (the default) was passed unchanged to the chat template, so Qwen3 would have been rendered with thinking enabled, unlike every archived run. Now resolved exactly as in `hf_runner.score_pairs`; 3 unit tests added.
 - Open questions for the owner (method, not fixed): see below.
