@@ -1,4 +1,4 @@
-# Security checkpoint — private pre-alpha
+# Security checkpoint — pre-alpha
 
 **Scope:** Python source under `src/indetbench/` on the review branch, not a full penetration test or formal verification.
 
@@ -21,7 +21,7 @@ The initial Bandit CI run raised **two B615 (CWE-494)** findings on `AutoTokeniz
 
 ## CodeQL / Copilot Autofix availability
 
-The private repository belongs to a **personal** GitHub account. Current GitHub Code Security documentation does not authorize CodeQL code scanning on that repository type unless visibility or ownership/entitlements change. It remains private. No CodeQL analysis, SARIF upload or Copilot Autofix was performed. Review `docs/CODEQL_SETUP.md` before enabling those tools if the repository becomes eligible.
+At the time of this checkpoint the repository was private on a personal account and therefore not eligible for CodeQL. Since 14 November 2026 it is public and eligible. No CodeQL analysis, SARIF upload or Copilot Autofix has been performed yet; see `docs/CODEQL_SETUP.md` to enable it.
 
 ## Remaining risks
 

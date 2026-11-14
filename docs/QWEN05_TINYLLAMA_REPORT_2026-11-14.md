@@ -6,7 +6,7 @@ Scope: completion of `QWEN_TINYLLAMA_RECOVERY_AUDIT_2026-11-14.md`. Corpus `data
 
 | Item | Before | After |
 |---|---|---|
-| Report | Official report artifact of run 43579643007 (W, AUROC in the log; B accuracy only inside the private artifact) | Re-analysis of the same raw scores with the unchanged analyzer (run of `reanalyze-archived-cpu-scores.yml`), full behaviour block printed |
+| Report | Official report artifact of run 43579643007 (W, AUROC in the log; B accuracy only inside the artifact) | Re-analysis of the same raw scores with the unchanged analyzer (run of `reanalyze-archived-cpu-scores.yml`), full behaviour block printed |
 | W [95% CI] | 0.5916666667 [0.52916667, 0.65416667] | identical |
 | AUROC | 0.5127083333 | identical |
 | Competence | not applied | applied (`competence_gate_240.py`) |

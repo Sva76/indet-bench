@@ -3,7 +3,7 @@
 Scope: technical audit of existing GitHub Actions run 43496061328, without modifying the frozen experimental method or dataset. These results are exploratory, not an independently validated benchmark.
 
 ## Qwen2.5-0.5B-Instruct
-- Retrieved four private GitHub Actions artifact ZIPs (IDs 14072340809, 14071673622, 14072890209, 14070984677).
+- Retrieved four GitHub Actions artifact ZIPs (private at the time) (IDs 14072340809, 14071673622, 14072890209, 14070984677).
 - Each archive contains one CSV with 120 records: total 480 distinct row IDs and 240 pair IDs, each with B and C. All rows report Qwen/Qwen2.5-0.5B-Instruct at revision 7ae557604adf67be50417f59c2c2f167def9a775.
 - Independent calculation on the four CSVs: paired W=142/240=0.5916666667 (142 wins, 98 losses, no ties); pair-bootstrap percentile 95% CI [0.52916667, 0.65416667], seed 20261113, 10000 replicates; two-sided exact sign p=0.0053996267.
 - Global AUROC on the 240 B and 240 C p_unknown values: 0.5127083333; paired-bootstrap 95% CI [0.5036276, 0.52255252].
@@ -29,7 +29,7 @@ For each candidate: confirm license, immutable model revision, CPU/memory feasib
 
 
 ## Update: observed completed Qwen workflow (run 43579643007)
-- The four Qwen inference jobs and its official final statistical report succeeded. Private report artifact: 14107084165.
+- The four Qwen inference jobs and its official final statistical report succeeded. Report artifact: 14107084165.
 - The four TinyLlama inference jobs failed and its final statistical report failed because `cross_scores/scores_tinyllama11_0.csv` was absent, as shown in the analyzer log. Overall workflow failure is therefore expected and does not invalidate the completed Qwen analysis.
 - The workflow checked the frozen dataset SHA-256. The analyzer requires exactly 480 rows/240 complete pairs, exact input/output row identity, fixed model revision, valid probabilities, and balanced frozen design.
 - Qwen's archived exploratory values: W=0.5916666667, 95% paired bootstrap [0.52916667, 0.65416667], two-sided sign p=0.0053996267, AUROC=0.5127083333. This is evidence for a small paired directional effect, NOT reliable global discrimination or external generalization.

@@ -7,7 +7,7 @@
 - [Preregistered protocol](SMOLLM2_STAT_STUDY_PREREG.md) created before inference.
 - [Frozen inputs](../data/smol_stat_v01_frozen.jsonl), 240 B/C pairs, six families × 40, two formats and two instruction styles. Input SHA-256: `e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d`.
 - Pinned Hugging Face model `HuggingFaceTB/SmolLM2-360M-Instruct`, immutable SHA `c15f933c73438218a2bc078446c513173cc4f06a`.
-- [Successful four-shard model inference and analysis](https://github.com/Sva76/indet-bench/actions/runs/43493566268) with original CSV outputs and machine-readable report in private Actions artifacts.
+- [Successful four-shard model inference and analysis](https://github.com/Sva76/indet-bench/actions/runs/43493566268) with original CSV outputs and machine-readable report in time-limited GitHub Actions artifacts.
 - Computations verified independently from the four original CSV shards: exactly 480 distinct responses, 240 complete B/C pairs, same model revision; W, sign counts and bootstrapped CI reproduced without using the tabular report as inputs.
 
 ## Preregistered primary result
@@ -76,4 +76,4 @@ Before publication or broader generalization:
 4. A natural-text corpus with clear licensing and contrastive controls.
 5. Head-to-head published method baselines on **identical** examples, not juxtaposed numbers from incompatible benchmarks.
 
-The repository remains private and reviewable; these results do not justify declaring this method **better** or **more complete overall** than existing benchmarks.
+The repository is public and reviewable; these results do not justify declaring this method **better** or **more complete overall** than existing benchmarks.

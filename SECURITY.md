@@ -2,7 +2,7 @@
 
 ## Development status
 
-IndetBench is currently private, in pre-alpha. Code dealing with externally supplied B/C datasets, ZIP archives and Hugging Face models has not yet undergone a formal independent security audit.
+IndetBench is public and in pre-alpha. Code dealing with externally supplied B/C datasets, ZIP archives and Hugging Face models has not yet undergone a formal independent security audit.
 
 ## Reporting a vulnerability
 
@@ -19,5 +19,5 @@ Only the latest reviewed development branch is maintained; there is no productio
 - Installing or downloading external model files is **opt-in**. IndetBench's Hugging Face runner requires a 40-hex commit SHA and `safetensors` rather than mutable branches or pickle weights. Always review the model provider's terms and source before loading weights or tokenizers.
 - Do not commit `HF_TOKEN`, cloud credentials, model-gated tokens or confidential dataset files.
 - Treat JSONL/CSV and compressed experiment archives supplied by strangers as **untrusted input**. Run them with ordinary user privileges, in an isolated environment.
-- No CodeQL or Copilot Autofix claim is made while this private personal-account repository is ineligible for GitHub Code Security.
+- No CodeQL or Copilot Autofix analysis has been run yet. Now that the repository is public it is eligible for CodeQL code scanning (see `docs/CODEQL_SETUP.md`); until it is enabled, no such claim is made.
 - The separate GitHub Actions Bandit workflow is **static security linting**, not formal verification or a security guarantee.

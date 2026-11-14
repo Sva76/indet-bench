@@ -28,7 +28,7 @@ Evaluate whether a pinned external Hugging Face model's *first-token uncertainty
 
 ## Data integrity / audit
 
-- Generated examples, family IDs, condition, language, and B gold answer must be stored in a frozen JSONL in this private repository. Audit logical truth tables by family and check all complete pairs.
+- Generated examples, family IDs, condition, language, and B gold answer must be stored in a frozen JSONL in this private repository. *(Note added 14 Nov 2026: the repository has since been made public; "private" here describes its status when this was written.)* Audit logical truth tables by family and check all complete pairs.
 - No examples from SQuAD, AbstentionBench, or other third-party datasets are redistributed.
 - Do not remove examples based on observed model behavior or a low W.
 - Exclude a complete B/C pair from a score metric **only** for missing/nonfinite model probabilities, with exact exclusions documented. Invalid generated response (`ALTRO`) is a behavioral failure, not a discarded response.
