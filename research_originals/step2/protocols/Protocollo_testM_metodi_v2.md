@@ -1,6 +1,6 @@
 # Test M (metodi esistenti sulle coppie B/C): protocollo v2
 
-Data: 10 novembre 2026. Stato: **scelte di §8 della v1 approvate da Simona (9 novembre), nessun dato raccolto**.
+Data: 10 novembre 2026. Stato: **pronto per l'implementazione e la prova tecnica**. Le scelte di §8 della v1 sono state approvate da Simona il 9 novembre, e le quattro regole del 10 novembre sono in §5 e §6. Dopo la revisione del notebook A (10 novembre): HM2 conta le coppie comuni (§5), la ripresa è legata a un'impronta e Llama ha una revisione fissata anche in HM0 (§6.1). Nessun dato è stato raccolto. La raccolta completa parte solo dopo che i tre ambienti si sono installati e ogni metodo ha girato sul proprio controllo positivo.
 Riferimenti: `Protocollo_testM_metodi_v1_bozza.md`, `Risultati_testU.md` (v2), `Risultati_testU2.md`, `PHI/Step1_verifica/Riepilogo_Step1.md`.
 
 ## Cosa cambia rispetto alla v1
@@ -29,7 +29,7 @@ Nessun metodo si addestra sulle storie. Ogni metodo si usa come è stato pubblic
 | **M1. Incertezza sulle uscite** | Maximum Sequence Probability (MSP), Perplexity, Mean Token Entropy, Semantic Entropy (5 campioni), p(True) | LM-Polygraph 0.7.0 (PyPI) | nessuno | i 4 modelli |
 | **M2. Sonda di answerability** | sonda SIRIN sugli stati interni del prompt, con attention pooling (la configurazione migliore dell'articolo per l'answerability) | SIRIN, commit `ef3bed1` | su SQuAD 2.0, come nell'articolo | i 4 modelli |
 | **M3. Giudice di answerability** | giudice zero-shot Qwen3-4B con il prompt di answerability di SIRIN (testo in §2.2) | SIRIN, commit `ef3bed1` | nessuno | un solo giudice, applicato ai prompt (sono gli stessi per tutti i modelli) |
-| **M4. Sonde pubblicate con pesi rilasciati** | sonde di Obeso et al. 2025 per entità allucinate: **M4-lin** (lineare) e **M4-LoRA** (LoRA-KL, λ_KL = 0.05). Punteggio per token, massimo sulla risposta | codice `obalcells/hallucination_probes` commit `295450e`; pesi `obalcells/hallucination-probes` revisione `db581ce` | già addestrate dagli autori | solo Llama-3.1-8B-Instruct |
+| **M4. Sonde pubblicate con pesi rilasciati** | sonde di Obeso et al. 2025 per entità allucinate: **M4-lin** (lineare) e **M4-LoRA** (LoRA-KL, cartella `llama3_1_8b_lora_lambda_kl_0_05`; il `training_config.json` della cartella indica λ_KL = 0.5). Punteggio per token, massimo sulla risposta | codice `obalcells/hallucination_probes` commit `295450e`; pesi `obalcells/hallucination-probes` revisione `db581ce` | già addestrate dagli autori | solo Llama-3.1-8B-Instruct |
 | **Riferimento** | p(UNKNOWN) grezza sul primo token | codice del Test U2 | nessuno | i 4 modelli, ricalcolata in ogni ambiente |
 
 I modelli e le revisioni sono gli stessi del Test U2: Qwen3-8B (`enable_thinking=False`), Mistral-Nemo-Instruct-2407, OLMo-2-1124-7B-Instruct e Llama-3.1-8B-Instruct (0e9e39f2). Si usano bf16 e attention eager.
@@ -83,14 +83,19 @@ Per ogni metodo (e per ogni stimatore di M1, ogni sonda di M4), modello e format
   - ΔW e il suo IC si riportano comunque.
   - Il limite si segnala nel resoconto.
   - Di conseguenza, per scrivere «fa meglio di p(UNKNOWN)» con la regola dei 3 su 4 devono confermare **tutti e tre** gli altri modelli.
+- **Margine di HM2 sui dati confrontati (regola del 10 novembre).** ΔW si calcola solo sulle coppie valide sia per il metodo sia per il riferimento, con le stesse `pair_key` e nello stesso ambiente. Su quelle coppie si riporta anche il margine massimo possibile, 1 − W(riferimento). La soglia di +0.05 resta fissa anche quando il margine è più piccolo.
+- **Copertura minima (regola del 10 novembre).** Un esito di HM1 o HM2 si assegna solo se nel formato principale restano almeno **760 coppie valide su 800** (95%). Per HM1 contano le coppie valide del metodo. Per HM2 contano le coppie valide sia per il metodo sia per il riferimento, cioè quelle su cui si calcola ΔW. Sotto questa soglia W e ΔW si riportano come descrittivi. Gli scarti si riportano sempre, per famiglia (AND, OR, IMPLIES) e per motivo. I motivi sono, per B e per C, «mancante» (il metodo non ha dato un punteggio per quella riga) e «non finito» (punteggio None, NaN o infinito).
 - Su S−S le stesse misure sono descrittive.
 
 **Lettura per la libreria (almeno 3 conferme su 4 modelli valutabili):**
 - «Il metodo X riconosce l'indeterminatezza logica in prosa» si scrive solo se HM1 è confermata in almeno 3 modelli. Per M1 la regola vale stimatore per stimatore.
 - «Il metodo X fa meglio di p(UNKNOWN)» si scrive solo se HM2 è confermata in almeno 3 modelli, tenendo conto del limite di Qwen.
-- M3 è un solo giudice, quindi dà un W per formato e la regola dei 3 su 4 non si applica. Si riporta il suo esito unico su HM0 e HM1. Il suo ΔW si calcola rispetto al p(UNKNOWN) di ciascuno dei 4 modelli ed è descrittivo, perché il giudice è un modello diverso.
+- M3 è un solo giudice, quindi dà un W per formato e la regola dei 3 su 4 non si applica. Si riporta il suo esito unico su HM0 e HM1. Il suo ΔW si calcola rispetto al p(UNKNOWN) di ciascuno dei 4 modelli, ricalcolato in `env_sirin`, ed è descrittivo, perché il giudice è un modello diverso.
 - M4 vale solo per Llama. M4-lin e M4-LoRA si riportano separatamente come risultati su un solo modello, senza generalizzare.
-- Un metodo che passa HM0 ma non HM1 si descrive così: «funziona sul suo dominio ma non riconosce l'indeterminatezza logica delle coppie B/C».
+- **Formulazioni per gli esiti di HM1 (regola del 10 novembre).**
+  - Se un metodo passa HM0 e HM1 è NON CONFERMATA: «funziona sul suo dominio ma non riconosce l'indeterminatezza logica delle coppie B/C».
+  - Se un metodo passa HM0 e HM1 è NON CONCLUSIVA: «non ha superato il criterio HM1 in questo test».
+  - Se un metodo non passa HM0, è NON VALUTABILE e il suo W si riporta come descrittivo.
 
 ## 6. Ambienti di esecuzione
 I vincoli reali delle librerie, controllati con `uv pip compile` sui loro file di dipendenze:
@@ -105,13 +110,59 @@ Le versioni non sono compatibili fra loro, quindi si usano **tre ambienti `uv` s
 | Ambiente | Python | Contenuto | Metodi |
 |---|---|---|---|
 | `env_m1` | 3.12 | lm-polygraph 0.7.0, con le versioni risolte fissate in un file di vincoli scritto nel notebook | M1 e p(UNKNOWN) dei 4 modelli |
-| `env_sirin` | 3.12 | SIRIN al commit `ef3bed1`, con le versioni risolte fissate | M3 (notebook A), M2 e p(UNKNOWN) dei 4 modelli (notebook B) |
+| `env_sirin` | 3.12 | SIRIN al commit `ef3bed1`, con le versioni risolte fissate | M3 e p(UNKNOWN) dei 4 modelli (notebook A); M2 (notebook B) |
 | `env_obeso` | 3.11 | `hallucination_probes` al commit `295450e`, installato con `uv sync --frozen` dal lock degli autori | M4 e p(UNKNOWN) di Llama |
 
-- **p(UNKNOWN) si ricalcola in ogni ambiente in cui girano i modelli**: in `env_m1` per i 4 modelli, in `env_obeso` per Llama e in `env_sirin` per i 4 modelli del notebook B. Ogni ΔW confronta due punteggi della stessa run.
-- In ogni ambiente si confronta anche p(UNKNOWN) di P−S con il Test U2, come controllo descrittivo: scarto massimo, W e quota di risposte uguali. Con versioni diverse di transformers e torch sono possibili piccole differenze numeriche. Una differenza di W oltre 0.01 si segnala nel resoconto, ma non decide nulla.
+- **p(UNKNOWN) si ricalcola in ogni ambiente in cui girano i modelli**: in `env_m1` per i 4 modelli e in `env_obeso` per Llama. Ogni ΔW confronta due punteggi della stessa run.
+- **I riferimenti di `env_sirin` si calcolano nel notebook A (regola del 10 novembre).** I quattro p(UNKNOWN) di `env_sirin` servono ai ΔW di M3, quindi si calcolano già nel notebook A. Il notebook B li riusa se ambiente e configurazione coincidono: stessa lista di pacchetti, stesso commit, stessi prompt e stesse revisioni dei modelli, verificati con un'impronta. Se qualcosa cambia, B li ricalcola. Il giudice M3 dà un solo W per formato. I suoi quattro ΔW, uno per ogni riferimento di `env_sirin`, sono descrittivi.
+- In ogni ambiente si confronta anche p(UNKNOWN) di P−S con il Test U2, come controllo descrittivo: scarto massimo, W e quota di risposte uguali. Lo scarto massimo si misura sui 24 valori di allineamento. La quota di risposte uguali si misura su tutti i prompt P−S eseguiti, confrontando la prima parola analizzata (YES, NO, UNKNOWN o altro) con quella del Test U2. Con versioni diverse di transformers e torch sono possibili piccole differenze numeriche. Una differenza di W oltre 0.01 si segnala nel resoconto, ma non decide nulla.
 - Ogni ambiente salva su Drive la lista completa dei pacchetti installati (`uv pip freeze`).
 - Se l'installazione o l'esecuzione di una libreria fallisce, il metodo si riporta come NON ESEGUITO, con il log dell'errore. Non si sostituisce con una reimplementazione senza una nuova approvazione.
+
+### 6.1 Dettagli di implementazione (fissati scrivendo il notebook A, prima di qualsiasi dato)
+Queste scelte non cambiano i metodi: riguardano la configurazione, i dati di controllo e l'installazione.
+
+**M1 (LM-Polygraph).**
+- Il modello si avvolge in `WhiteboxModel(..., instruct=True)`, che applica il chat template come il Test U2. Per Qwen il template si chiama con `enable_thinking=False`.
+- Prima della run il notebook verifica, prompt per prompt, che LM-Polygraph veda gli stessi token del riferimento. Se c'è anche una sola differenza, M1 non si esegue per quel modello.
+- 5 campioni invece dei 10 di default della libreria. Si impostano con un builder, cioè il punto di estensione previsto dalla libreria per i calcolatori. Il passo greedy non salva attenzioni né stati interni, che a questi stimatori non servono.
+- La libreria genera sempre almeno 2 token (`min_new_tokens=2`), sia in greedy sia nei campioni. Le sue misure di sequenza includono quindi un token dopo la parola di risposta. È il comportamento pubblicato e non si modifica. Nel resoconto si riporta quanto spesso la risposta greedy di LM-Polygraph coincide con quella del riferimento.
+- **Batch.** Sulle coppie i batch contengono solo prompt della stessa lunghezza in token, quindi non c'è padding. Sui controlli positivi i batch sono da 16 con padding a sinistra, l'uso standard della libreria.
+
+**M1, controllo TriviaQA.**
+- Le domande sono 400, estratte da `mandarjoshi/trivia_qa` (rc.nocontext, validation) con il seme 20261110. L'istruzione è «Answer the following question with a short answer only, without explanation.», e la risposta ha al massimo 24 token.
+- Una risposta è corretta se, dopo la normalizzazione SQuAD, contiene come sequenza di parole intere uno degli alias normalizzati. È il criterio usuale con i modelli chat, che raramente rispondono con il solo alias. Sostituisce la «coincidenza» indicata in §3.1.
+
+**M3 (giudice SIRIN).**
+- Si usano la classe `SequenceDecoderJudge` e l'adattatore `HfModelAdapter` di SIRIN, con Qwen3-4B alla revisione `1cfa9a7`.
+- La configurazione è quella del preset di answerability: lo stesso `user_prompt`, `dialogue_format='{question}'` e il `system_prompt` di default della libreria. Quel system prompt è scritto per la rilevazione di allucinazioni; si lascia com'è, perché è quello che usa il preset.
+- Due impostazioni sono necessarie per leggere un punteggio:
+  - `num_classification_heads=2`, così la probabilità di «1» è normalizzata su {«0», «1»};
+  - `max_new_tokens=1`, così si legge solo il primo token.
+- I campioni si passano uno alla volta, perché il tokenizer dell'adattatore aggiunge il padding a destra e in un batch sposterebbe il primo token letto.
+- **Modo senza ragionamento (§2.1).** Il giudice locale di SIRIN unisce il dialogo senza prompt di generazione e poi aggiunge solo `<|im_start|>assistant\n`. Con Qwen3 questo è il modo con ragionamento: il primo token atteso è `<think>`, e le probabilità delle cifre 0 e 1 non dicono nulla. Nella prova su GPU del 10 novembre il giudice dava circa 0.7 a tutte le domande SQuAD, con AUROC 0.35 su 40. Il prefisso dell'assistente si prende quindi dal chat template con `enable_thinking=False` (`<|im_start|>assistant\n<think>\n\n</think>\n\n`), come fa il preset di SIRIN per il giudice via API. Il manifest registra sia questo prefisso sia quello della libreria.
+- SIRIN si importa dal repository clonato, tramite PYTHONPATH. Non si installano il progetto, né la copia di lm-polygraph inclusa nel repository, né i due pacchetti git del processore MTopDiv (`mtopdiv`, `ripserplusplus`). Il giudice non li usa, e il loro import in SIRIN è protetto. Tutte le altre dipendenze si installano con le versioni risolte. Due vincoli si aggiungono alla risoluzione, e ciascuno cambia solo il proprio pacchetto:
+  - `pyarrow<26` (si risolve a 25.0.1). La prova a secco ha mostrato che pyarrow 26.0.1, scelto dalla risoluzione automatica, richiede numpy 2 quando si importa, mentre SIRIN fissa numpy 1.26.4: senza il vincolo `datasets` non si importa.
+  - `torchao==0.14.1`. La risoluzione sceglieva torchao 0.18.0, richiesto senza limiti da `unsloth-zoo`. Quella versione richiede torch ≥ 2.11, e nella prova su GPU del 10 novembre ha fatto fallire l'import di transformers con torch 2.9.0. La 0.14.1 è quella compilata per torch 2.9.0. Il giudice e il riferimento non usano torchao: transformers lo importa solo perché è installato.
+
+**Esecuzione, ripresa ed esportazione.**
+- Ogni lavoro (metodo × modello) scrive in una cartella che porta un'impronta. L'impronta copre il contenuto dei file di input, gli script, i pacchetti installati nell'ambiente, la configurazione e la versione del notebook. Se cambia uno di questi, il lavoro riparte in una cartella nuova e non riusa né il file finale né i checkpoint precedenti.
+- **GPU.** Si usa una A100, come nel Test U2, e il notebook si ferma su un'altra GPU. Nella prova del 10 novembre una sessione su L4 ha dato p(UNKNOWN) diversi dal Test U2 fino a 0.06 sui 24 valori di allineamento, mentre le A100 da 40 e da 80 GB danno lo stesso valore del Test U2 (scarto 1e-16). La famiglia della GPU entra nell'impronta, quindi un lavoro non riusa mai uscite o checkpoint calcolati su un'altra GPU. Il rapporto elenca la GPU di ogni lavoro.
+- **Pacchetti dell'ambiente effettivo.** L'impronta usa i pacchetti letti dall'ambiente installato (`uv pip freeze` sul suo Python), non l'elenco salvato su Drive. Se un ambiente già installato non coincide più con la sua installazione, si reinstalla da zero con le versioni fissate. Se coincide con l'installazione ma non con l'elenco su Drive, vale l'ambiente effettivo: l'elenco su Drive si conserva a parte e i lavori fatti con l'altro ambiente non si riusano. L'elenco su Drive si usa solo quando l'ambiente non è installato, cioè per riesportare in una sessione nuova. Anche l'impronta di ogni checkpoint copre il contenuto completo delle righe, prompt compresi.
+- `stato.json` registra per ogni lavoro l'esito, l'impronta, la cartella e l'ambiente. La nuova impronta si registra prima del lancio, con esito «IN CORSO»: se il tentativo si interrompe o fallisce, `stato.json` non indica più il risultato precedente.
+- L'analisi ricalcola l'impronta attesa di ogni lavoro con gli input, gli script, gli ambienti e la configurazione attuali. Legge un risultato solo se è ESEGUITO con quell'impronta. Un risultato ESEGUITO con un'impronta diversa resta fuori dall'analisi: il rapporto lo segnala e lo ZIP lo mette a parte, in `uscite_escluse/`.
+- **Ambiente dei processi.** Ogni script gira con `MPLBACKEND=Agg`. Il kernel di Colab imposta il backend grafico inline, che negli ambienti separati non esiste: nella prova del 10 novembre matplotlib rifiutava quel valore all'import, e M1 e il codice di valutazione di M4 non partivano. Agg non disegna a schermo e non cambia nessun calcolo.
+- **Versioni fissate cambiate.** Se le versioni fissate di un ambiente (o il commit con il lock degli autori) cambiano rispetto all'installazione, l'ambiente si reinstalla da zero.
+- Lo ZIP si esporta sempre, anche se tutti i lavori falliscono o l'analisi va in errore. Contiene esiti, tabella, rapporto, `stato.json`, i log, gli elenchi dei pacchetti, i dati di input e le uscite di ogni lavoro (JSON dei metodi, configurazione, cartelle HM0 di M4), senza i checkpoint. I risultati si possono quindi ricalcolare dallo ZIP.
+
+**M4 (sonde di Obeso et al.).**
+- Le sonde si scaricano alla revisione `db581ce` e si caricano dal disco con `setup_probe` degli autori: prima la lineare, poi la LoRA, che modifica il modello.
+- I dataset annotati si scaricano alle revisioni `949fd2f` (LongFact) e `620117a` (TriviaQA bilanciato degli autori) e si passano al codice di valutazione come cartelle locali. Si scaricano interi, con tutti i sottoinsiemi. Con una cartella locale, `datasets` 3.5 cerca i file del primo sottoinsieme elencato nel README anche quando se ne chiede un altro: nella prova su GPU, con il solo sottoinsieme di Llama 3.1 8B, `probe.evaluate` non trovava i dati. Dopo il download, il notebook verifica il caricamento nel Python di `env_obeso`.
+- La riserva di HM0 diventa il test TriviaQA bilanciato degli autori per Llama 3.1 8B, valutato con lo stesso codice. Sostituisce le 400 domande TriviaQA di M1 indicate in §3.1.
+- `probe.evaluate` carica Llama per nome, senza revisione. Per questo il notebook scarica prima Llama alla revisione fissata (`0e9e39f`) e passa a `probe.evaluate` la cartella locale di quella revisione. Il risultato di HM0 registra la revisione usata. Se non coincide con quella del protocollo, HM0 per quella sonda non vale come controllo positivo.
+- **Memoria per HM0.** Prima di `probe.evaluate`, che carica un secondo Llama, il processo di M4 libera la GPU. Nella prova del 10 novembre il modello con LoRA restava in memoria, LongFact finiva in CUDA out of memory e HM0 ripiegava sulla riserva TriviaQA (0.925 lineare, 0.949 LoRA, su 40 testi). La valutazione usa il batch 4, il default degli autori. Solo in caso di out of memory si ripete con batch 1, che non cambia le metriche, e il batch usato si registra.
+- Se `probe.evaluate` non gira per una sonda né su LongFact né sulla riserva, M4 è NON ESEGUITO con il log (§6): è un errore di esecuzione della libreria, non un controllo positivo fallito. Le uscite già calcolate restano in un file a parte (`M4_senza_HM0.json`), e al tentativo successivo si riusano i checkpoint.
+- Le cartelle delle sonde contengono le metriche degli autori, che si riportano accanto al nostro HM0 come confronto descrittivo. Per la LoRA l'AUC span-max su LongFact test è 0.890, su TriviaQA test 0.968. Per la lineare la cartella riporta solo HealthBench (0.849). Il nome della cartella LoRA dice λ = 0.05, mentre la sua configurazione di addestramento dice 0.5: si usa la cartella così com'è, e nel resoconto si cita il valore della configurazione.
 
 ## 7. Struttura e tempi
 Due notebook, per tenere separato il lavoro con addestramento:

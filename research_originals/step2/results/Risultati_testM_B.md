@@ -3,15 +3,15 @@
 Protocollo: `Protocollo_testM_metodi_v2.md` e `Nota_M2_configurazione_v2_2.md` (approvata l'11 novembre). Notebook: `TestM_B_M2_v4_1.ipynb` (versione M-B-notebook-4; la v4_1 corregge solo l'esportazione), modalità completo, 4 modelli su 4. GPU NVIDIA A100-SXM4-80GB, sessione da 167.1 GB, avvio 13:03 e fine 16:57 UTC (circa 3.9 ore di Colab; M2 per modello da 51 a 65 minuti).
 Dati: `testM_risultati/` (esiti_B.json, tabella_B.csv, tabella_famiglie_B.csv, rapporto_B.txt e testM_B_risultati_completo.zip, con log, ambiente, dati, uscite e sonde salvate di ogni lavoro). Tabelle generate dallo ZIP: `strumenti_resoconto_B/tabelle_B_completo.md`.
 Dimensione: **1000 + 200 esempi per modello (riserva)**. La riserva deriva dalla regola sulla RAM (nota §2.6 e appendice), non da una scelta sui risultati.
-Stato: **bozza revisionata l'11 novembre 2026, da rivedere con Simona.** Lo schema di questo resoconto è stato scritto prima di vedere i risultati (`Risultati_testM_B_schema.md`); le regole di assegnazione degli esiti sono quelle preregistrate. La revisione distingue il mancato raggiungimento del criterio di conferma dalla prova di assenza del segnale e mantiene separata l'analisi esplorativa POS/NOT.
+Stato: **rivisto da Simona l'11 novembre** (versione 2: esiti HM0/HM1/HM2 invariati; correzioni su HM1, HM2 nel simbolico, epoche di Qwen e analisi POS/NOT). Lo schema di questo resoconto è stato scritto prima di vedere i risultati (`Risultati_testM_B_schema.md`); le formule di lettura sono quelle preregistrate.
 
 ## In breve
 
 1. **Controllo positivo (HM0).** M2 originale lo supera in 3 modelli su 4 (Mistral 0.909, OLMo 0.911, Llama 0.931). Su Qwen non lo supera: 0.499. M2-senzaℓ2 lo supera in 4 su 4 (Qwen 0.881, Mistral 0.925, OLMo 0.912, Llama 0.937). Per M2 su Qwen: **NON VALUTABILE**, «risultato sull'implementazione SIRIN e sulla configurazione adottata». Il collasso della sonda originale di Qwen visto nella diagnostica a 2000 + 400 si ripete a 1000 + 200.
-2. **M2 originale (analisi principale): HM1 confermata in 1 modello su 3 valutabili (Mistral, W 0.646 [0.606, 0.686]); HM2 in 0.** Su OLMo e Llama M2 «non ha superato il criterio HM1 in questo test» (W 0.506 e 0.498, IC che includono 0.5). M2 non raggiunge quindi il criterio dei 3 modelli per la conclusione generale «riconosce l'indeterminatezza logica in prosa». Questo non dimostra l'assenza di ogni segnale, né cancella l'esito positivo di Mistral. Su P−S non fa meglio di p(UNKNOWN): ΔW è negativo in tutti e 3 i modelli valutabili, con l'IC interamente sotto 0 (da −0.13 a −0.24).
-3. **M2-senzaℓ2 (secondaria preregistrata): HM1 confermata in 1 modello su 4 (Mistral, W 0.611 [0.570, 0.653]); HM2 in 0.** Su Qwen la variante «funziona sul suo dominio ma non riconosce l'indeterminatezza logica delle coppie B/C»: W 0.450 [0.415, 0.488]. Nell'ordinamento appaiato C supera B meno spesso del riferimento casuale del 50%; questa misura non confronta le medie dei punteggi e non implica che C sia sotto B in ogni coppia. Su OLMo e Llama «non ha superato il criterio HM1 in questo test». Su P−S ΔW è negativo in tutti e 4 i modelli con l'IC sotto 0 (da −0.17 a −0.53). Questi esiti affiancano quelli di M2 e non li sostituiscono.
+2. **M2 originale (analisi principale): HM1 confermata in 1 modello su 3 valutabili (Mistral, W 0.646 [0.606, 0.686]); HM2 in 0.** Su OLMo e Llama M2 «non ha superato il criterio HM1 in questo test» (W 0.506 e 0.497, IC che includono 0.5). Il criterio generale dei 3 su 4 non è raggiunto, quindi non si può scrivere che M2 «riconosce l'indeterminatezza logica in prosa»; questo non dimostra che il segnale sia assente, e resta la conferma su Mistral. M2 non «fa meglio di p(UNKNOWN)»: nel confronto principale P−S, ΔW è negativo in tutti e 3 i modelli valutabili, con l'IC interamente sotto 0 (da −0.13 a −0.24).
+3. **M2-senzaℓ2 (secondaria preregistrata): HM1 confermata in 1 modello su 4 (Mistral, W 0.611 [0.570, 0.652]); HM2 in 0.** Su Qwen la variante «funziona sul suo dominio ma non riconosce l'indeterminatezza logica delle coppie B/C»: W 0.450 [0.415, 0.487], quindi assegna punteggi di «senza risposta» più bassi ai casi C che ai B. Su OLMo e Llama «non ha superato il criterio HM1 in questo test». Anche qui il criterio generale non è raggiunto, senza che questo dimostri l'assenza del segnale. Nel confronto principale P−S, ΔW è negativo in tutti e 4 i modelli con l'IC sotto 0 (da −0.17 a −0.53); nel simbolico (S−S, descrittivo) ci sono alcuni vantaggi, per esempio Mistral +0.045 [0.006, 0.084]. Questi esiti affiancano quelli di M2 e non li sostituiscono.
 4. **Per famiglia (secondaria, IC non corretti).** Con il criterio nominale, solo M2-senzaℓ2 su OR raggiunge i 3 su 4 (HM1_f in 4 su 4): «M2-senzaℓ2 riconosce l'indeterminatezza sulla famiglia OR» (criterio nominale). M2 originale su OR arriva a 2 su 3 valutabili (Mistral, Llama). Su AND e IMPLIES nessuno dei due metodi va oltre 1 modello. HM2_f è confermata solo su OR, in 2 modelli per ciascun metodo (Mistral e OLMo, dove p(UNKNOWN) su OR è debole). H ≥ 0.20 in 6 celle su 8, quindi «forti differenze tra famiglie» (descrittivo). Il caso più netto è Llama: W_f su AND 0.004 (M2) e 0.007 (variante), su OR 0.963 e 0.910.
-5. **Confronto con il notebook A (descrittivo).** Sulle stesse 800 coppie P−S, le stime complessive di M2 e della variante restano sotto p(UNKNOWN) di `env_sirin` in ogni modello (riferimento 0.698–0.980); per M2 originale su Qwen il confronto resta solo descrittivo, perché HM0 non è superato. Le stime restano sotto anche al giudice M3 (0.693) in tutti i modelli e alla sonda M4-LoRA su Llama (0.823). Quest'ultimo è un confronto fra stime, senza un test appaiato della differenza tra metodi. Nessuna delle due configurazioni di sonda di answerability qui provate supera p(UNKNOWN) nel risultato complessivo su P−S; restano i vantaggi nominali in alcune celle OR.
+5. **Confronto con il notebook A (descrittivo).** Sulle stesse 800 coppie P−S, M2 e la variante restano sotto p(UNKNOWN) di `env_sirin` in ogni modello (riferimento 0.698–0.980). Restano sotto anche al giudice M3 (0.693) in tutti i modelli e alla sonda M4-LoRA su Llama (0.823). In sintesi, nessuna delle sonde di answerability di SIRIN addestrate su SQuAD separa le coppie meglio della probabilità di UNKNOWN del modello.
 
 ### Formule applicate
 
@@ -58,7 +58,7 @@ Articolo di SIRIN, Qwen3-4B con un'altra configurazione: 0.879, descrittivo.
 
 | Metodo | Modello | Epoche | F1 di validazione per epoca | Epoca scelta | AUROC validazione | Norma query / pesi (finale) |
 |---|---|---|---|---|---|---|
-| M2 | Qwen | 3 eseguite, 2 validate; arresto anticipato | 0.667, 0.667 | 1 | 0.581 | 0.015 / 0.188 |
+| M2 | Qwen | 3 eseguite, 2 validate (l'arresto anticipato precede la terza validazione) | 0.667, 0.667 | 1 | 0.581 | 0.015 / 0.188 |
 | M2-senzaℓ2 | Qwen | 5 | 0.592, 0.607, 0.638, 0.847, 0.854 | 5 | 0.925 | 9.735 / 5.796 |
 | M2 | Mistral | 5 | 0.664, 0.671, 0.829, 0.862, 0.859 | 4 | 0.931 | 0.572 / 1.088 |
 | M2-senzaℓ2 | Mistral | 5 | 0.804, 0.853, 0.864, 0.870, 0.866 | 4 | 0.931 | 1.782 / 2.511 |
@@ -67,7 +67,7 @@ Articolo di SIRIN, Qwen3-4B con un'altra configurazione: 0.879, descrittivo.
 | M2 | Llama | 5 | 0.667, 0.882, 0.882, 0.876, 0.876 | 2 | 0.946 | 0.888 / 1.090 |
 | M2-senzaℓ2 | Llama | 5 | 0.860, 0.866, 0.878, 0.873, 0.872 | 3 | 0.955 | 2.683 / 2.086 |
 
-Lo schema dell'originale su Qwen si ripete: F1 0.667 (il classificatore banale che dice sempre «senza risposta»), arresto anticipato, query quasi azzerata (0.015). L'arresto avviene nella terza epoca prima della sua validazione: per questo il log registra 3 epoche eseguite ma solo 2 F1 di validazione. Le norme in tabella sono quelle registrate a fine addestramento, non una misura ricalcolata sul checkpoint scelto. Sulle coppie i suoi punteggi sono quasi costanti (media 0.515, deviazione standard 0.0005). Su Mistral e Llama l'originale parte dallo stesso F1 0.667 alla prima epoca e poi migliora; in questi due modelli la variante parte più in alto. In tutti e quattro i modelli la variante ha norme finali maggiori. Da questi valori di addestramento non si trae alcuna conclusione sul trasferimento alle coppie.
+Lo schema dell'originale su Qwen si ripete: F1 0.667 (il classificatore banale che dice sempre «senza risposta»), arresto anticipato, query quasi azzerata (0.015). Sulle coppie i suoi punteggi sono quasi costanti (media 0.515, deviazione standard 0.0005). Sugli altri modelli l'originale parte a volte dallo stesso F1 0.667 (Mistral e Llama alla prima epoca) e poi esce; la variante parte più in alto e ha norme finali maggiori. Da qui non si trae nessuna conclusione sulle coppie.
 
 ## Ipotesi preregistrate su P−S
 
@@ -80,14 +80,14 @@ W è la quota di coppie in cui il punteggio di C supera quello di B (pareggi a m
 | Qwen | 0.450 [0.429, 0.470] | NON VALUTABILE (HM0) | −0.530 [−0.551, −0.510] | 0.020 | NON VALUTABILE (HM0) | 800 |
 | Mistral | 0.646 [0.606, 0.686] | **CONFERMATA** | −0.133 [−0.183, −0.080] | 0.221 | NON CONFERMATA | 800 |
 | OLMo | 0.506 [0.479, 0.534] | NON CONCLUSIVA | −0.191 [−0.235, −0.147] | 0.302 | NON CONFERMATA | 800 |
-| Llama | 0.498 [0.443, 0.554] | NON CONCLUSIVA | −0.240 [−0.276, −0.205] | 0.262 | NON CONFERMATA | 800 |
+| Llama | 0.497 [0.443, 0.554] | NON CONCLUSIVA | −0.240 [−0.276, −0.205] | 0.262 | NON CONFERMATA | 800 |
 
 ### M2-senzaℓ2 (secondaria)
 
 | Modello | W [IC] | HM1 | ΔW [IC] | Margine 1 − W_rif | HM2 | Coppie comuni |
 |---|---|---|---|---|---|---|
-| Qwen | 0.450 [0.415, 0.488] | NON CONFERMATA | −0.530 [−0.568, −0.491] | 0.020 | NON CONFERMATA | 800 |
-| Mistral | 0.611 [0.570, 0.653] | **CONFERMATA** | −0.168 [−0.214, −0.119] | 0.221 | NON CONFERMATA | 800 |
+| Qwen | 0.450 [0.415, 0.487] | NON CONFERMATA | −0.530 [−0.568, −0.491] | 0.020 | NON CONFERMATA | 800 |
+| Mistral | 0.611 [0.570, 0.652] | **CONFERMATA** | −0.168 [−0.214, −0.119] | 0.221 | NON CONFERMATA | 800 |
 | OLMo | 0.507 [0.464, 0.551] | NON CONCLUSIVA | −0.190 [−0.270, −0.107] | 0.302 | NON CONFERMATA | 800 |
 | Llama | 0.490 [0.438, 0.544] | NON CONCLUSIVA | −0.247 [−0.284, −0.212] | 0.262 | NON CONFERMATA | 800 |
 
@@ -145,9 +145,9 @@ Conteggio nominale per famiglia (HM1_f / HM2_f, sui modelli valutabili):
 
 ## Descrittivi (non preregistrati)
 
-**S−S.** Nel formato simbolico i W complessivi vanno da 0.496 a 0.595. Alcune celle sono compatibili con 0.5, mentre altre hanno IC interamente sopra 0.5: non sono tutte indistinguibili dal caso. Le prestazioni restano comunque contenute. ΔW su p(UNKNOWN) va da −0.136 (Qwen) a +0.050 (Mistral, M2, IC [−0.003, 0.103]); per M2-senzaℓ2 su Mistral +0.045 [0.006, 0.084]. Su Mistral la variante ha quindi un vantaggio descrittivo con IC sopra 0, ma la stima è sotto +0.05; su S−S non si assegnano esiti HM1/HM2. Il riferimento è più debole che su P−S (W_rif da 0.54 a 0.63), perciò un ΔW meno negativo non implica da solo una migliore separazione B/C della sonda.
+**S−S.** Nel formato simbolico i due metodi restano vicini al caso: W da 0.496 a 0.595. ΔW su p(UNKNOWN) va da −0.136 (Qwen) a +0.050 (Mistral, M2, IC [−0.003, 0.103]); per M2-senzaℓ2 su Mistral +0.045 [0.006, 0.084]. Nel simbolico ci sono quindi alcuni vantaggi descrittivi sulle sonde rispetto a p(UNKNOWN) (Mistral con entrambe le sonde, Llama circa 0). Il riferimento qui è più debole (W_rif da 0.54 a 0.63) e i W delle sonde restano vicini al caso; non si tratta di ipotesi preregistrate.
 
-**AUROC (tutti i casi, senza appaiamento).** C contro B su P−S: da 0.481 a 0.641 (massimo M2 su Mistral). C contro A+B su P−S: da 0.468 a 0.725 (massimo M2 su Qwen, la sonda collassata). Quest'ultimo valore non risolve il mancato superamento di HM0 e non dimostra una separazione specifica di C da B: nel medesimo caso l'AUROC C contro B è 0.494. Su S−S, C contro A+B da 0.505 a 0.733.
+**AUROC (tutti i casi, senza appaiamento).** C contro B su P−S: da 0.481 a 0.641 (massimo M2 su Mistral). C contro A+B su P−S: da 0.468 a 0.725 (massimo M2 su Qwen, la sonda collassata, quindi da non leggere come segnale). Su S−S, C contro A+B da 0.505 a 0.733.
 
 **Confronto con il notebook A sulle stesse 800 coppie P−S.**
 
@@ -156,11 +156,11 @@ Conteggio nominale per famiglia (HM1_f / HM2_f, sui modelli valutabili):
 | Qwen | 0.980 | 0.450 (NON VALUTABILE) | 0.450 | 0.693 | — | — |
 | Mistral | 0.779 | 0.646 | 0.611 | 0.693 | — | — |
 | OLMo | 0.698 | 0.506 | 0.507 | 0.693 | — | — |
-| Llama | 0.738 | 0.498 | 0.490 | 0.693 | 0.823 | 0.481 |
+| Llama | 0.738 | 0.497 | 0.490 | 0.693 | 0.823 | 0.481 |
 
 M3 è un giudice unico (Qwen3-4B) che legge il prompt: lo stesso W vale per tutte le righe.
 
-**Esplorativo, fatto dopo aver visto i risultati: varianti che preservano risposta e determinabilità.** Ogni famiglia ha due varianti, POS e NOT. La trasformazione inverte la polarità del secondo atomo nella regola e il valore del fatto noto. Su AND e OR introduce una negazione nella regola; su IMPLIES la rimuove. Lo stato logico di B e di C resta lo stesso, ma cambia quale dei due casi contiene «It is false that». Si tratta di trasformazioni che preservano la risposta e la determinabilità, non dell'identità letterale delle regole. Un rilevatore invariante rispetto a queste trasformazioni manterrebbe gli stessi ordinamenti C/B e quindi lo stesso W. W per cella (134 o 132 coppie, senza IC; script `strumenti_resoconto_B/esplorativo_variante_B.py`; valori verificati in revisione dai punteggi grezzi):
+**Esplorativo, fatto dopo aver visto i risultati: varianti logicamente equivalenti.** Ogni famiglia ha due varianti, POS e NOT. NOT nega l'atomo nella regola («the scaffold is not reserved») e inverte il valore del fatto noto, quindi lo stato logico di B e di C resta lo stesso. Cambiano però due cose insieme: la polarità della regola e quale dei due casi contiene «It is false that». Un metodo che segue solo lo stato logico dovrebbe dare lo stesso W nelle due varianti; la trasformazione non isola invece una causa esclusivamente lessicale. W per cella (134 o 132 coppie, senza IC; script `strumenti_resoconto_B/esplorativo_variante_B.py`):
 
 | Modello | Metodo | AND POS | AND NOT | OR POS | OR NOT | IMPLIES POS | IMPLIES NOT | media \|POS − NOT\| |
 |---|---|---|---|---|---|---|---|---|
@@ -177,17 +177,15 @@ M3 è un giudice unico (Qwen3-4B) che legge il prompt: lo stesso W vale per tutt
 | Llama | M2 | 0.00 | 0.01 | 1.00 | 0.93 | 0.97 | 0.08 | 0.32 |
 | Llama | M2-senzaℓ2 | 0.00 | 0.01 | 1.00 | 0.82 | 0.93 | 0.17 | 0.32 |
 
-Nelle celle AND NOT, OR POS e IMPLIES POS il caso C ha un «It is false that» in più di B; nelle altre tre ne ha uno in meno. Nella sonda originale di Qwen, che non supera HM0, l'ordinamento dei punteggi concorda con la regola «punteggio più alto al caso con un'occorrenza in più» nel **92.0% delle 800 coppie P−S** (pareggi a mezzo punto; descrittivo calcolato in revisione). Questo risultato riguarda variazioni molto piccole: la media di |p(C) − p(B)| è circa 0.000070. Mostra una forte associazione con l'indizio lessicale, non che la sonda segua soltanto quella frase.
-
-Anche altri metodi mostrano differenze fra varianti che preservano la risposta. Per p(UNKNOWN) di Mistral e OLMo il caso OR è netto: 0.99 contro 0.22 e 0.65 contro 0.05. p(UNKNOWN) di Qwen ha la minore differenza media |POS − NOT| fra le configurazioni qui confrontate (0.04). Questi dati documentano una sensibilità alla trasformazione POS/NOT, ma non ne isolano la causa: cambiano insieme la polarità della regola, il valore del fatto noto e la formulazione dei token. La presenza di «It is false that», la difficoltà di elaborare la negazione e altri effetti della formulazione restano spiegazioni da distinguere. Non provano inoltre che il segnale dipenda solo dalla forma o che non contenga informazione logica. L'analisi è a posteriori, senza IC né regola di decisione fissata prima; non modifica gli esiti HM0, HM1 e HM2.
+Nelle celle AND NOT, OR POS e IMPLIES POS il caso C ha un «It is false that» in più di B; nelle altre tre ne ha uno in meno. Sulla sonda originale di Qwen, che è collassata, il segno della differenza C − B concorda con quello della differenza di «It is false that» nel 92.0% delle 800 coppie (per M2-senzaℓ2 su Qwen: 46.3%), ma su differenze di punteggio molto piccole (mediana 0.00006, massimo 0.00024): è un indizio, non una spiegazione. Gli altri metodi mostrano differenze grandi fra varianti equivalenti in quasi tutti i modelli; lo fa anche p(UNKNOWN) di Mistral e di OLMo (OR: 0.99 contro 0.22; 0.65 contro 0.05). Solo p(UNKNOWN) di Qwen è stabile (0.04). L'analisi documenta una sensibilità alla trasformazione, senza dimostrare che il modello o la sonda usino soltanto una scorciatoia. È coerente con quanto visto nello Step 1 (sonde sensibili alla forma), ma resta un'osservazione a posteriori, senza IC e senza regola fissata prima, separata dagli esiti preregistrati.
 
 ## Lettura
 
-1. **Criterio generale preregistrato non raggiunto:** né M2 né M2-senzaℓ2 raggiunge le 3 conferme richieste per concludere che il metodo riconosce l'indeterminatezza logica in prosa. HM1 è confermata solo su Mistral, con entrambe. Gli esiti non conclusivi di OLMo e Llama non dimostrano l'assenza del segnale; per Qwen originale HM1 resta non valutabile.
-2. **Confronto complessivo su P−S:** nessuna delle due configurazioni supera p(UNKNOWN) in un modello valutabile; tutti i relativi ΔW sono negativi con l'IC sotto 0. Questo risultato riguarda W nel confronto preregistrato: non è una prova generale di assenza di informazione interna aggiuntiva rispetto all'uscita. Restano distinti i vantaggi nominali nelle singole famiglie e i descrittivi S−S.
-3. **Controllo positivo e confronto controllato delle configurazioni:** il collasso della sonda originale di Qwen si ripete con 1000 + 200 esempi, mentre M2-senzaℓ2 supera HM0 su Qwen (0.881). Insieme all'ablation SQuAD dell'Appendice B della nota, il confronto attribuisce un ruolo alla penalità ℓ2 interna del trainer in questa configurazione. Sugli altri tre modelli le due configurazioni hanno HM0 simili (scarti da 0.001 a 0.016). È un risultato sull'implementazione SIRIN e sulla configurazione adottata, non sul metodo in astratto.
+1. **Preregistrato: per le sonde di answerability di SIRIN addestrate su SQuAD 2.0 il criterio generale di HM1 (3 su 4) non è raggiunto, né nella configurazione originale né nella variante senza ℓ2.** Questo non dimostra l'assenza del segnale: HM1 è confermata su Mistral, con entrambe.
+2. **Preregistrato: nel confronto principale P−S nessuna delle due fa meglio di p(UNKNOWN)** in nessun modello valutabile; tutti i ΔW su P−S sono negativi con l'IC sotto 0. Nel simbolico (S−S) ci sono alcuni vantaggi descrittivi.
+3. **Sul controllo positivo: con la penalità ℓ2 fissa del trainer di SIRIN la sonda di Qwen collassa anche con 1000 + 200 esempi**, mentre M2-senzaℓ2 supera HM0 su Qwen (0.881). Sugli altri tre modelli le due configurazioni hanno HM0 simili (scarti da 0.001 a 0.016). È un risultato sull'implementazione SIRIN e sulla configurazione adottata, non sul metodo in astratto.
 4. **Secondario (nominale, IC non corretti): M2-senzaℓ2 supera HM1_f su OR in 4 modelli su 4**, ma su AND e IMPLIES in al massimo 1. Le differenze tra famiglie sono forti (H ≥ 0.20 in 6 celle su 8; Llama AND contro OR: 0.004 contro 0.963).
-5. **Esplorativo:** i W cambiano fra trasformazioni POS/NOT che preservano risposta e determinabilità. Il risultato documenta una sensibilità alla trasformazione; l'ipotesi di una scorciatoia lessicale è compatibile con i dati, ma la sua causa specifica non è isolata. Per confermarla serve un confronto preregistrato su storie nuove, con manipolazioni che separino l'indizio lessicale dalla polarità e dalla struttura logica.
+5. **Esplorativo:** su varianti logicamente equivalenti (POS/NOT) i W cambiano molto, per le sonde e in parte per p(UNKNOWN) di Mistral e OLMo. Questo documenta una sensibilità alla trasformazione (polarità della regola e posizione del fatto falso insieme), non una causa solo lessicale né l'uso esclusivo di una scorciatoia. Per separare le due componenti servirebbe un confronto preregistrato.
 
 ## Limiti
 
@@ -195,7 +193,6 @@ Anche altri metodi mostrano differenze fra varianti che preservano la risposta. 
 - M2-senzaℓ2 è stata definita dopo la diagnostica SQuAD su Qwen. Le sue regole sono preregistrate, ma la scelta della variante non è indipendente da quella diagnostica.
 - Prima del completo abbiamo visto i punteggi della prova tecnica di **entrambe le sonde**, M2 e M2-senzaℓ2 (Qwen, 200 + 40 esempi SQuAD, 9 storie). Le 9 storie della prova sono **comprese nelle 200 del completo**. Nel completo i punteggi si ricalcolano e quelli della prova non si aggregano agli esiti, ma i casi sono condivisi. Il campione principale resta quello già fissato (200 storie, 800 coppie P−S).
 - Due metodi per 4 modelli e 3 famiglie, con IC non corretti per la molteplicità.
-- Gli IC ricampionano le storie: non misurano la variabilità fra nuovi addestramenti delle sonde, semi casuali o scelte dello strato. La revisione numerica conferma le tabelle dai punteggi salvati, non riesegue l'inferenza dei modelli.
 - 4 modelli tra 7 e 12B, storie sintetiche di un solo tipo, solo inglese. Il confronto con l'articolo di SIRIN è solo descrittivo (modello, dati e configurazione diversi).
 - L'analisi per variante POS/NOT è a posteriori: si riporta solo come descrittivo.
 

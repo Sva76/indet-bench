@@ -31,6 +31,8 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 
 ## Scientific, licensing and AI transparency
 
+- **[Scientific status](docs/SCIENTIFIC_STATUS.md)**: what the original research has and has not shown, with sources.
+- **[Verify the results on a new model](docs/VERIFY_ON_NEW_MODELS.md)**: run the frozen original benchmark (800 prose B/C pairs) on any Hugging Face model and compare with the published values.
 - [Development plan, acceptance and limits](docs/ROADMAP.md).
 - [AI assistance disclosure](docs/AI_USAGE.md) — AI-assisted planning, coding, analysis and writing, with human oversight and documented limits.
 - [References and attribution](docs/REFERENCES.md) — verified core paper citations in [BibTeX](docs/REFERENCES.bib); model revisions and remaining references require further checks.
