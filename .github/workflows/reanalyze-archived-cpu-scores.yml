@@ -1,0 +1,60 @@
+name: Re-analyse archived CPU scores (no inference)
+# Technical recovery only. Downloads raw score CSVs already produced by
+# earlier runs and applies the UNCHANGED analyzer (tests/integration/
+# analyze_crossmodel_stat.py). No model is downloaded, no dataset, score,
+# threshold or statistical rule is changed.
+#  - smol17 from run 43582196401: its 4 inference shards succeeded, but the
+#    analyze matrix still listed qwen05/tinyllama11, so no report was made.
+#  - qwen15, olmo1 from run 43582196401: independent second inference of the
+#    same pinned checkpoints; compare with reports of run 43582014175.
+#  - qwen05 from run 43579643007: re-analysis to print the behaviour block
+#    (B accuracy, C abstention) that the original log did not show.
+on:
+  push:
+    branches: [claude/correzioni-tecniche-verifica]
+    paths: ['.github/workflows/reanalyze-archived-cpu-scores.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  analyze:
+    name: Re-analysis / ${{ matrix.model }} from run ${{ matrix.run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {model: smol17, run: '43582196401'}
+          - {model: qwen15, run: '43582196401'}
+          - {model: olmo1, run: '43582196401'}
+          - {model: qwen05, run: '43579643007'}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[replay]'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cross-${{ matrix.model }}-shard-*
+          path: cross_scores
+          merge-multiple: true
+          run-id: ${{ matrix.run }}
+          repository: ${{ github.repository }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify frozen dataset and apply the unchanged analyzer
+        run: |
+          echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check
+          sha256sum cross_scores/*.csv
+          python tests/integration/analyze_crossmodel_stat.py --input data/smol_stat_v01_frozen.jsonl --scores cross_scores/scores_${{ matrix.model }}_0.csv cross_scores/scores_${{ matrix.model }}_1.csv cross_scores/scores_${{ matrix.model }}_2.csv cross_scores/scores_${{ matrix.model }}_3.csv --model-key '${{ matrix.model }}' --output reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
+      - name: Print full report (aggregates only, no prompts) for audit
+        run: cat reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
+      - name: Keep report privately
+        uses: actions/upload-artifact@v4
+        with:
+          name: reanalysis-${{ matrix.model }}-run-${{ matrix.run }}
+          path: reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
+          retention-days: 14
+          if-no-files-found: error

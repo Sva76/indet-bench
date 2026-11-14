@@ -19,6 +19,19 @@ FIELDS = ("row_id", "pair_id", "block_id", "side", "model_id", "model_revision",
           "mass_total", "entropy", "top1_probability", "hidden_state")
 
 
+def resolve_model_key(model_key, model_id):
+    """Resolve "auto" exactly as hf_runner.score_pairs does.
+
+    Without this, model_key="auto" reached chat_prompt unchanged and Qwen3
+    templates were rendered with thinking enabled (the default), unlike every
+    archived IndetBench run, which used enable_thinking=False.
+    """
+    if model_key != "auto":
+        return model_key
+    name = model_id.lower()
+    return "qwen" if "qwen" in name else "mistral" if "mistral" in name else "other"
+
+
 def extract(model, tokenizer, rows, *, model_id, revision, model_key="other",
             layer=-1, max_input_tokens=768):
     """Yield one final-input-token hidden vector per prompt, plus output baselines.
@@ -29,6 +42,7 @@ def extract(model, tokenizer, rows, *, model_id, revision, model_key="other",
     """
     import torch
 
+    model_key = resolve_model_key(model_key, model_id)
     token_ids = token_label_ids(tokenizer)
     device = next(model.parameters()).device
     for row in rows:
@@ -78,15 +92,16 @@ def main(argv=None):
     args = parser.parse_args(argv)
     revision = validate_revision(args.revision)
     rows = load_pairs(args.input)
+    model_key = resolve_model_key(args.model_key, args.model_id)
     model, tokenizer = load_hf(args.model_id, revision=revision,
-                               model_key=args.model_key, hf_token=os.environ.get("HF_TOKEN"))
+                               model_key=model_key, hf_token=os.environ.get("HF_TOKEN"))
     source_hash = hashlib.sha256(Path(args.input).read_bytes()).hexdigest()
     with Path(args.output).open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS)
         writer.writeheader()
         count = 0
         for result in extract(model, tokenizer, rows, model_id=args.model_id,
-                              revision=revision, model_key=args.model_key,
+                              revision=revision, model_key=model_key,
                               layer=args.layer, max_input_tokens=args.max_input_tokens):
             writer.writerow(result)
             count += 1
