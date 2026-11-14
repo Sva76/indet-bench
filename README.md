@@ -2,7 +2,7 @@
 
 **A reproducible benchmark and validation protocol for answer determinability in language models.**
 
-> **Status: public, development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation, method-card/release checks and broader model compatibility are still pending; a first external-model CPU inference smoke test has passed. This project does not certify hallucination detection.
+> **Status: public, development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation, method-card/release checks and broader model compatibility are still pending. The Hugging Face runner has been run on CPU on six small external models (SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B, Qwen2.5-1.5B, OLMo-2-0425-1B, TinyLlama-1.1B) on the separate 240-pair set; only Qwen2.5-1.5B passes the competence gate, TinyLlama is not measurable (first-token collision), and all these results are exploratory ([status](docs/COMPETENCE_240_PAIRS.md)). This project does not certify hallucination detection.
 
 ## Research question
 
@@ -27,7 +27,7 @@ python -m indetbench --scores examples/sample_scores.csv --reference examples/sa
 
 The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using **common complete pairs**, and block-bootstrap confidence intervals. The example files contain invented demonstration values, not actual experiment scores.
 
-**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and was run on the original archives on 14 November 2026 and matched Test C (508 values), Test M notebook A (498) and notebook B (176) with 0 differences. See [Test your model](docs/RUN_YOUR_MODEL.md) for the Hugging Face runner, which has now passed one real CPU-model smoke test.
+**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and was run on the original archives on 14 November 2026 and matched Test C (508 values), Test M notebook A (498) and notebook B (176) with 0 differences. See [Test your model](docs/RUN_YOUR_MODEL.md) for the Hugging Face runner, which has been run on CPU on six small external models (see the status note above).
 
 ## Scientific, licensing and AI transparency
 
@@ -43,6 +43,15 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 **No third-party model weights, training data, natural SQuAD passages, or proprietary probe files are distributed with this package.**
 
 Copyright © 2026 Simona Vargiu.
+
+## License
+
+IndetBench original material (code, documentation, frozen prompt sets written for this project) is licensed under the **[PolyForm Noncommercial License 1.0.0](LICENSE)**, © 2026 Simona Vargiu; see [NOTICE](NOTICE) for the required notice.
+
+- Allowed without asking: noncommercial use, including research at universities and public research organisations, modification and redistribution, provided the license text and the required notice are kept.
+- Not allowed without a separate written agreement with the author: commercial use.
+- It is source-available, not an OSI-approved open-source license.
+- Third-party models, libraries and datasets are not covered and keep their own terms ([THIRD_PARTY.md](docs/THIRD_PARTY.md)); for example Llama 3.1 models need the Llama 3.1 Community License.
 
 ## Historical research archive — source material preserved
 
@@ -76,7 +85,7 @@ python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --revision YOUR_40_CHARA
 python -m indetbench --scores my_scores.csv
 ```
 
-Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's unit tests use a fake tokenizer and **one real external-model CPU smoke test has now passed**. Further model-family coverage and semantic answer validation are still pending. See [the verified run and limitations](docs/SMOLLM2_EXTERNAL_SMOKE.md).
+Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's unit tests use a fake tokenizer. Beyond the first [CPU smoke test on SmolLM2-360M](docs/SMOLLM2_EXTERNAL_SMOKE.md), it has scored five more small models on CPU on the 240-pair set ([competence verdicts](docs/COMPETENCE_240_PAIRS.md)). Models of 7B and more are run from the Colab notebook in `notebooks/`; no result from that notebook is recorded in this repository yet. Semantic answer validation is still pending.
 
 ## External statistical evaluation — SmolLM2 (13 November 2026)
 

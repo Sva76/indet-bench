@@ -1,6 +1,6 @@
 # Test your own model (experimental Hugging Face runner)
 
-This is an **experimental adapter API and CLI**; it has now passed a CPU smoke test on SmolLM2-360M-Instruct, but general model support and semantic answer correctness are not yet validated. It requires a separate GPU/CPU environment suitable for the weights.
+This is an **experimental adapter API and CLI**; it has passed a CPU smoke test on SmolLM2-360M-Instruct and has been run on CPU on five more small models on the 240-pair set ([competence verdicts](COMPETENCE_240_PAIRS.md)), but general model support and semantic answer correctness are not yet validated. It requires a separate GPU/CPU environment suitable for the weights.
 
 ## Input schema
 
@@ -33,7 +33,7 @@ Scores are **not** renormalized to the three possible labels. The user must supp
 
 ## Known limits
 
-Model cards, gated access conditions and third-party licenses still apply. No weights are distributed. GPU memory requirements depend on the selected model. The adapter has unit tests with fake inputs/tokenizers but **has passed a pinned CPU inference smoke test on one Hugging Face model** against a real Hugging Face model in this version. The exact archived Test U/M/C model revisions, tokenizer and package versions are needed to claim historical bit-for-bit parity.
+Model cards, gated access conditions and third-party licenses still apply. No weights are distributed. GPU memory requirements depend on the selected model. The adapter has unit tests with fake inputs/tokenizers and has run pinned CPU inference on six small Hugging Face models (one smoke test and five 240-pair runs); TinyLlama-1.1B is refused because the first tokens of YES/NO/UNKNOWN collide. The exact archived Test U/M/C model revisions, tokenizer and package versions are needed to claim historical bit-for-bit parity.
 
 ## Verified external-model smoke test
 
