@@ -1,6 +1,6 @@
 # Historical research sources — IndetBench
 
-**Status: private archive / recovered originals, 13 November 2026.**
+**Status: archive of recovered originals, 13 November 2026** (public since 14 November 2026).
 These files preserve the original research provenance of **Step 1** (tests 4–7) and **Step 2** (U, U2, M-A, M-B and C) from the owner's earlier work. They are distinct from the separately generated **240-pair Hugging Face** study under `data/smol_stat_v01_frozen.jsonl`.
 
 ## Preserved files
