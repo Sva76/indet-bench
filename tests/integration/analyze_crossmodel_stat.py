@@ -21,6 +21,21 @@ MODELS = {
         "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
         "architecture_family": "Qwen2",
     },
+    "qwen15": {
+        "id": "Qwen/Qwen2.5-1.5B-Instruct",
+        "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "architecture_family": "Qwen2",
+    },
+    "smol17": {
+        "id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        "revision": "31b70e2e869a7173562077fd711b654946d38674",
+        "architecture_family": "SmolLM2",
+    },
+    "olmo1": {
+        "id": "allenai/OLMo-2-0425-1B-Instruct",
+        "revision": "48d788eca847d4d7548f375ad03d3c9312f6139e",
+        "architecture_family": "OLMo2",
+    },
     "tinyllama11": {
         "id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
         "revision": "fe8a4ea1ffedaf415f4da2f062534de366a451e6",

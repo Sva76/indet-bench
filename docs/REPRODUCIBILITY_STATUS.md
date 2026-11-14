@@ -18,6 +18,19 @@ The 684 previously checked statistic groups (Test C + Test M notebook B) span W,
 
 **Important distinction:** the stored numeric tables were *verification targets*, **not** substitutes for source scores. This does not show out-of-domain generalization or the quality of model-generated answers.
 
+## Committed CLI run against the original archives (2026-11-14)
+
+The committed replayer (`python -m indetbench.replay`, this branch) was executed directly on the original ZIP files, CPU only, Python 3.13, NumPy 2.5.3. Every run exited with code 0 (`passed: true`), i.e. zero differences from the archived targets.
+
+| Archive | SHA-256 | `--kind` | Values checked | Differences |
+|---|---|---|---:|---:|
+| `completo_Drive_20261113.zip` (Test C, C-sel-8) | `da84d9bf…bbed` | C | 508 | 0 |
+| `testC_completo_risultati.zip` (Test C, same results, other export) | `cc89298c…e1a3` | C | 508 | 0 |
+| `testM_A_risultati_completo.zip` | `5f2922d7…1cbc` | M-A | 498 numeric values (116 metric groups) | 0 |
+| `testM_B_risultati_completo.zip` | `a78cf5a0…bbea3a` | M-B | 176 | 0 |
+
+The 498 values of the CLI (M-A) and the 400 scalar fields of the earlier independent check are two different counts of the same archive; both match. Boundary 1 below is therefore closed. Test U/U2 replay (boundary 2) and HC4 (boundary 3) remain open.
+
 ## Run the proposed replay code
 
 ```bash
@@ -31,7 +44,7 @@ The replay command returns nonzero when a statistic differs from its archived ta
 
 ## Boundaries and remaining work
 
-1. Test M **notebook A**: original complete archive was supplied and independently checked (400/400 scalar values). The committed replayer must still be executed directly against that original file before marking the CLI as release-tested.
+1. Test M **notebook A**: closed on 2026-11-14 — the committed replayer was run directly on the original file (498 values, 0 differences; see table above).
 2. Test U and Test U2: numeric replay is not part of the current implementation.
 3. Test C **HC4**: response labels and classifier agreement require separate analysis. No HC4 revalidation is implied by W and ΔW parity.
 4. Classification sample and natural-language semantic review were partly AI assisted; do not describe them as independently double-blind.

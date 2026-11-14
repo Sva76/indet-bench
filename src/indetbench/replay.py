@@ -297,7 +297,7 @@ def replay_m_b(path, seed=SEED, n_boot=BOOT):
             "method_model_combinations": len(original["risultati"]),
             "pairs_two_formats": len(pairs), "statistics_checked": checked,
             "differences": errors, "passed": not errors,
-            "scope": "Test M notebook B only. Notebook A NOT reproduced"}
+            "scope": "Test M notebook B only; notebook A is replayed separately with --kind M-A"}
 
 
 def main(argv=None):

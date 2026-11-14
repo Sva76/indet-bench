@@ -1,8 +1,8 @@
-name: IndetBench Qwen2.5 and TinyLlama statistical evaluation (CPU)
+name: IndetBench cross-model frozen statistical evaluation (CPU)
 
 on:
   push:
-    branches: [feature/initial-cpu-metrics]
+    branches: [feature/initial-cpu-metrics, fix/qwen-tinyllama-validation]
     paths: ['.github/workflows/hf-crossmodel-stat.yml']
   workflow_dispatch:
 
@@ -13,11 +13,11 @@ jobs:
   inference:
     name: ${{ matrix.model }} / shard ${{ matrix.shard }}
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 110
     strategy:
       fail-fast: false
       matrix:
-        model: [qwen05, tinyllama11]
+        model: [qwen15, smol17, olmo1]
         shard: [0, 1, 2, 3]
     env:
       OMP_NUM_THREADS: '2'
@@ -43,8 +43,9 @@ jobs:
       - name: Run real external model inference
         run: |
           case "${{ matrix.model }}" in
-            qwen05) MODEL_ID='Qwen/Qwen2.5-0.5B-Instruct'; REV='7ae557604adf67be50417f59c2c2f167def9a775';;
-            tinyllama11) MODEL_ID='TinyLlama/TinyLlama-1.1B-Chat-v1.0'; REV='fe8a4ea1ffedaf415f4da2f062534de366a451e6';;
+            qwen15) MODEL_ID='Qwen/Qwen2.5-1.5B-Instruct'; REV='989aa7980e4cf806f80c7fef2b1adb7bc71aa306';;
+            smol17) MODEL_ID='HuggingFaceTB/SmolLM2-1.7B-Instruct'; REV='31b70e2e869a7173562077fd711b654946d38674';;
+            olmo1) MODEL_ID='allenai/OLMo-2-0425-1B-Instruct'; REV='48d788eca847d4d7548f375ad03d3c9312f6139e';;
             *) exit 1;;
           esac
           python -m indetbench.hf_runner --model-id "$MODEL_ID" --revision "$REV" --model-key other --input shard_${{ matrix.shard }}.jsonl --output scores_${{ matrix.model }}_${{ matrix.shard }}.csv --max-input-tokens 768 --max-new-tokens 12
@@ -59,13 +60,16 @@ jobs:
   analyze:
     name: Final statistical report / ${{ matrix.model }}
     needs: inference
-    if: success()
+    if: ${{ always() && needs.inference.result != 'cancelled' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        model: [qwen05, tinyllama11]
+        # Must list exactly the models of the inference matrix above.
+        # Before this fix it still listed qwen05/tinyllama11, so run
+        # 43582196401 produced 12 successful inference shards and no report.
+        model: [qwen15, smol17, olmo1]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

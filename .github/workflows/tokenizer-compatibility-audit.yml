@@ -1,0 +1,62 @@
+name: IndetBench tokenizer compatibility audit (no inference)
+on:
+  push:
+    branches: [fix/qwen-tinyllama-validation]
+    paths: ['.github/workflows/tokenizer-compatibility-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tokenizer-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - model_key: tinyllama11
+            model_id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+            revision: fe8a4ea1ffedaf415f4da2f062534de366a451e6
+          - model_key: qwen05
+            model_id: Qwen/Qwen2.5-0.5B-Instruct
+            revision: 7ae557604adf67be50417f59c2c2f167def9a775
+          - model_key: qwen15
+            model_id: Qwen/Qwen2.5-1.5B-Instruct
+            revision: resolve
+          - model_key: smol17
+            model_id: HuggingFaceTB/SmolLM2-1.7B-Instruct
+            revision: resolve
+          - model_key: olmo1
+            model_id: allenai/OLMo-2-0425-1B-Instruct
+            revision: resolve
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install tokenizer only
+        run: python -m pip install 'transformers==4.57.1' 'tokenizers' 'huggingface_hub'
+      - name: Resolve immutable Hugging Face revision
+        env:
+          MODEL_ID: ${{ matrix.model_id }}
+          REVISION: ${{ matrix.revision }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import model_info
+          rev = os.environ["REVISION"]
+          if rev == "resolve":
+              rev = model_info(os.environ["MODEL_ID"]).sha
+          assert len(rev) == 40 and all(c in "0123456789abcdef" for c in rev.lower())
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write("PINNED_REVISION=" + rev + "\n")
+          print("Pinned:", os.environ["MODEL_ID"], rev)
+          PY
+      - name: Record first-token collisions without changing method
+        run: |
+          python tests/integration/audit_label_tokenizer.py --model-id '${{ matrix.model_id }}' --revision "$PINNED_REVISION" --output 'tokenizer_${{ matrix.model_key }}.json'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tokenizer-audit-${{ matrix.model_key }}
+          path: tokenizer_${{ matrix.model_key }}.json
+          retention-days: 14
