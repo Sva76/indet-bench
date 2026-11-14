@@ -2,7 +2,7 @@ name: IndetBench Qwen2.5 and TinyLlama statistical evaluation (CPU)
 
 on:
   push:
-    branches: [feature/initial-cpu-metrics]
+    branches: [feature/initial-cpu-metrics, fix/qwen-tinyllama-validation]
     paths: ['.github/workflows/hf-crossmodel-stat.yml']
   workflow_dispatch:
 
@@ -59,7 +59,7 @@ jobs:
   analyze:
     name: Final statistical report / ${{ matrix.model }}
     needs: inference
-    if: success()
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
