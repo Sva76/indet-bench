@@ -40,6 +40,7 @@ For each candidate: confirm license, immutable model revision, CPU/memory feasib
 - This is a **measurement applicability failure** for this checkpoint and scoring implementation, **not** a measured negative W/AUROC, nor evidence that the model cannot internally represent uncertainty.
 - A tokenizer-only diagnostic script `tests/integration/audit_label_tokenizer.py` now records exact variant encodings and cross-label token IDs, with a manually triggered, no-inference workflow `.github/workflows/tokenizer-compatibility-audit.yml`. Until that audit executes, exact collisions are not yet archived.
 - Do not replace first-token scores with full-string scores under this frozen protocol. That would be a separately declared measurement study.
+- **Update 2026-11-14:** the audit has run (run 43580463810); exact collisions and the final verdict are in `QWEN05_TINYLLAMA_REPORT_2026-11-14.md`.
 
 ## Follow-up model selection and comparison plan
 - Candidate checkpoints: `Qwen/Qwen2.5-1.5B-Instruct`, `HuggingFaceTB/SmolLM2-1.7B-Instruct`, `allenai/OLMo-2-0425-1B-Instruct`.
