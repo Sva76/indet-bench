@@ -6,7 +6,7 @@
 - Minimal B/C pair scoring with ties as half a win.
 - Block-weighted W(C>B); paired delta-W on *common complete pairs*, block-level bootstrap, AUROC helper.
 - Strict CSV validation and six unit tests.
-- **Archived CPU comparisons:** 508 Test C metric checks, 176 Test M notebook B metric checks and 400 individually compared Test M notebook A scalar fields matched the original scores. The `--kind M-A` CLI still needs a full archived-file execution check; real-model smoke tests remain pending.
+- **Archived CPU comparisons:** 508 Test C metric checks, 176 Test M notebook B metric checks and 400 individually compared Test M notebook A scalar fields matched the original scores. The `--kind M-A` CLI was run on the full original archive on 14 November 2026 (498 values, 0 differences); the HF runner has run on six small CPU models and, from the Colab notebook, on five 7–14B models ([results](NEW_MODELS_RESULTS_2026-11-14.md)).
 
 ## Version 0.1 acceptance (not yet reached)
 

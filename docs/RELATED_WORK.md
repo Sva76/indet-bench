@@ -72,7 +72,7 @@ This page places IndetBench among published work. For each area it says what has
 *Relation to IndetBench.*
 - IndetBench reaches the same conceptual conclusion as Wagner (2026) on different data. Estimators of uncertainty *about the answer* are not detectors of an answer that *cannot be determined*. The sharpest case is Mistral-Nemo in Test M, where a confident UNKNOWN is read as low uncertainty (W ≈ 0.30). This explanation is an interpretation, not a test.
 - The equal-length pairs are a direct response to the length and lexical confounds documented by Agnimo et al., Santilli et al. and Wagner: by construction they remove those confounds from the B/C comparison.
-- The reference p(UNKNOWN) is the probability of an offered abstention label. It is a close relative of maximum probability and P(True), not a new estimator. Whether it carries information beyond generic output uncertainty (entropy, maximum probability) computed on the same outputs is **not established**.
+- The reference p(UNKNOWN) is the probability of an offered abstention label. It is a close relative of maximum probability and P(True), not a new estimator. Whether it carries information beyond generic output uncertainty (entropy, maximum probability) computed on the same outputs is **not established**. The exploratory new-model run of 14 November 2026 points the other way: entropy or maximum probability does about as well as p(UNKNOWN) on Falcon3-7B and Phi-4 and better on Gemma-2-9B (descriptive ΔW −0.074 [−0.099, −0.050]; [report](NEW_MODELS_RESULTS_2026-11-14.md)).
 
 *Not claimed:* that uncertainty estimators failing under indeterminacy is a new finding, or that p(UNKNOWN) is a superior detector.
 

@@ -2,7 +2,7 @@
 
 **A reproducible benchmark and validation protocol for answer determinability in language models.**
 
-> **Status: public, development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation, method-card/release checks and broader model compatibility are still pending. The Hugging Face runner has been run on CPU on six small external models (SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B, Qwen2.5-1.5B, OLMo-2-0425-1B, TinyLlama-1.1B) on the separate 240-pair set; only Qwen2.5-1.5B passes the competence gate, TinyLlama is not measurable (first-token collision), and all these results are exploratory ([status](docs/COMPETENCE_240_PAIRS.md)). This project does not certify hallucination detection.
+> **Status: public, development / pre-alpha.** The repository now includes CPU archive replay for **Test C** and **Test M notebooks A and B**, plus an experimental Hugging Face model runner. Full U/U2 replay, HC4 validation, method-card/release checks and broader model compatibility are still pending. The Hugging Face runner has been run on CPU on six small external models (SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B, Qwen2.5-1.5B, OLMo-2-0425-1B, TinyLlama-1.1B) on the separate 240-pair set; only Qwen2.5-1.5B passes the competence gate, TinyLlama is not measurable (first-token collision), and all these results are exploratory ([status](docs/COMPETENCE_240_PAIRS.md)). On the frozen 800-pair prose benchmark, a GPU run on 14 November 2026 (exploratory) found p(UNKNOWN) W 0.818, 0.931 and 0.944 on Gemma-2-9B-it, Falcon3-7B-Instruct and Phi-4, all above the competence gate; Yi-1.5-9B-Chat is not evaluable for a technical reason, and generic output-uncertainty baselines do about as well or better ([report](docs/NEW_MODELS_RESULTS_2026-11-14.md)). This project does not certify hallucination detection.
 
 ## Research question
 
@@ -33,6 +33,7 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 
 - **[Scientific status](docs/SCIENTIFIC_STATUS.md)**: what the original research has and has not shown, with sources.
 - **[Verify the results on a new model](docs/VERIFY_ON_NEW_MODELS.md)**: run the frozen original benchmark (800 prose B/C pairs) on any Hugging Face model and compare with the published values.
+- **[New-model results, 14 November 2026](docs/NEW_MODELS_RESULTS_2026-11-14.md)** (exploratory): Gemma-2-9B-it, Falcon3-7B-Instruct, Phi-4; Yi-1.5-9B-Chat not evaluable (technical).
 - [Development plan, acceptance and limits](docs/ROADMAP.md).
 - [AI assistance disclosure](docs/AI_USAGE.md) — AI-assisted planning, coding, analysis and writing, with human oversight and documented limits.
 - **[Related work](docs/RELATED_WORK.md)**: closest published work, what IndetBench adds and what it does not claim.
@@ -73,7 +74,7 @@ python -m indetbench.replay /path/to/testM_A_risultati_completo.zip --kind M-A -
 python -m indetbench.replay /path/to/testM_B_risultati_completo.zip --kind M-B --expected-sha256 a78cf5a02566d22de80acf8fff6caff0fa0049c697abbbf27667b807648cea3a --json-out testM_B_parity.json
 ```
 
-The replayer recomputes statistics from scores for individual pairs, rather than trusting the precomputed tables. [Exact scope and evidence](docs/REPRODUCIBILITY_STATUS.md). Test U/U2 replication and **HC4 annotation reliability** remain separate unfinished checks. The new Test M notebook A CLI is ready for validation against the full original ZIP.
+The replayer recomputes statistics from scores for individual pairs, rather than trusting the precomputed tables. [Exact scope and evidence](docs/REPRODUCIBILITY_STATUS.md). Test U/U2 replication and **HC4 annotation reliability** remain separate unfinished checks. The Test M notebook A CLI was run on the full original ZIP on 14 November 2026 (498 values, 0 differences).
 
 ## Test a new language model (experimental)
 
@@ -85,7 +86,7 @@ python -m indetbench.hf_runner --model-id Qwen/Qwen3-8B --revision YOUR_40_CHARA
 python -m indetbench --scores my_scores.csv
 ```
 
-Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's unit tests use a fake tokenizer. Beyond the first [CPU smoke test on SmolLM2-360M](docs/SMOLLM2_EXTERNAL_SMOKE.md), it has scored five more small models on CPU on the 240-pair set ([competence verdicts](docs/COMPETENCE_240_PAIRS.md)). Models of 7B and more are run from the Colab notebook in `notebooks/`; no result from that notebook is recorded in this repository yet. Semantic answer validation is still pending.
+Replace YOUR_40_CHARACTER_COMMIT_SHA with a commit hash from the model provider's official history. Only a fabricated demonstration pair is included. See [the input schema, first-token definition and limitations](docs/RUN_YOUR_MODEL.md). The runner's unit tests use a fake tokenizer. Beyond the first [CPU smoke test on SmolLM2-360M](docs/SMOLLM2_EXTERNAL_SMOKE.md), it has scored five more small models on CPU on the 240-pair set ([competence verdicts](docs/COMPETENCE_240_PAIRS.md)). Models of 7B and more are run from the Colab notebook in `notebooks/`; its first full run (Qwen3-8B control, Gemma-2-9B-it, Yi-1.5-9B-Chat, Falcon3-7B-Instruct, Phi-4) is archived in [`results/new_models_2026-11-14/`](results/new_models_2026-11-14/) with an [exploratory report](docs/NEW_MODELS_RESULTS_2026-11-14.md). Semantic answer validation is still pending.
 
 ## External statistical evaluation — SmolLM2 (13 November 2026)
 
