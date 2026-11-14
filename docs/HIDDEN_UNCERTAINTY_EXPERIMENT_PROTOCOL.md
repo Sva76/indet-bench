@@ -29,7 +29,7 @@ H-S1 (primary): on formulations never used in any previous test, the detector U1
 - Probe: standardisation and 64-component PCA inside folds, L2 logistic regression C = 1; layer chosen by 5-fold group CV by story; B/C pairs only (C = 1).
 - Output references, without family or variant: U1 (logistic regression on log p(YES), log p(NO), log p(UNKNOWN)), U2 (with quadratic terms), **raw p(UNKNOWN)** (untrained).
 - Detector: U1 + probe score (out of fold with nested CV on training).
-- Primary metric: paired within-story W (ties = 0.5), comparable with all previous tests. Story bootstrap, 2000 paired resamples; permutation in "probe" mode (only the probe is retrained with labels swapped by story).
+- Primary metric: paired within-story W (ties = 0.5), comparable with all previous tests. Story bootstrap, 2000 paired resamples; permutation in "probe" mode, **500 repetitions** (only the probe is retrained with labels swapped by story).
 - Alignment gate: from the new states, rebuild the Test 6 probe (ADD â†’ V2) on Qwen and Mistral: same layer, Spearman > 0.999, W within 0.005; otherwise stop.
 
 ## 5. Criterion (PROPOSAL: Test 7 criterion, unchanged)
@@ -49,7 +49,7 @@ Qwen3-8B (`b968826`) and Mistral-Nemo-Instruct-2407 (`04d8a90`), as in Tests 5â€
 ## 8. Owner decisions required before data
 1. Primary criterion = Test 7 criterion unchanged?
 2. Which new formulations (proposal: two, one symbolic with a different structure and one prose with vocabulary different from V2), and how many stories (proposal: 200 each).
-3. 500 permutations as in Test 5 (confirmatory) instead of 200 (Test 7, exploratory)?
+3. ~~500 or 200 permutations?~~ **Decided by the owner (2026-11-14): 500**, as in Test 5 (confirmatory).
 4. Run it although Test 7's entry criterion was not met (proposal: yes, declared as a confirmation test of the Test 7 result in either direction).
 
 ## 9. Technical work after approval
