@@ -52,4 +52,4 @@ Unchanged analyzer, 480 rows, 240 pairs (B gold: 120 YES, 120 NO), pinned revisi
 
 ## Open questions for the owner (not changed)
 1. The hidden-state protocol does not cite Step 1 (Tests 4–7), which already probed pre-answer hidden states on B/C pairs (Test 4 on Qwen3-8B, Mistral-Nemo and OLMo-2-7B; Tests 5–7 on Qwen3-8B and Mistral-Nemo; `research_originals/step1/Riepilogo_Step1.md`) and found in-domain signal without transfer. Its primary endpoint (+0.03 AUROC) was not approved by the owner. **Update:** at the owner's request, protocol v2 (draft) now builds on Tests 4–7; endpoint and criteria await approval.
-2. Whether the competence condition (B accuracy ≥ 0.50 overall and per gold label) also applies to the 240-pair corpus.
+2. ~~Whether the competence condition applies to the 240-pair corpus.~~ **Decided 2026-11-14:** the 0.50 rule is binding; a 1/3 chance threshold is reported as a theoretical sensitivity only. See `COMPETENCE_240_PAIRS.md`: only Qwen2.5-1.5B is evaluable; SmolLM2-1.7B and OLMo-1B fail under both thresholds.

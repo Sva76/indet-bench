@@ -51,10 +51,14 @@ jobs:
           python tests/integration/analyze_crossmodel_stat.py --input data/smol_stat_v01_frozen.jsonl --scores cross_scores/scores_${{ matrix.model }}_0.csv cross_scores/scores_${{ matrix.model }}_1.csv cross_scores/scores_${{ matrix.model }}_2.csv cross_scores/scores_${{ matrix.model }}_3.csv --model-key '${{ matrix.model }}' --output reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
       - name: Print full report (aggregates only, no prompts) for audit
         run: cat reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
+      - name: Competence condition (official 0.50; theoretical 1/3 sensitivity only)
+        run: python tests/integration/competence_gate_240.py reanalysis_${{ matrix.model }}_${{ matrix.run }}.json --output gate_${{ matrix.model }}_${{ matrix.run }}.json
       - name: Keep report privately
         uses: actions/upload-artifact@v4
         with:
           name: reanalysis-${{ matrix.model }}-run-${{ matrix.run }}
-          path: reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
+          path: |
+            reanalysis_${{ matrix.model }}_${{ matrix.run }}.json
+            gate_${{ matrix.model }}_${{ matrix.run }}.json
           retention-days: 14
           if-no-files-found: error
