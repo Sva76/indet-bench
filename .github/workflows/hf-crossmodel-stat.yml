@@ -59,7 +59,7 @@ jobs:
   analyze:
     name: Final statistical report / ${{ matrix.model }}
     needs: inference
-    if: always()
+    if: ${{ always() && needs.inference.result != 'cancelled' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
