@@ -51,5 +51,5 @@ Unchanged analyzer, 480 rows, 240 pairs (B gold: 120 YES, 120 NO), pinned revisi
 - Open questions for the owner (method, not fixed): see below.
 
 ## Open questions for the owner (not changed)
-1. The hidden-state protocol does not cite Step 1 (Tests 4–7), which already probed pre-answer hidden states on B/C pairs with Qwen3-8B, Mistral-Nemo and OLMo-2-7B (`research_originals/step1/Riepilogo_Step1.md`) and found in-domain signal without generalisation. It should be framed relative to that result. Its primary endpoint (+0.03 AUROC) was not approved by the owner.
+1. The hidden-state protocol does not cite Step 1 (Tests 4–7), which already probed pre-answer hidden states on B/C pairs (Test 4 on Qwen3-8B, Mistral-Nemo and OLMo-2-7B; Tests 5–7 on Qwen3-8B and Mistral-Nemo; `research_originals/step1/Riepilogo_Step1.md`) and found in-domain signal without transfer. Its primary endpoint (+0.03 AUROC) was not approved by the owner. **Update:** at the owner's request, protocol v2 (draft) now builds on Tests 4–7; endpoint and criteria await approval.
 2. Whether the competence condition (B accuracy ≥ 0.50 overall and per gold label) also applies to the 240-pair corpus.
