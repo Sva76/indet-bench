@@ -37,7 +37,7 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 - [AI assistance disclosure](docs/AI_USAGE.md) — AI-assisted planning, coding, analysis and writing, with human oversight and documented limits.
 - [References and attribution](docs/REFERENCES.md) — verified core paper citations in [BibTeX](docs/REFERENCES.bib); model revisions and remaining references require further checks.
 - [Third-party terms](docs/THIRD_PARTY.md) — per-model, library and dataset licensing.
-- [Copyright notice](LICENSE) — **all rights reserved, Simona Vargiu; no license is granted for now.** A noncommercial license (PolyForm Noncommercial 1.0.0 is under consideration) will be evaluated when the repository is opened to researchers. Third-party terms are unaffected.
+- [License](LICENSE) — **PolyForm Noncommercial 1.0.0**, © 2026 Simona Vargiu, for original IndetBench material only ([NOTICE](NOTICE)). Noncommercial research use, modification and distribution are permitted; commercial use needs a separate written agreement. This is source-available, not OSI open source. Third-party models and datasets keep their own terms.
 
 **No third-party model weights, training data, natural SQuAD passages, or proprietary probe files are distributed with this package.**
 
@@ -49,7 +49,7 @@ The owner's **original Step 1 and Step 2** research material is archived in [`re
 
 The provenance and original-input SHA-256 values are in [`research_originals/manifest_originals.json`](research_originals/manifest_originals.json). The M-A and M-B original frozen inputs were checked to be identical. **This is a substantial partial recovery, not yet the entire historical research archive:** complete natural SQuAD-derived rows, several original U/U2 and Step 1 files, model-output ZIPs, environment captures and weights remain excluded pending byte access or rights review. The original full ZIPs are retained separately in the owner's private ChatGPT Library.
 
-**The 240-pair `data/smol_stat_v01_frozen.jsonl` dataset was created for a separate experiment on 13 November 2026; it is NOT original Step 1 or Step 2 data.** Repository remains private; archiving sources does not grant any license.
+**The 240-pair `data/smol_stat_v01_frozen.jsonl` dataset was created for a separate experiment on 13 November 2026; it is NOT original Step 1 or Step 2 data.** It is covered by the root license as original IndetBench material.
 
 ## Reproduce frozen experiments without GPU
 

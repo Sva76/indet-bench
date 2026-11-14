@@ -42,6 +42,6 @@ The complete Test C selection `dati/righe_C.json` (2,478 rows including technica
 
 ## Rights and provenance
 
-This is a **private repository**, not an approved public distribution. The root notice is **all rights reserved** (no license granted). **Do not publish, grant access, or change licensing without explicit owner approval and third-party rights review.** A noncommercial license will be evaluated when the repository is opened to researchers.
+The root license (PolyForm Noncommercial 1.0.0, © Simona Vargiu) covers the owner's original material archived here; third-party content is excluded or keeps its own terms. **Do not change licensing without explicit owner approval and third-party rights review.**
 
 These source records are historical. Later versions or observations must be separately versioned, not silently overwrite original protocols or results.

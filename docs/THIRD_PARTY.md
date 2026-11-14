@@ -1,6 +1,6 @@
 # Third-party terms and distribution boundaries
 
-The original IndetBench material is **all rights reserved** (root `LICENSE`; no license granted for now). That notice covers original IndetBench material only and does not relicense any external dataset, model, tokenizer, adapter, library, copyrighted prompt, or publication.
+The root PolyForm Noncommercial License 1.0.0 (`LICENSE`, `NOTICE`) covers **original IndetBench material only**. It does not relicense any external dataset, model, tokenizer, adapter, library, copyrighted prompt, or publication.
 
 | Component | Reported license | Publishing rule |
 |---|---|---|
@@ -13,4 +13,4 @@ The original IndetBench material is **all rights reserved** (root `LICENSE`; no 
 | SQuAD 2.0 | CC BY-SA 4.0 | No derived passage data shipped in initial source |
 | TriviaQA, LongFact, additional checkpoints | Model/artifact-specific | Do not redistribute before exact license review |
 
-All model runners should be opt-in and download from official sources under their own terms. If a noncommercial license (e.g. PolyForm) is adopted later, its patent clauses and third-party licensing merit legal review before publishing components touching proprietary patents.
+All model runners should be opt-in and download from official sources under their own terms. The patent clauses of PolyForm and third-party licensing merit legal review before publishing components touching proprietary patents.
