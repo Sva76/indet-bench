@@ -38,7 +38,7 @@ Unchanged analyzer, 480 rows, 240 pairs (B gold: 120 YES, 120 NO), pinned revisi
 | SmolLM2-1.7B | 43582196401 | 0.579 [0.517, 0.642] | 0.0167 | 0.548 | 0.021 | 5 / 0 / 235 | 0.983 |
 
 - Reproducibility: Qwen2.5-1.5B and OLMo-1B were inferred twice (runs 43582014175 and 43582196401); W and AUROC are identical in the two runs.
-- SmolLM2-1.7B answers UNKNOWN to 235/240 determined cases and OLMo-1B to 169/240: as for SmolLM2-360M, a high W cannot be read as uncertainty detection when the model does not answer the determined cases. Qwen2.5-0.5B answers YES at most 52 times out of 120 YES cases, so its YES accuracy is at most 0.43.
+- SmolLM2-1.7B answers UNKNOWN to 235/240 determined cases and OLMo-1B to 169/240: as for SmolLM2-360M, a W above 0.5 cannot be read as uncertainty detection when the model does not answer the determined cases. Qwen2.5-0.5B answers YES at most 52 times out of 120 YES cases, so its YES accuracy is at most 0.43.
 - No competence condition is applied by the 240-pair analyzer; the corpus has no independent human validation. Whether the owner's condition (B accuracy ≥ 0.50 overall and per gold label, fixed for the 800 original pairs) applies here is an open question below. Per-label accuracy for Qwen2.5-1.5B needs the per-row scores.
 - SmolLM2-1.7B history: in run 43582014175 shards 1–2 were stopped by a runner shutdown signal (infrastructure); in run 43582196401 all shards succeeded but the `analyze` matrix of `hf-crossmodel-stat.yml` still listed `qwen05, tinyllama11`, so no report was made. **Fixed** (matrix aligned).
 
