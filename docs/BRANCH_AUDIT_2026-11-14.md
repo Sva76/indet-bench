@@ -27,20 +27,20 @@ CI gap (fixed here): `ci.yml` and `security.yml` ran on pull requests into `main
 ### SmolLM2-360M on the 240-pair corpus — NOT EVALUABLE (as documented)
 - B accuracy 92/240, never answers NO: the competence condition fails; this is not a negative result about the method.
 
-### Qwen2.5-0.5B, Qwen2.5-1.5B, OLMo-2-0425-1B on the 240-pair corpus — EXPLORATORY
-Values printed by the unchanged analyzer in the workflow logs (480 rows, 240 pairs, pinned revisions, dataset SHA-256 checked):
+### Qwen2.5-0.5B, Qwen2.5-1.5B, OLMo-2-0425-1B, SmolLM2-1.7B on the 240-pair corpus — EXPLORATORY
+Unchanged analyzer, 480 rows, 240 pairs (B gold: 120 YES, 120 NO), pinned revisions, dataset SHA-256 checked. Run 43607866659 of `reanalyze-archived-cpu-scores.yml` (this branch) re-analysed the existing raw scores; no new inference.
 
-| Model | Run | W [95% CI] | sign p | AUROC [95% CI] |
-|---|---|---|---|---|
-| Qwen2.5-0.5B | 43579643007 | 0.592 [0.529, 0.654] | 0.0054 | 0.513 [0.504, 0.523] |
-| Qwen2.5-1.5B | 43582014175 | 0.613 [0.550, 0.671] | 0.0006 | 0.617 [0.585, 0.650] |
-| OLMo-2-0425-1B | 43582014175 | 0.579 [0.517, 0.642] | 0.0167 | 0.549 [0.530, 0.568] |
+| Model | Scores from run | W [95% CI] | sign p | AUROC | B accuracy | B answers YES/NO/UNKNOWN | C abstention |
+|---|---|---|---|---|---|---|---|
+| Qwen2.5-0.5B | 43579643007 | 0.592 [0.529, 0.654] | 0.0054 | 0.513 | 0.625 | 52 / 173 / 15 | 0.058 |
+| Qwen2.5-1.5B | 43582196401 | 0.613 [0.550, 0.671] | 0.0006 | 0.617 | 0.679 | 117 / 93 / 30 | 0.229 |
+| OLMo-2-0425-1B | 43582196401 | 0.579 [0.517, 0.642] | 0.0167 | 0.549 | 0.237 | 52 / 19 / 169 | 0.725 |
+| SmolLM2-1.7B | 43582196401 | 0.579 [0.517, 0.642] | 0.0167 | 0.548 | 0.021 | 5 / 0 / 235 | 0.983 |
 
-- Missing: B accuracy and C abstention are in the private report artifacts but not in any document; no competence condition is applied to the 240-pair corpus; the corpus has no independent human validation.
-
-### SmolLM2-1.7B on the 240-pair corpus — IN PROGRESS (technical defect, data exist)
-- Run 43582014175: shards 1 and 2 were stopped by a runner shutdown signal (infrastructure), so no report.
-- Run 43582196401: all 4 shards succeeded, but the `analyze` matrix of `hf-crossmodel-stat.yml` still listed `qwen05, tinyllama11`, so no report was produced for any of the three models. **Fixed**: matrix aligned, and `reanalyze-archived-cpu-scores.yml` applies the unchanged analyzer to the existing raw scores (no new inference). It also re-analyses the second independent inference of Qwen2.5-1.5B and OLMo-1B as a determinism check.
+- Reproducibility: Qwen2.5-1.5B and OLMo-1B were inferred twice (runs 43582014175 and 43582196401); W and AUROC are identical in the two runs.
+- SmolLM2-1.7B answers UNKNOWN to 235/240 determined cases and OLMo-1B to 169/240: as for SmolLM2-360M, a high W cannot be read as uncertainty detection when the model does not answer the determined cases. Qwen2.5-0.5B answers YES at most 52 times out of 120 YES cases, so its YES accuracy is at most 0.43.
+- No competence condition is applied by the 240-pair analyzer; the corpus has no independent human validation. Whether the owner's condition (B accuracy ≥ 0.50 overall and per gold label, fixed for the 800 original pairs) applies here is an open question below. Per-label accuracy for Qwen2.5-1.5B needs the per-row scores.
+- SmolLM2-1.7B history: in run 43582014175 shards 1–2 were stopped by a runner shutdown signal (infrastructure); in run 43582196401 all shards succeeded but the `analyze` matrix of `hf-crossmodel-stat.yml` still listed `qwen05, tinyllama11`, so no report was made. **Fixed** (matrix aligned).
 
 ### TinyLlama-1.1B — NOT MEASURED
 - First tokens of YES/NO/UNKNOWN overlap; the runner correctly refuses. Applicability limit of the first-token measurement, not a result about the model.
