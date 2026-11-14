@@ -1,6 +1,6 @@
-# Note al notebook `IndetBench_modelli_nuovi_v2.ipynb` (N-notebook-2)
+# Note al notebook `IndetBench_modelli_nuovi_v3.ipynb` (N-notebook-3)
 
-14 novembre 2026. La v2 recepisce le decisioni di Simona delle 09:19 (sezione 5). I tre sì autorizzano la preparazione della prova, non l'accettazione scientifica dei risultati.
+14 novembre 2026. La v2 recepisce le decisioni di Simona delle 09:19 (sezione 5). La v3 recepisce la decisione delle 15:38 sulla baseline «p(UNKNOWN) normalizzata» (sezione 5, punto 8), presa dopo la prova e prima di qualsiasi dato del completo. I tre sì autorizzano la preparazione della prova, non l'accettazione scientifica dei risultati.
 
 ## 1. Scopo e statuto dei risultati
 
@@ -50,6 +50,12 @@ Per ogni modello `esito.json` e `rapporto.txt` separano tre livelli:
 4. **Controllo su CPU dei 4 W del Test U2 (cella 4b), obbligatorio prima del completo.** Il notebook legge `testU2_risultati.zip` da MyDrive, controlla lo SHA-256 del `punteggi.csv` (`9701dce0…`) e ci applica la propria analisi. Deve ridare esattamente W 0.975, 0.7825, 0.69375 e 0.74625, i conteggi dei B corretti per gold della PR #3 e CONFIRMED per tutti e 4. In modalità completo, se il controllo non è superato, la cella 6 si ferma prima di caricare qualsiasi modello. Il risultato è salvato in `controllo_cpu_testU2.json`.
 5. **Identità delle coppie B/C fra i modelli.** Ogni modello registra le impronte dei prompt congelati (dati e benchmark), quella dei testi effettivi passati al modello e quella dell'insieme delle coppie valide. Il riepilogo controlla che tutti i modelli abbiano ricevuto gli stessi prompt, conta le coppie valide comuni a tutti e riporta il W di ciascun modello su quelle coppie comuni (descrittivo).
 6. **Token.** `GH_TOKEN` e `HF_TOKEN` si leggono solo dai Secrets. Il token GitHub passa a git solo come variabile d'ambiente del processo (intestazione HTTP): non compare nell'URL, negli argomenti, in `.git/config` o in `FETCH_HEAD`, che viene comunque cancellato. Ogni messaggio di errore passa da `nascondi()`, che toglie i token noti prima di stamparlo o salvarlo.
+8. **Baseline «p(UNKNOWN) normalizzata» (decisione di Simona, 14 nov 15:38, prima dei dati del completo).** La baseline resta nel confronto e viene spiegata, non tolta. È p(UNKNOWN)/(p(YES)+p(NO)+p(UNKNOWN)). Quando la massa sulle tre risposte è circa 1, coincide con p(UNKNOWN): nella prova la massa minima era 0.997 per entrambi i modelli. Una parità con questa baseline è quindi attesa e **non è un'anomalia del metodo**. Per questo:
+   - la segnalazione «una baseline eguaglia o supera p(UNKNOWN)» usa solo le baseline indipendenti (entropia, meno p massima, risposta UNKNOWN 0/1);
+   - c'è una segnalazione propria quando la normalizzata differisce da p(UNKNOWN) di almeno 0.02 in W. In quel caso la massa fuori dalle tre risposte conta, ed è un fatto da classificare;
+   - la stessa spiegazione è scritta nel rapporto (`NOTA_NORMALIZZATA`), così un lettore esterno trova il motivo accanto al numero.
+
+   Origine: nella prova la regola v2 aveva segnalato per Qwen «1.000 contro 1.000» con questa baseline. È stata classificata come limite della regola di segnalazione, non come comportamento del modello. La regola cambia solo per questa baseline; i dati della prova restano archiviati come prodotti dalla v2.
 7. **Altre regole (invariate dalla v1).** Controllo positivo Qwen3-8B: 24 valori entro 1e-3 e, nel completo, W 0.975 entro 0.005. Cautela se più del 5% delle righe ha massa < 0.90.
 
 ## 6. Controlli fatti prima della consegna (CPU, senza GPU)
@@ -62,7 +68,16 @@ Per ogni modello `esito.json` e `rapporto.txt` separano tre livelli:
 
 Non verificato: il comportamento reale dei 5 modelli su GPU e le versioni di transformers in Colab. Il controllo positivo Qwen serve a questo.
 
-## 7. Prima del lancio
+## 7. Esito della prova v2 (14 nov 15:16, A100-SXM4-40GB, transformers 5.22.1, torch 2.14.1)
+
+- **Controllo Qwen3-8B:** 24 valori con scarto massimo 8e-17, risposte uguali 24 su 24.
+- **Tokenizer:** nessuno dei due modelli usava `token_type_ids`. Tokenizzazione identica e prompt intatti su 72 prompt su 72.
+- **Coppie:** nessuna esclusione per lunghezza, 36 coppie su 36, prompt identici fra i modelli.
+- **Uscite:** nessuna risposta ALTRO, massa ≥ 0.997. Soglia di competenza superata da entrambi; Gemma ha 0.97 sui B.
+- **Controllo CPU 4b:** non eseguito, perché `testU2_risultati.zip` non era in MyDrive. L'archivio caricato poi da Simona è quello atteso (SHA-256 dello ZIP `dbcd61fa…`, del `punteggi.csv` `9701dce0…`).
+- **Anomalie della prova:** Qwen, parità con la normalizzata, è un limite della regola, corretto nella v3. Gemma, differenze fra famiglie e meno p massima sopra p(UNKNOWN), è un'evidenza possibile da valutare solo nel completo: 12 coppie per famiglia non bastano.
+
+## 8. Prima del lancio
 
 - **Archivio del Test U2** in MyDrive: `testU2_risultati.zip` (una copia sola; percorso in `ARCHIVIO_TEST_U2`).
 - **Secrets di Colab** con «Accesso al notebook» attivo: `GH_TOKEN` (token GitHub fine-grained, sola lettura dei contenuti di `Sva76/indet-bench`) e `HF_TOKEN`. Per Gemma bisogna accettare la licenza sulla pagina del modello.
