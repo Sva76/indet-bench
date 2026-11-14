@@ -1,0 +1,88 @@
+name: IndetBench three new Hugging Face models (CPU)
+on:
+  push:
+    branches: [fix/qwen-tinyllama-validation]
+    paths: ['.github/workflows/hf-three-new-models.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inference:
+    name: ${{ matrix.model }} / shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [qwen15, smol17, olmo1]
+        shard: [0, 1, 2, 3]
+    env:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      TOKENIZERS_PARALLELISM: 'false'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HOME: /tmp/indetbench-new-hf
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify unchanged frozen corpus
+        run: echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install identical pinned CPU environment
+        run: |
+          python -m pip install 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'transformers==4.57.1' 'accelerate==1.12.0' -e '.[replay]'
+      - name: Select 60 complete frozen pairs
+        run: python tests/integration/shard_smol_stat.py --input data/smol_stat_v01_frozen.jsonl --shard ${{ matrix.shard }} --total 4 --output shard_${{ matrix.shard }}.jsonl
+      - name: Inference using unchanged first-token scoring
+        run: |
+          case "${{ matrix.model }}" in
+            qwen15) MODEL_ID='Qwen/Qwen2.5-1.5B-Instruct'; REV='989aa7980e4cf806f80c7fef2b1adb7bc71aa306';;
+            smol17) MODEL_ID='HuggingFaceTB/SmolLM2-1.7B-Instruct'; REV='31b70e2e869a7173562077fd711b654946d38674';;
+            olmo1) MODEL_ID='allenai/OLMo-2-0425-1B-Instruct'; REV='48d788eca847d4d7548f375ad03d3c9312f6139e';;
+            *) exit 1;;
+          esac
+          python -m indetbench.hf_runner --model-id "$MODEL_ID" --revision "$REV" --model-key other --input shard_${{ matrix.shard }}.jsonl --output scores_${{ matrix.model }}_${{ matrix.shard }}.csv --max-input-tokens 768 --max-new-tokens 12
+      - name: Archive raw scores privately
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: new-${{ matrix.model }}-shard-${{ matrix.shard }}
+          path: scores_${{ matrix.model }}_${{ matrix.shard }}.csv
+          retention-days: 14
+          if-no-files-found: error
+  analyze:
+    name: Statistical report / ${{ matrix.model }}
+    needs: inference
+    if: ${{ always() && needs.inference.result != 'cancelled' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [qwen15, smol17, olmo1]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[replay]'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: new-${{ matrix.model }}-shard-*
+          path: cross_scores
+          merge-multiple: true
+      - name: Validate all 480 rows and compute unchanged statistics
+        run: |
+          echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check
+          python tests/integration/analyze_crossmodel_stat.py --input data/smol_stat_v01_frozen.jsonl --scores cross_scores/scores_${{ matrix.model }}_0.csv cross_scores/scores_${{ matrix.model }}_1.csv cross_scores/scores_${{ matrix.model }}_2.csv cross_scores/scores_${{ matrix.model }}_3.csv --model-key '${{ matrix.model }}' --output new_${{ matrix.model }}_report.json
+          python -m json.tool new_${{ matrix.model }}_report.json > /dev/null
+      - name: Archive validated report privately
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: new-${{ matrix.model }}-statistical-report
+          path: new_${{ matrix.model }}_report.json
+          retention-days: 14
+          if-no-files-found: error
