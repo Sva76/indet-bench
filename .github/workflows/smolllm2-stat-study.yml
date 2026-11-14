@@ -1,0 +1,104 @@
+name: Preregistered 240-pair SmolLM2 statistical study (CPU)
+on:
+  push:
+    branches: [feature/initial-cpu-metrics]
+    paths:
+      - '.github/workflows/smolllm2-stat-study.yml'
+      - 'src/indetbench/stat_study.py'
+      - 'data/smol_stat_v01_frozen.jsonl'
+      - 'tests/test_stat_study.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-smollm2-study:
+    name: Run frozen B/C evaluation with exact model commit
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      TOKENIZERS_PARALLELISM: 'false'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      HF_HOME: /tmp/indetbench-smol-stat-cache
+
+    steps:
+      - name: Checkout preregistered benchmark
+        uses: actions/checkout@v4
+
+      - name: Audit frozen corpus Git blob SHA
+        run: |
+          EXPECTED='a67faab92592a6d96f888a7e9cda9c70d208c5ae'
+          ACTUAL="$(git hash-object data/smol_stat_v01_frozen.jsonl)"
+          test "$ACTUAL" = "$EXPECTED" || { echo "FROZEN CORPUS HASH MISMATCH"; exit 1; }
+          wc -l data/smol_stat_v01_frozen.jsonl
+          sha256sum data/smol_stat_v01_frozen.jsonl > data_sha256.txt
+
+      - name: Prepare Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install CPU model and analysis environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'transformers==4.57.1' 'accelerate==1.12.0' -e '.[replay]'
+          python -m unittest discover -s tests -p 'test_stat_study.py' -v
+
+      - name: Execute all 480 model generations (NO selective subset)
+        run: |
+          python -m indetbench.hf_runner \
+            --model-id 'HuggingFaceTB/SmolLM2-360M-Instruct' \
+            --revision 'c15f933c73438218a2bc078446c513173cc4f06a' \
+            --model-key other \
+            --input data/smol_stat_v01_frozen.jsonl \
+            --output smol_stat_scores.csv \
+            --max-input-tokens 768 \
+            --max-new-tokens 12
+
+      - name: Preregistered statistics, behavioral error counts and subgroup checks
+        run: |
+          python -m indetbench.stat_study \
+            --input data/smol_stat_v01_frozen.jsonl \
+            --scores smol_stat_scores.csv \
+            --output smol_stat_report.json \
+            --bootstrap 10000
+          python -m json.tool smol_stat_report.json > /dev/null
+          python -m indetbench --scores smol_stat_scores.csv --bootstrap 10000 > generic_cli_report.json
+
+      - name: Verify all generated rows and record runtime metadata
+        run: |
+          python - <<'PY'
+          import csv, json, platform, importlib.metadata, pathlib
+          rows=list(csv.DictReader(open("smol_stat_scores.csv",newline="",encoding="utf-8")))
+          r=json.load(open("smol_stat_report.json"))
+          assert len(rows)==480 and r["sample_pairs"]==240
+          assert r["raw_score_rows"]==480
+          manifest={"model":"HuggingFaceTB/SmolLM2-360M-Instruct",
+                    "commit":"c15f933c73438218a2bc078446c513173cc4f06a",
+                    "code_commit":"${{ github.sha }}",
+                    "python":platform.python_version(),
+                    "torch":importlib.metadata.version("torch"),
+                    "transformers":importlib.metadata.version("transformers"),
+                    "accelerate":importlib.metadata.version("accelerate"),
+                    "container":"GitHub-hosted Ubuntu CPU","model_generations":480,
+                    "temperature":"greedy","max_new_tokens":12}
+          pathlib.Path("smol_stat_runtime.json").write_text(json.dumps(manifest,indent=2)+"\n")
+          print("Success: 480 model-generated rows; 240 paired stories and full statistical report")
+          PY
+
+      - name: Retain full model-generated evidence privately (7 days)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smollm2-240-pairs-preregistered-results
+          path: |
+            smol_stat_scores.csv
+            smol_stat_report.json
+            generic_cli_report.json
+            smol_stat_runtime.json
+            data_sha256.txt
+          retention-days: 7

@@ -1,0 +1,26 @@
+name: Hidden uncertainty technical integrity (CPU)
+on:
+  push:
+    branches: [experiment/hidden-uncertainty-probe]
+    paths:
+      - '.github/workflows/hidden-uncertainty-integrity.yml'
+      - 'tests/integration/hidden_uncertainty_fixture.py'
+      - 'tests/integration/test_hidden_uncertainty_fixture.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fixture-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check reproducibility and paired labels
+        run: python -m unittest discover -s tests/integration -p test_hidden_uncertainty_fixture.py -v
+      - name: Generate deterministic fixture (NOT scientific data)
+        run: python tests/integration/hidden_uncertainty_fixture.py --count 32 --seed 20261114 --output /tmp/hidden_uncertainty_fixture.jsonl
+      - name: Confirm original frozen dataset untouched
+        run: echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check

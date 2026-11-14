@@ -1,0 +1,47 @@
+Concordanza: 0.680 su 100 risposte (soglia del protocollo 0.90) · kappa di Cohen 0.619
+ESITO: < 0.90: gli esiti di HC4 vanno accompagnati dall'avvertenza (§4)
+Concordanza sulla classe usata da HC4 (supportata / non supportata / esclusa): 0.770
+
+Per categoria automatica (uguali / totale):
+  alternative: 17/18
+  altro: 0/11
+  astensione: 18/18
+  attribuite: 11/14
+  corretta: 18/18
+  entrambi affermati: 4/7
+  un valore del contesto: 0/9
+  valore assente dal contesto: 0/5
+
+Disaccordi (n: automatica → Simona):
+  6: valore assente dal contesto → entrambi affermati
+  7: alternative → corretta
+  11: un valore del contesto → corretta
+  14: altro → corretta
+  15: valore assente dal contesto → entrambi affermati
+  16: entrambi affermati → attribuite
+  20: un valore del contesto → corretta
+  26: altro → attribuite
+  27: un valore del contesto → corretta
+  32: altro → entrambi affermati
+  33: valore assente dal contesto → corretta
+  34: entrambi affermati → un valore del contesto
+  38: attribuite → alternative
+  41: un valore del contesto → corretta
+  48: altro → entrambi affermati
+  52: valore assente dal contesto → corretta
+  54: altro → entrambi affermati
+  64: attribuite → entrambi affermati
+  65: entrambi affermati → attribuite
+  68: un valore del contesto → corretta
+  70: altro → entrambi affermati
+  71: altro → corretta
+  74: un valore del contesto → corretta
+  77: attribuite → alternative
+  82: altro → entrambi affermati
+  83: altro → entrambi affermati
+  85: altro → corretta
+  87: un valore del contesto → corretta
+  91: un valore del contesto → corretta
+  93: un valore del contesto → corretta
+  95: altro → corretta
+  100: valore assente dal contesto → corretta

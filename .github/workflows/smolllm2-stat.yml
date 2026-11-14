@@ -1,0 +1,98 @@
+name: SmolLM2 statistical evaluation (CPU)
+
+on:
+  push:
+    branches: [feature/initial-cpu-metrics]
+    paths:
+      - '.github/workflows/smolllm2-stat.yml'
+      - 'data/smol_stat_v01_frozen.jsonl'
+      - 'src/indetbench/hf_runner.py'
+      - 'tests/integration/shard_smol_stat.py'
+      - 'tests/integration/analyze_smol_stat.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smol-stat-eval
+  cancel-in-progress: true
+
+jobs:
+  inference:
+    name: SmolLM2 360M pinned model · shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    env:
+      HF_HOME: /tmp/indetbench-smol-stat-hf-cache
+      HF_HUB_DISABLE_TELEMETRY: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PyTorch CPU and fixed HF packages
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'transformers==4.57.1' 'accelerate==1.12.0' -e '.[replay]'
+      - name: Select frozen dataset shard with complete B/C pairs
+        run: |
+          sha256sum data/smol_stat_v01_frozen.jsonl
+          python tests/integration/shard_smol_stat.py --input data/smol_stat_v01_frozen.jsonl --shard ${{ matrix.shard }} --total 4 --output input_${{ matrix.shard }}.jsonl
+      - name: Infer using pinned external model revision
+        run: |
+          python -m indetbench.hf_runner \
+            --model-id HuggingFaceTB/SmolLM2-360M-Instruct \
+            --revision c15f933c73438218a2bc078446c513173cc4f06a \
+            --model-key other \
+            --input input_${{ matrix.shard }}.jsonl \
+            --output scores_${{ matrix.shard }}.csv \
+            --max-input-tokens 512 \
+            --max-new-tokens 12
+      - name: Upload original per-row scores to private artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smol-stat-shard-${{ matrix.shard }}
+          path: scores_${{ matrix.shard }}.csv
+          retention-days: 14
+          if-no-files-found: error
+
+  analyze:
+    name: Analyze paired scores, frozen endpoints and evidence
+    needs: inference
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e '.[replay]'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: smol-stat-shard-*
+          path: results
+          merge-multiple: true
+      - name: Audit raw data, score coverage and compute preregistered statistics
+        run: |
+          sha256sum data/smol_stat_v01_frozen.jsonl
+          find results -maxdepth 1 -type f -print | sort
+          python tests/integration/analyze_smol_stat.py \
+            --input data/smol_stat_v01_frozen.jsonl \
+            --scores results/scores_0.csv results/scores_1.csv results/scores_2.csv results/scores_3.csv \
+            --output smol_stat_results.json
+          python -m json.tool smol_stat_results.json > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: smol-stat-preregistered-report
+          path: smol_stat_results.json
+          retention-days: 14
+          if-no-files-found: error

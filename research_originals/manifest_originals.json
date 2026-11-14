@@ -1,0 +1,264 @@
+{
+  "status": "historical originals recovered from owner-provided experimental ZIP archives; not a substitute for full independent scientific audit",
+  "archive_date": "2026-11-13",
+  "compression": "gzip level 9; mtime=0; source content is unchanged after decompression",
+  "sources": [
+    {
+      "archive": "testM_A_risultati_completo.zip",
+      "sha256": "5f2922d73d3f8921600d082c92201975faea97cf3d078ab49e6ec51565661cbc"
+    },
+    {
+      "archive": "testM_B_risultati_completo.zip",
+      "sha256": "a78cf5a02566d22de80acf8fff6caff0fa0049c697abbbf27667b807648cea3a"
+    },
+    {
+      "archive": "testC_selezione.zip",
+      "sha256": "aaad5c5e6150e2c29b16220fa26fa895d8a7b2bb1688800011c3b8cdbaf4d21d"
+    },
+    {
+      "archive": "completo-20261113T082301Z-1-001.zip",
+      "sha256": "da84d9bfb81df8ef15c39524b9e507ffa13eb1e563ce18715b432a1638b5bbed"
+    }
+  ],
+  "frozen_files": [
+    {
+      "path": "research_originals/step2/frozen/M_Original_4800_righe.json.gz",
+      "source_archive": "testM_A_risultati_completo.zip",
+      "source_member": "dati/righe.json",
+      "sha256_decompressed_original": "906c01bf2988607247b4b06f92b15d189bcb49278a6964ae2479b2236f96d459",
+      "sha256_gzip": "4908cd9e9e55df3bcf8167518f86a71819e5c36ff7f49c12dd36d347b37bd0bc",
+      "git_blob_sha": "d074101e5ecac01395835156056a345759c70b19",
+      "rows": 4800
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_sintetico_definitivo.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "dati/testC_sintetico_definitivo.json",
+      "sha256_decompressed_original": "97b255b51d7229da1cfda00c54b93d6fcc66bbc37e307d969ba9274f29fe26b6",
+      "sha256_gzip": "238c8fe0a9a10485217e081308904523e561d96807f1e69d656232a2814b851f",
+      "git_blob_sha": "64d87dcbcdfd99b4f064b591192101d476d3ed3d"
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_sintetico_prova.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "dati/testC_sintetico_prova.json",
+      "sha256_decompressed_original": "6c429023a18a9f2537eb2e120454d2a475451b7ede5cf4965a7c6152ae40c502",
+      "sha256_gzip": "bbc908a63921c975bafc59162100b867b23b685746224fdab1bd680de40397ab",
+      "git_blob_sha": "f656e45eb9e060474426db08148f7560283f7621"
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_sintetico_riserva.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "testC_sintetico_definitivo_riserva.json",
+      "sha256_decompressed_original": "32007443261cb4205d774f23ffc327c4b2b0ef3d2c162a3897fee93053c30937",
+      "sha256_gzip": "5d5f9054178d54d5e805853d31aaa6e76ec89d727891c4fab77864dc3c2dd554",
+      "git_blob_sha": "b5f12b5e0e75c73dfa1a58c7a8f468463a4a3d93"
+    },
+    {
+      "path": "research_originals/step2/frozen/C_Original_prova_riserva.json.gz",
+      "source_archive": "testC_selezione.zip",
+      "source_member": "testC_sintetico_prova_riserva.json",
+      "sha256_decompressed_original": "cdecb33aeaef00989f4c8dc6bf423a41072138c68c4f8898b2449f47df2eeb9d",
+      "sha256_gzip": "18493a9bd09ac7bd5f35bd0fb68d849f4df71c2c7a282317a9b0b2e1bed53b6c",
+      "git_blob_sha": "9d52f6dce7d1df51b4d82af09bb35a5fc32ac958"
+    }
+  ],
+  "additional_frozen_data_awaiting_rights_review": [
+    {
+      "source": "testC_selezione.zip",
+      "member": "dati/righe_C.json",
+      "sha256": "4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42",
+      "reason": "includes synthetic plus natural passages derived from SQuAD; do not distribute without separate rights audit"
+    }
+  ],
+  "not_yet_recovered": [
+    "Step 1 original generator/source notebooks and frozen score archives",
+    "Step 2 Test U/U2 complete frozen outputs and original notebooks where library bytes are unavailable",
+    "M-A/M-B complete raw model outputs, environments and probe weights",
+    "Test C full raw model outputs and natural data (third-party rights review)"
+  ],
+  "separation": "Hugging Face SmolLM2/Qwen/TinyLlama experiments from November 13 live under data/ and docs/, not in research_originals/",
+  "numeric_original_reports": [
+    {
+      "path": "research_originals/step2/numeric_reports/M_esiti_A.json.gz",
+      "source_archive": "testM_A_risultati_completo.zip",
+      "source_member": "esiti_A.json",
+      "sha256_decompressed_original": "aae347d27c5a6beceec71061da910a1fd54254c0abaf24825bef8cf214560eba",
+      "git_blob_sha": "1c2aafb678ffc565de6cb100c572707863f17b49"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_esiti_B.json.gz",
+      "source_archive": "testM_B_risultati_completo.zip",
+      "source_member": "esiti_B.json",
+      "sha256_decompressed_original": "349c0284f80e6945eccfa099caf7930236a0a2f79c4f86e9617f55e7eaab1ead",
+      "git_blob_sha": "393504569a70be703ac68c1eded44b31fb2dd0eb"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/C_esiti_C.json.gz",
+      "source_archive": "completo-20261113T082301Z-1-001.zip",
+      "source_member": "completo/esiti_C.json",
+      "sha256_decompressed_original": "6644e91bbc527479523db6d658ddde8fd5d21d5f080de8682584828157ba67e2",
+      "git_blob_sha": "a43cb1ecf47c7299c918a4e1c58ef46213353546"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/C_rapporto_C.txt.gz",
+      "source_archive": "completo-20261113T082301Z-1-001.zip",
+      "source_member": "completo/rapporto_C.txt",
+      "sha256_decompressed_original": "495587f87e80743e9d45e3b5f56fbdaecb76f05697964e9345ab11fa38318213",
+      "git_blob_sha": "5235aeb6531eb36cb556900bfc8f7aaaba4baf06"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_tabella_A.csv.gz",
+      "source_archive": "testM_A_risultati_completo.zip",
+      "source_member": "tabella_A.csv",
+      "sha256_decompressed_original": "40d4668b13badb5f191bd28318f68d5c0f1da921479a388668b954de1efb2f4e",
+      "git_blob_sha": "29e3ead446e4ca165249c7b878bf4590663888fd"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_tabella_B.csv.gz",
+      "source_archive": "testM_B_risultati_completo.zip",
+      "source_member": "tabella_B.csv",
+      "sha256_decompressed_original": "042e5a100be849c8b226c728e935b0aa684674bfc0edf1a0e6312aa621a0f3df",
+      "git_blob_sha": "73f8aa2212ea1c3af0c96ac922a9f17114a643d0"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/C_tabella_C.csv.gz",
+      "source_archive": "completo-20261113T082301Z-1-001.zip",
+      "source_member": "completo/tabella_C.csv",
+      "sha256_decompressed_original": "cef4c107b663726d1a097377a3476e526f6898fb234d72fa1a32115286e99708",
+      "git_blob_sha": "1c69922b8a3375d9f8742c7520147188bc9b39df"
+    },
+    {
+      "path": "research_originals/step2/numeric_reports/M_tabella_famiglie_B.csv.gz",
+      "source_archive": "testM_B_risultati_completo.zip",
+      "source_member": "tabella_famiglie_B.csv",
+      "sha256_decompressed_original": "7752f749d2a371b5d9086b6e000c3c8e5ab56149a7912a0b67abf5b7edfcbda0",
+      "git_blob_sha": "75d489e81790507eb00882e2e5957ecbca82be18"
+    }
+  ],
+  "documents_final_versions": {
+    "note": "On 13 Nov the protocol/report files first archived at commit 3e0e9fb were earlier drafts. They were replaced by the byte-identical versions kept in the project archive. Drafts remain in git history.",
+    "files": [
+      {
+        "path": "research_originals/step1/Riepilogo_Step1.md",
+        "project_source": "PHI/Step1_verifica/Riepilogo_Step1.md",
+        "status": "v3, approved 8 Nov",
+        "sha256": "488f20caf94211c04b22b4c2e73986aed1ac8382a35f74df2a5de5120a87c120"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testU_v2.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testU_v2.md",
+        "status": "approved before launch",
+        "sha256": "43dc24a9284309305608eec36c45bc877a1952da45c5e2f696d58c67c23a4663"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testU2_istruzione_v2.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testU2_istruzione_v2.md",
+        "status": "approved",
+        "sha256": "b0acd0bb4229fbffecb90a3da03e888775dd643429522e614abb0955324e13ba"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testM_metodi_v2.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testM_metodi_v2.md",
+        "status": "approved 10 Nov, with later recorded rules",
+        "sha256": "5c3d431518a06041d02dad031ee9c458121781fbcf83c1aadbeebfe21b7a2a98"
+      },
+      {
+        "path": "research_originals/step2/protocols/Nota_M2_configurazione_v2_2.md",
+        "project_source": "PHI/Step2_uscite/Nota_M2_configurazione_v2_2.md",
+        "status": "v2.2 approved 11 Nov",
+        "sha256": "c8aa36d59a300559689ab2de5f55a7a72355cf75ea12da9ff8fdb0450329b021"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testC_v3.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testC_v3.md",
+        "status": "v3 with C-gen-4 and C-sel corrections",
+        "sha256": "baa2a850c0bb97666fb23868dbde775e481b4feccb67b17f5696c32df40d9ce5"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testU.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testU.md",
+        "status": "v2 after owner review",
+        "sha256": "d15c52c8c43baa9169750ffcffb37050752e4750efa17fe9e7c71aa8587283bc"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testU2.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testU2.md",
+        "status": "final",
+        "sha256": "6fae9048784ee028de279af8d1ed97e9df961f0ca73347b4df213619d9522920"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testM_A.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testM_A.md",
+        "status": "v2 reviewed 10 Nov",
+        "sha256": "75020d1b825c33b9df5b032df0533ad4852610d3997d3efea777ec5d929bddb2"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testM_B.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testM_B.md",
+        "status": "v2 reviewed 11 Nov",
+        "sha256": "f463becf79fe17b46525b46ae8f7bde940d211ca7000c0a0faa7f51d128d8366"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testC.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testC.md",
+        "status": "draft v2 of 13 Nov, under owner review",
+        "sha256": "404f2a04334992e7a0dd9721846ccd2d41c0e6b3f432606c9a2ab555a9d454e5"
+      },
+      {
+        "path": "research_originals/step2/test_c_selection/Chiusura_selezione_DUE-nat_199_C-sel-8.md",
+        "project_source": "PHI/Step2_uscite/testC_selezione_risultati/C-sel-8/",
+        "status": "closure of C-sel-8 at 199/200",
+        "sha256": "52612478256021ac4fcc6bc1c5f45355aba3640f5eea35d8483ff8af9fe890f2"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/TestC_controlli_revisione_notebook.md",
+        "project_source": "PHI/Step2_uscite/",
+        "status": "owner review of the controls notebook C-controlli-1a",
+        "sha256": "7fbcacf7bf8d05ff9c1ec34b806bf81f4ced3e31bb8e09c13b2c61a7862aee95"
+      }
+    ]
+  },
+  "test_c_controls": {
+    "note": "Aggregate outputs of notebook C-controlli-1a (13 Nov); per-answer model outputs and the owner's reading sheets are not committed",
+    "files": [
+      {
+        "path": "research_originals/step2/test_c_controls/TestC_controlli_revisione_notebook.md",
+        "sha256": "7fbcacf7bf8d05ff9c1ec34b806bf81f4ced3e31bb8e09c13b2c61a7862aee95"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/concordanza_classificatore_esito.txt",
+        "sha256": "7e571bfbb14349a9e580e897ef7805ec32a71fe104be54d9ebf742edd677c58c"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/hc0_M1.csv",
+        "sha256": "aa3e87e9ca09aff5c8e6de912f0162f6304ec8ce009dff608d67812c848fd083"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/hc4_sensibilita.csv",
+        "sha256": "521099d9002843866b89fd237b10651b8abbf86c2a167b6741630d11533e7cd8"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/log_W_per_esito.csv",
+        "sha256": "02312e321c1049773fa9dd8c614d0df9c848f50a64a8eb65ea69d02e57edc175"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/log_accuratezza.csv",
+        "sha256": "eed010cef2cec235d142f20905a8697cc08cd0875920ce1591a4d1841af6fc49"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/rapporto_controlli.txt",
+        "sha256": "3a282af20dc2b2f7c9e59a8431ba89ff580e7ccccce3eac347d53a18569bb132"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/troncamento_transizioni.csv",
+        "sha256": "e8450c26d1d7831e07fbcf00f55d1df1400e415b2bfcd65ca0421219b95bfeb4"
+      }
+    ],
+    "source_archive": {
+      "name": "controlli_Drive_20261113.zip",
+      "sha256": "ace6e9a4f91e951d9b1f67bb83001f503a7e6e5e3632089f1c30d75b37fd5787"
+    }
+  },
+  "hf_revisions": "research_originals/hf_revisions_verified.json"
+}

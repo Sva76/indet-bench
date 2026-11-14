@@ -1,0 +1,24 @@
+name: Python security checks (Bandit)
+on:
+  push:
+    branches: [main, feature/initial-cpu-metrics]
+  # Every pull request, whatever its base branch: PRs into the development
+  # branches (#2, #3) previously ran no unit tests at all.
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  bandit:
+    name: Python static security analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install security analyzer
+        run: python -m pip install 'bandit==1.8.6'
+      - name: Analyze IndetBench code
+        run: bandit -r src/indetbench -ll -ii

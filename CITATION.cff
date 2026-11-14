@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use IndetBench in research, please cite the software and the applicable third-party methods in docs/REFERENCES.bib."
+type: software
+title: "IndetBench: A Benchmark for Answer Determinability in Language Models"
+authors:
+  - family-names: Vargiu
+    given-names: Simona
+repository-code: "https://github.com/Sva76/indet-bench"
+version: "0.0.1-dev"

@@ -1,0 +1,65 @@
+name: Hidden uncertainty extraction smoke test (CPU)
+on:
+  push:
+    branches: [experiment/hidden-uncertainty-probe]
+    paths:
+      - '.github/workflows/hidden-uncertainty-extraction.yml'
+      - 'src/indetbench/hidden_uncertainty.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qwen05-preanswer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+      TOKENIZERS_PARALLELISM: 'false'
+      HF_HUB_DISABLE_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned CPU dependencies
+        run: |
+          python -m pip install 'torch==2.5.1' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'transformers==4.57.1' 'accelerate==1.12.0' -e '.[replay]'
+      - name: Build TWO technical pairs, not a scientific sample
+        run: python tests/integration/hidden_uncertainty_fixture.py --count 2 --seed 20261114 --output /tmp/hidden_fixture.jsonl
+      - name: Extract real pre-answer activations from pinned Qwen 0.5B
+        run: |
+          python -m indetbench.hidden_uncertainty \
+            --model-id Qwen/Qwen2.5-0.5B-Instruct \
+            --revision 7ae557604adf67be50417f59c2c2f167def9a775 \
+            --model-key other --input /tmp/hidden_fixture.jsonl \
+            --output /tmp/hidden_features.csv --layer -1 --max-input-tokens 768
+      - name: Verify complete pairs, finite values, dimensions, and no generated answer field
+        run: |
+          python - <<'PY'
+          import csv, json, math
+          with open('/tmp/hidden_features.csv', newline='', encoding='utf-8') as f:
+              rows = list(csv.DictReader(f))
+          assert len(rows) == 4, len(rows)
+          assert {x['side'] for x in rows} == {'B', 'C'}
+          assert len({x['pair_id'] for x in rows}) == 2
+          assert all({x['side'] for x in rows if x['pair_id'] == pid} == {'B', 'C'} for pid in {x['pair_id'] for x in rows})
+          assert all(x['token_position'] == 'last_prompt_token' for x in rows)
+          assert all('generated' not in x for x in rows)
+          vectors = [json.loads(x['hidden_state']) for x in rows]
+          assert len({len(v) for v in vectors}) == 1 and len(vectors[0]) > 0
+          assert all(all(math.isfinite(n) for n in v) for v in vectors)
+          assert all(all(math.isfinite(float(x[k])) for k in ('p_yes','p_no','p_unknown','entropy','top1_probability')) for x in rows)
+          print('PASS: 4 rows, 2 paired cases, finite pre-answer vectors; NO scientific result')
+          PY
+      - name: Confirm frozen study corpus untouched
+        run: echo 'e7d83b1e661ed34ab3c73a37481301bdab1258a5867d1ac1e57f66762f8fc36d  data/smol_stat_v01_frozen.jsonl' | sha256sum --check
+      - name: Archive technical smoke test features privately
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hidden-uncertainty-qwen05-technical-smoke
+          path: /tmp/hidden_features.csv
+          retention-days: 7
+          if-no-files-found: error

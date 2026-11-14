@@ -1,0 +1,7 @@
+pair_id,block_id,side,score
+example-1,story-1,B,0.10
+example-1,story-1,C,0.80
+example-2,story-1,B,0.20
+example-2,story-1,C,0.20
+example-3,story-2,B,0.30
+example-3,story-2,C,0.40
