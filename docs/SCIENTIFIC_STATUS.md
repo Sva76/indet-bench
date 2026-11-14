@@ -1,15 +1,15 @@
-# Scientific status of IndetBench (13 November 2026)
+# Scientific status of IndetBench (updated 14 November 2026)
 
 This page states what the research behind IndetBench has shown, what it has not shown, and where each number comes from. Every number below is taken from an archived report in `research_originals/`. When this page and a report disagree, the report is authoritative.
 
 ## Two separate bodies of evidence
 
-| | Original research (Steps 1–2) | Hugging Face CPU studies (13 Nov) |
+| | Original research (Steps 1–2) | Hugging Face CPU studies (13–14 Nov) |
 |---|---|---|
-| Models | Qwen3-8B, Mistral-Nemo-Instruct-2407, OLMo-2-1124-7B-Instruct, Llama-3.1-8B-Instruct (7–12B), pinned revisions in [`hf_revisions_verified.json`](../research_originals/hf_revisions_verified.json) | SmolLM2-360M-Instruct; Qwen2.5-0.5B-Instruct and TinyLlama-1.1B-Chat (incomplete) |
+| Models | Qwen3-8B, Mistral-Nemo-Instruct-2407, OLMo-2-1124-7B-Instruct, Llama-3.1-8B-Instruct (7–12B), pinned revisions in [`hf_revisions_verified.json`](../research_originals/hf_revisions_verified.json) | SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B, Qwen2.5-1.5B, OLMo-2-0425-1B, TinyLlama-1.1B (all Instruct/Chat) |
 | Data | Frozen logic stories (Tests U/U2/M, 800 B/C pairs per format) and synthetic passages (Test C, 600 + 200 pairs) | New 240-pair set `data/smol_stat_v01_frozen.jsonl`, created on 13 Nov, not yet human-reviewed |
 | Protocols | Preregistered, owner-approved before each run | Preregistration written minutes before the run |
-| Status | Completed and reported; numeric results reproduced from archives with 0 differences | Technical checks; no substantive scientific result yet |
+| Status | Completed and reported; numeric results reproduced from archives with 0 differences | Exploratory; one model evaluable under the competence rule |
 
 The two must not be merged into one conclusion.
 
@@ -30,7 +30,8 @@ B and C are **minimal pairs**: the same story, in which one variable is stated w
 - That any method detects hallucinations with context. In Test C, HC4 within B could not be evaluated (0 errors on B), and HC4 within C is confounded with the passage family.
 - That the results hold outside 4 open-weights models of 7–12B, English and template texts.
 - That p(UNKNOWN) works in symbolic formats: there it is weak or reversed (Test U, Test U2).
-- Anything about the four new small models. SmolLM2 answered only 92/240 B cases correctly and never generated NO, so the study is not evaluable. Qwen2.5-0.5B lacks its aggregate report. TinyLlama stopped because its tokenizer shares first tokens between the labels: this is a limit of the measurement, not a result about the model.
+- Anything general about the small models on the 240-pair set. Under the binding competence rule (B accuracy ≥ 0.50 overall and on gold YES and NO) only Qwen2.5-1.5B is evaluable (W 0.613 [0.550, 0.671], exploratory, corpus not human-validated). Qwen2.5-0.5B, OLMo-2-0425-1B, SmolLM2-1.7B and SmolLM2-360M are NOT EVALUABLE; SmolLM2-1.7B and OLMo-1B fail even at the theoretical chance threshold of 1/3. TinyLlama is NOT MEASURED: its tokenizer shares the first token between labels, a limit of the measurement, not a result about the model. Details: [`COMPETENCE_240_PAIRS.md`](COMPETENCE_240_PAIRS.md), [`QWEN05_TINYLLAMA_REPORT_2026-11-14.md`](QWEN05_TINYLLAMA_REPORT_2026-11-14.md).
+- Anything new about hidden states: the prospective hidden-state experiment was not run (owner's decision, 14 Nov), because Step 1 already showed that probes do not transfer ([`HIDDEN_UNCERTAINTY_EXPERIMENT_PROTOCOL.md`](HIDDEN_UNCERTAINTY_EXPERIMENT_PROTOCOL.md)).
 
 ## Reproducibility already verified
 
