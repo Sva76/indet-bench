@@ -72,6 +72,10 @@ Mistral-Nemo passes the gold-YES part by a small margin: 271 correct where 266 a
 
 Running one of these four models again at its pinned revision should give a close value. Exact equality is not expected. The original runs used bfloat16 weights, eager attention and the package versions recorded in the archives. `hf_runner` uses the model's default dtype and attention on GPU, and float32 on CPU. The `report` bootstrap also differs slightly from the original one: on the archived scores the point estimates are identical and the intervals agree to about ±0.004.
 
+## Results so far
+
+First exploratory run with this procedure (14 November 2026): [`NEW_MODELS_RESULTS_2026-11-14.md`](NEW_MODELS_RESULTS_2026-11-14.md). It also shows a case the rule above does not catch: a model can pass the gate and get CONFIRMED while its YES/NO/UNKNOWN probability mass at the first token is near zero (Yi-1.5-9B-Chat); the owner classified it as NOT EVALUABLE for a technical reason. The notebook flags low label mass only as a caution; it does not change the verdict, so read that flag before reading W.
+
 ## What a result on a new model can and cannot show
 
 - A confirmed W supports the original finding for that model, in this prose format only.
