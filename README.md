@@ -27,7 +27,7 @@ python -m indetbench --scores examples/sample_scores.csv --reference examples/sa
 
 The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using **common complete pairs**, and block-bootstrap confidence intervals. The example files contain invented demonstration values, not actual experiment scores.
 
-**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and has matched 508 Test C and 176 Test M notebook B checks in local development. A separate Test M notebook A CPU check matched **400 independent scalar comparisons** from the archived raw scores; the integrated CLI needs its own archived-file execution check. See [Test your model](docs/RUN_YOUR_MODEL.md) for the Hugging Face runner, which has now passed one real CPU-model smoke test.
+**Important:** the generic CSV CLI uses its own deterministic bootstrap; do not equate its confidence intervals automatically with the historical reports. The separate [archived-results replayer](docs/REPRODUCIBILITY_STATUS.md) follows the original NumPy bootstrap and was run on the original archives on 14 November 2026 and matched Test C (508 values), Test M notebook A (498) and notebook B (176) with 0 differences. See [Test your model](docs/RUN_YOUR_MODEL.md) for the Hugging Face runner, which has now passed one real CPU-model smoke test.
 
 ## Scientific, licensing and AI transparency
 
@@ -37,7 +37,7 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 - [AI assistance disclosure](docs/AI_USAGE.md) — AI-assisted planning, coding, analysis and writing, with human oversight and documented limits.
 - [References and attribution](docs/REFERENCES.md) — verified core paper citations in [BibTeX](docs/REFERENCES.bib); model revisions and remaining references require further checks.
 - [Third-party terms](docs/THIRD_PARTY.md) — per-model, library and dataset licensing.
-- [Root license](LICENSE) — **PolyForm Noncommercial 1.0.0**, original IndetBench code only. Commercial use needs a separate agreement; this is **source-available, not OSI open source**.
+- [Copyright notice](LICENSE) — **all rights reserved, Simona Vargiu; no license is granted for now.** A noncommercial license (PolyForm Noncommercial 1.0.0 is under consideration) will be evaluated when the repository is opened to researchers. Third-party terms are unaffected.
 
 **No third-party model weights, training data, natural SQuAD passages, or proprietary probe files are distributed with this package.**
 
@@ -49,7 +49,7 @@ The owner's **original Step 1 and Step 2** research material is archived in [`re
 
 The provenance and original-input SHA-256 values are in [`research_originals/manifest_originals.json`](research_originals/manifest_originals.json). The M-A and M-B original frozen inputs were checked to be identical. **This is a substantial partial recovery, not yet the entire historical research archive:** complete natural SQuAD-derived rows, several original U/U2 and Step 1 files, model-output ZIPs, environment captures and weights remain excluded pending byte access or rights review. The original full ZIPs are retained separately in the owner's private ChatGPT Library.
 
-**The 240-pair `data/smol_stat_v01_frozen.jsonl` dataset was created for a separate experiment on 13 November 2026; it is NOT original Step 1 or Step 2 data.** Repository remains private and the PR is still draft; no change to owner licensing is implied by archiving sources.
+**The 240-pair `data/smol_stat_v01_frozen.jsonl` dataset was created for a separate experiment on 13 November 2026; it is NOT original Step 1 or Step 2 data.** Repository remains private; archiving sources does not grant any license.
 
 ## Reproduce frozen experiments without GPU
 

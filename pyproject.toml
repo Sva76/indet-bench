@@ -8,12 +8,14 @@ version = "0.0.1.dev0"
 description = "Benchmark primitives for answer determinability in language models"
 requires-python = ">=3.10"
 readme = "README.md"
+license = {text = "All rights reserved. No license granted (see LICENSE)."}
 authors = [{name = "Simona Vargiu"}]
 keywords = ["language-models", "uncertainty", "answerability", "benchmark"]
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
   "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "License :: Other/Proprietary License",
 ]
 
 [project.optional-dependencies]

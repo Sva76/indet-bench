@@ -42,6 +42,6 @@ The complete Test C selection `dati/righe_C.json` (2,478 rows including technica
 
 ## Rights and provenance
 
-This is a **private repository and draft PR**, not an approved public distribution. Importing historical research sources here does not change the root LICENSE. **Do not publish, merge, grant access, or change licensing without explicit owner approval and third-party rights review.** The root license choice remains under owner/legal review.
+This is a **private repository**, not an approved public distribution. The root notice is **all rights reserved** (no license granted). **Do not publish, grant access, or change licensing without explicit owner approval and third-party rights review.** A noncommercial license will be evaluated when the repository is opened to researchers.
 
 These source records are historical. Later versions or observations must be separately versioned, not silently overwrite original protocols or results.
