@@ -1,7 +1,7 @@
 # Test M, nota di configurazione di M2 e analisi per famiglia (v2.2)
 
 Data: 11 novembre 2026. Aggiorna `Protocollo_testM_metodi_v2.md` (§2.1 e §5) per il notebook B. Sostituisce la v2.1 (approvata da Simona l'11 novembre), che resta valida per tutto ciò che qui non cambia.
-Stato: **bozza v2.2, da approvare.** Rispetto alla v2.1 aggiunge la variante **M2-senzaℓ2** (§2.10), decisa dopo la diagnostica e l'ablation dell'Appendice B e prima di qualsiasi punteggio sulle coppie B/C o sulle domande di verifica, e corregge due etichette del rapporto dell'ablation (Appendice B). Il notebook che la applica è M-B-notebook-4. I ruoli dei due metodi (§2.10) sono una proposta da confermare. Le modifiche sono elencate in fondo. I valori della nota non cambiano dopo aver visto i risultati.
+Stato: **v2.2 approvata da Simona l'11 novembre**, ruoli compresi. Rispetto alla v2.1 aggiunge la variante **M2-senzaℓ2** (§2.10): variante definita dopo la diagnostica SQuAD e prima di calcolare i suoi punteggi sulle coppie B/C e sul controllo HM0 (Appendice B). Corregge inoltre due etichette del rapporto dell'ablation (Appendice B). Il notebook che la applica è M-B-notebook-4. Le modifiche sono elencate in fondo. I valori della nota non cambiano dopo aver visto i risultati.
 
 Fonti controllate: l'articolo di SIRIN (arXiv 2608.00033v1, Tabella 3 e Appendici A e C) e il codice al commit `ef3bed1` (`sirin/detection/probing`, `sirin/classification/linear.py`, `sirin/detection/probing/training/trainers.py`, `sirin/inference/adapters/hf_adapter.py`, `sirin/configs`, `docs/reference`).
 
@@ -87,7 +87,7 @@ Il notebook legge `num_hidden_layers` dalla configurazione del modello alla revi
   - Lunghezza e strato non cambiano.
 
 **2.7 Addestramento e scelta dell'epoca.**
-- **Iperparametri:** `train_args/default.yaml` della libreria: 5 epoche, lr 1e-3, Adam con `weight_decay` 0, batch 8, BCE, validazione a ogni epoca (`validation_interval=1`). Seme della libreria 42.
+- **Iperparametri:** `train_args/default.yaml` della libreria: al massimo 5 epoche (con l'arresto anticipato qui sotto), lr 1e-3, Adam con `weight_decay` 0, batch 8, BCE, validazione a ogni epoca (`validation_interval=1`). Seme della libreria 42.
 - **Regolarizzazione ℓ2 (corretta nella v2.1).** La v2 diceva «weight decay 0, nonostante la menzione di ℓ2 nell'articolo», come se la sonda non avesse regolarizzazione. Non è così. Il trainer di SIRIN (`BinaryHiddenStatesClassifierTrainer.train_epoch`, `sirin/detection/probing/training/trainers.py` righe 573–581) aggiunge sempre alla loss il termine Σw² / (2 × batch), su tutti i parametri tranne i bias e compresa la query dell'attention pooling. Con batch 8 il coefficiente è 1/16, anche con `weight_decay` 0 (il batch del DataLoader di addestramento è `train_batch_size` = 8, `pipeline.py` riga 318; con 2000 esempi tutti i batch sono pieni). Il termine è fisso, non si configura, e con ogni probabilità è la regolarizzazione ℓ2 di cui parla l'articolo. M2 lo usa così com'è; la variante M2-senzaℓ2 (§2.10) lo toglie. L'AUROC pubblicata (0.879, con Qwen3-4B) resta un riferimento descrittivo, perché modello e dati sono diversi.
 - **Arresto anticipato e ordine.** Si tengono quelli della libreria (arresto se la loss cambia meno di 1e-4 fra due epoche; nessun rimescolamento). L'ordine degli esempi è fissato dal campionamento (§2.6). Entrambi si registrano nel JSON di ogni modello.
 - **Problema del codice a `ef3bed1`.** La scelta dell'epoca migliore non funziona così com'è:
@@ -112,16 +112,16 @@ Il notebook ricostruisce l'impronta del lavoro del notebook A da script, input, 
 
 **2.9 Controllo positivo (HM0).** AUROC tra senza risposta e con risposta sulle domande di verifica rimaste dopo §2.4, soglia 0.70, per modello e per ciascuno dei due metodi (M2 e M2-senzaℓ2). HM0 si legge per ogni modello prima di interpretare le coppie B/C. L'esito si assegna se restano almeno 380 domande su 400; sotto, HM0 è NON VALUTABILE. Si riportano, per classe, le domande ammesse e quelle con punteggio finito, gli scarti per motivo e il numero di domande che entrano nell'AUROC. Il valore dell'articolo (87.9) si riporta accanto come confronto descrittivo.
 
-**2.10 Variante M2-senzaℓ2 (aggiunta nella v2.2, preregistrata prima dei punteggi sulle coppie).**
-- **Origine.** La diagnostica dell'Appendice B (caso 3) e l'ablation della ℓ2: su Qwen, SQuAD 2000 + 400, l'AUROC di validazione passa da 0.575 (M2) a 0.941 togliendo la sola penalità ℓ2 interna del trainer. Per definire la variante si sono usati soltanto l'addestramento e la validazione SQuAD di Qwen. Le sonde della diagnostica non hanno prodotto punteggi né sulle 400 domande di verifica (HM0) né sulle coppie B/C.
+**2.10 Variante M2-senzaℓ2 (aggiunta nella v2.2: variante definita dopo la diagnostica SQuAD e prima di calcolare i suoi punteggi sulle coppie B/C e sul controllo HM0).**
+- **Origine.** La diagnostica dell'Appendice B (caso 3) e l'ablation della ℓ2: su Qwen, SQuAD 2000 + 400, l'AUROC di validazione passa da 0.575 (M2) a 0.941 togliendo la sola penalità ℓ2 interna del trainer. Per definire la variante si sono usati soltanto l'addestramento e la validazione SQuAD di Qwen. Le sonde della diagnostica non hanno prodotto punteggi né sulle 400 domande di verifica (HM0) né sulle coppie B/C. Dell'originale si erano già visti i punteggi della prova tecnica (Qwen, 200 + 40, coppie di 9 storie), che non entrano negli esiti.
 - **Definizione.** M2-senzaℓ2 è M2 (§2.1–§2.9) con una sola differenza: la penalità ℓ2 interna del trainer, Σw² / (2 × batch), si toglie in valore e in gradiente, con il metodo dell'Appendice B. Restano quelli di M2:
   - dati, strato, estrazione, lunghezza, scalatura;
-  - inizializzazione (seme della libreria 42), 5 epoche, lr 1e-3, batch 8, Adam con `weight_decay` 0;
+  - inizializzazione (seme della libreria 42), al massimo 5 epoche, lr 1e-3, batch 8, Adam con `weight_decay` 0;
   - arresto anticipato della libreria, calcolato sulla perdita senza penalità;
   - scelta dell'epoca con l'F1 di validazione e controllo del ricaricamento (§2.7).
   Nessun iperparametro si cerca o si regola: la penalità non si sostituisce con un'altra regolarizzazione.
 - **Esecuzione.** Nel lavoro `M2_<modello>` gli stati si estraggono una volta. Le due sonde si addestrano sugli stessi DataLoader, partendo dalla stessa inizializzazione: prima di ciascun addestramento si ripristinano lo stato iniziale della sonda e i generatori casuali. Si salvano in `sonda/` e `sonda_senzaL2/` e danno punteggi separati, ciascuna con il proprio controllo del ricaricamento. Se il ricaricamento della sola variante non passa, M2 resta valido e la variante è NON ESEGUITA per quel modello. Nella prova a secco (modelli minuscoli, CPU) i punteggi delle due sonde coincidono esattamente (scarto 0) con quelli delle due esecuzioni separate della diagnostica.
-- **Ruoli (proposta da confermare).** M2 resta l'**analisi principale**, come preregistrato. M2-senzaℓ2 è un'**analisi secondaria preregistrata**, con le stesse regole:
+- **Ruoli (confermati da Simona l'11 novembre).** M2 resta l'**analisi principale**, come preregistrato. M2-senzaℓ2 è un'**analisi secondaria preregistrata**, con le stesse regole:
   - HM0 per modello (≥ 0.70, almeno 380 domande su 400; §2.9);
   - HM1 e HM2 (§5 del protocollo), contro lo stesso riferimento p(UNKNOWN) di `env_sirin`, sulle coppie comuni;
   - copertura minima di 760 coppie su 800;
@@ -192,7 +192,7 @@ Riguarda **M2** e, con lo stesso ruolo secondario, **M2-senzaℓ2** (§2.10), ci
 | Correzione del checkpoint | F1 di validazione esplicito, `state_dict` completo dell'epoca migliore, controllo dell'epoca ricaricata e del ricaricamento (§2.7) |
 | Riuso di p(UNKNOWN) | anche revisione, configurazione d'inferenza, ID e prompt; JSON e configurazione del riferimento riusato nello ZIP di B (§2.8) |
 | HM0 e RAM | almeno 380 domande su 400 per assegnare HM0 (§2.9); soglia della RAM all'85% della sessione (§2.6) |
-| Variante M2-senzaℓ2 (v2.2) | da valutare nel completo accanto a M2 (Simona, 11 novembre); HM0 per modello prima delle coppie; ruoli proposti: M2 principale, variante secondaria preregistrata (§2.10), **da confermare** |
+| Variante M2-senzaℓ2 (v2.2) | da valutare nel completo accanto a M2 (Simona, 11 novembre); HM0 per modello prima delle coppie; ruoli confermati: M2 analisi principale preregistrata, M2-senzaℓ2 variante secondaria preregistrata con le stesse regole e verdetti separati, che affianca l'originale (§2.10) |
 
 ## Modifiche rispetto alla v2
 
@@ -207,9 +207,11 @@ Riguarda **M2** e, con lo stesso ruolo secondario, **M2-senzaℓ2** (§2.10), ci
 
 ## Modifiche rispetto alla v2.1
 
-1. **Variante M2-senzaℓ2 (§2.10, nuova):** definizione, esecuzione nello stesso lavoro con la stessa inizializzazione, ruoli proposti, portata e lettura. Riferimenti in §2.7, §2.9, §3, §4 e §5.
+1. **Variante M2-senzaℓ2 (§2.10, nuova):** definizione, esecuzione nello stesso lavoro con la stessa inizializzazione, ruoli, portata e lettura. Riferimenti in §2.7, §2.9, §3, §4 e §5.
 2. **Appendice B:** etichette del rapporto dell'ablation corrette (penalità controfattuale, obiettivo ottimizzato) e portata del risultato.
 3. **§2.7:** batch del DataLoader verificato nel codice (8), quindi il coefficiente 1/16 è confermato.
+4. **Correzioni di Simona all'approvazione (11 novembre):** momento della definizione della variante scritto con precisione (dopo la diagnostica SQuAD, prima dei suoi punteggi sulle coppie e su HM0); «al massimo 5 epoche», con l'arresto anticipato; ruoli confermati.
+5. **Appendice, prova della v4:** decisione sulla RAM STOP con 83.5 GB; scelta A di Simona (stesse misure, decisione ricalcolata con circa 167 GB, riserva attesa, 1000 + 200 per i quattro modelli); conseguenze per la variante.
 
 ## Appendice: ID dei campioni SQuAD
 
@@ -220,7 +222,16 @@ Dalla prova del 11 novembre (notebook M-B-notebook-3, A100, sessione da 167.1 GB
 - sha256 dell'elenco di addestramento: `10966c4c815bfa5e1441de49c9e77f59caf658de3a63d78f4c5a25736f5bed4b`;
 - sha256 dell'elenco di validazione: `ca0f3def47b955688a9f7e5ccb97f58b9da444128e2b601b88d7c99de15ee057`;
 - controlli del confine: 0 errori con i 4 tokenizer su addestramento, validazione, verifica e coppie;
-- decisione sulla RAM: piena. Proiezioni dei picchi: Mistral 130.6 GB (piena) e 67.5 GB (riserva), Qwen 106.9 e 55.2 GB, contro un limite di 142.0 GB (85% di 167.1 GB).
+- decisione sulla RAM: piena. Proiezioni dei picchi: Mistral 130.6 GB (piena) e 67.5 GB (riserva), Qwen 106.9 e 55.2 GB, contro un limite di 142.0 GB (85% di 167.1 GB). Questa decisione era legata alla versione M-B-notebook-3 e non vale per la v4.
+
+**Prova della v4 (11 novembre, M-B-notebook-4, A100, sessione da 83.5 GB).**
+- Selezione SQuAD identica: stessa revisione, stessi conteggi (130297 ammesse, 438 accorciate, 22 escluse) e stessi sha256 degli ID, controllati dal notebook. Controlli del confine: 0 errori.
+- Due sonde su Qwen (200 + 40): ricaricamento con scarto 0 per entrambe, epoca ricaricata corretta, riferimento p(UNKNOWN) di Qwen riusato dal notebook A. Gli HM0 della prova (0.38 per M2, 0.40 per M2-senzaℓ2, su 40 domande) sono diagnostici e non hanno valore conclusivo.
+- Misure di RAM (nuove, legate alla v4). Mistral: 16.4 GB a 240 esempi e 31.6 GB a 480, proiezione 153.7 GB per la piena e 77.4 GB per la riserva. Qwen: 13.7 e 24.2 GB, proiezione 107.8 e 55.5 GB. Le misure di Mistral sono più alte di quelle della prova 2 (17.1 e 29.7 GB): una differenza di circa 2 GB a 480 esempi diventa circa 23 GB nella proiezione a 2400.
+- Decisione nella sessione da 83.5 GB (limite 71.0 GB): STOP.
+- **Scelta di Simona (11 novembre, opzione A).** Si tengono le misure registrate e si ricalcola la sola decisione rieseguendo la prova in una sessione da circa 167 GB (limite circa 142 GB). Con queste misure la decisione attesa è **riserva**. Il completo usa quindi **1000 + 200 esempi per ciascuno dei quattro modelli**, con soglie e criteri invariati. La riserva deriva dalla regola sulla RAM (§2.6), non da una scelta sui risultati.
+  - Ripetere una misura di RAM non è di per sé scorretto, ma scegliere poi quella più favorevole richiederebbe una regola esplicita. L'opzione A evita questa scelta.
+- **Conseguenza per M2-senzaℓ2.** Il confronto fra le due sonde resta valido, perché usano gli stessi dati. La prestazione della variante va verificata con 1000 + 200 esempi, senza dare per acquisito lo 0.941 ottenuto nell'ablation con 2000 + 400.
 
 ## Appendice B: diagnostica prima del completo (regola fissata da Simona l'11 novembre alle 8:08, prima dei risultati)
 

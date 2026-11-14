@@ -135,5 +135,130 @@
       "sha256_decompressed_original": "7752f749d2a371b5d9086b6e000c3c8e5ab56149a7912a0b67abf5b7edfcbda0",
       "git_blob_sha": "75d489e81790507eb00882e2e5957ecbca82be18"
     }
-  ]
+  ],
+  "documents_final_versions": {
+    "note": "On 13 Nov the protocol/report files first archived at commit 3e0e9fb were earlier drafts. They were replaced by the byte-identical versions kept in the project archive. Drafts remain in git history.",
+    "files": [
+      {
+        "path": "research_originals/step1/Riepilogo_Step1.md",
+        "project_source": "PHI/Step1_verifica/Riepilogo_Step1.md",
+        "status": "v3, approved 8 Nov",
+        "sha256": "488f20caf94211c04b22b4c2e73986aed1ac8382a35f74df2a5de5120a87c120"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testU_v2.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testU_v2.md",
+        "status": "approved before launch",
+        "sha256": "43dc24a9284309305608eec36c45bc877a1952da45c5e2f696d58c67c23a4663"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testU2_istruzione_v2.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testU2_istruzione_v2.md",
+        "status": "approved",
+        "sha256": "b0acd0bb4229fbffecb90a3da03e888775dd643429522e614abb0955324e13ba"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testM_metodi_v2.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testM_metodi_v2.md",
+        "status": "approved 10 Nov, with later recorded rules",
+        "sha256": "5c3d431518a06041d02dad031ee9c458121781fbcf83c1aadbeebfe21b7a2a98"
+      },
+      {
+        "path": "research_originals/step2/protocols/Nota_M2_configurazione_v2_2.md",
+        "project_source": "PHI/Step2_uscite/Nota_M2_configurazione_v2_2.md",
+        "status": "v2.2 approved 11 Nov",
+        "sha256": "c8aa36d59a300559689ab2de5f55a7a72355cf75ea12da9ff8fdb0450329b021"
+      },
+      {
+        "path": "research_originals/step2/protocols/Protocollo_testC_v3.md",
+        "project_source": "PHI/Step2_uscite/Protocollo_testC_v3.md",
+        "status": "v3 with C-gen-4 and C-sel corrections",
+        "sha256": "baa2a850c0bb97666fb23868dbde775e481b4feccb67b17f5696c32df40d9ce5"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testU.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testU.md",
+        "status": "v2 after owner review",
+        "sha256": "d15c52c8c43baa9169750ffcffb37050752e4750efa17fe9e7c71aa8587283bc"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testU2.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testU2.md",
+        "status": "final",
+        "sha256": "6fae9048784ee028de279af8d1ed97e9df961f0ca73347b4df213619d9522920"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testM_A.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testM_A.md",
+        "status": "v2 reviewed 10 Nov",
+        "sha256": "75020d1b825c33b9df5b032df0533ad4852610d3997d3efea777ec5d929bddb2"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testM_B.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testM_B.md",
+        "status": "v2 reviewed 11 Nov",
+        "sha256": "f463becf79fe17b46525b46ae8f7bde940d211ca7000c0a0faa7f51d128d8366"
+      },
+      {
+        "path": "research_originals/step2/results/Risultati_testC.md",
+        "project_source": "PHI/Step2_uscite/Risultati_testC.md",
+        "status": "draft v2 of 13 Nov, under owner review",
+        "sha256": "404f2a04334992e7a0dd9721846ccd2d41c0e6b3f432606c9a2ab555a9d454e5"
+      },
+      {
+        "path": "research_originals/step2/test_c_selection/Chiusura_selezione_DUE-nat_199_C-sel-8.md",
+        "project_source": "PHI/Step2_uscite/testC_selezione_risultati/C-sel-8/",
+        "status": "closure of C-sel-8 at 199/200",
+        "sha256": "52612478256021ac4fcc6bc1c5f45355aba3640f5eea35d8483ff8af9fe890f2"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/TestC_controlli_revisione_notebook.md",
+        "project_source": "PHI/Step2_uscite/",
+        "status": "owner review of the controls notebook C-controlli-1a",
+        "sha256": "7fbcacf7bf8d05ff9c1ec34b806bf81f4ced3e31bb8e09c13b2c61a7862aee95"
+      }
+    ]
+  },
+  "test_c_controls": {
+    "note": "Aggregate outputs of notebook C-controlli-1a (13 Nov); per-answer model outputs and the owner's reading sheets are not committed",
+    "files": [
+      {
+        "path": "research_originals/step2/test_c_controls/TestC_controlli_revisione_notebook.md",
+        "sha256": "7fbcacf7bf8d05ff9c1ec34b806bf81f4ced3e31bb8e09c13b2c61a7862aee95"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/concordanza_classificatore_esito.txt",
+        "sha256": "7e571bfbb14349a9e580e897ef7805ec32a71fe104be54d9ebf742edd677c58c"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/hc0_M1.csv",
+        "sha256": "aa3e87e9ca09aff5c8e6de912f0162f6304ec8ce009dff608d67812c848fd083"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/hc4_sensibilita.csv",
+        "sha256": "521099d9002843866b89fd237b10651b8abbf86c2a167b6741630d11533e7cd8"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/log_W_per_esito.csv",
+        "sha256": "02312e321c1049773fa9dd8c614d0df9c848f50a64a8eb65ea69d02e57edc175"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/log_accuratezza.csv",
+        "sha256": "eed010cef2cec235d142f20905a8697cc08cd0875920ce1591a4d1841af6fc49"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/rapporto_controlli.txt",
+        "sha256": "3a282af20dc2b2f7c9e59a8431ba89ff580e7ccccce3eac347d53a18569bb132"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/troncamento_transizioni.csv",
+        "sha256": "e8450c26d1d7831e07fbcf00f55d1df1400e415b2bfcd65ca0421219b95bfeb4"
+      }
+    ],
+    "source_archive": {
+      "name": "controlli_Drive_20261113.zip",
+      "sha256": "ace6e9a4f91e951d9b1f67bb83001f503a7e6e5e3632089f1c30d75b37fd5787"
+    }
+  },
+  "hf_revisions": "research_originals/hf_revisions_verified.json"
 }

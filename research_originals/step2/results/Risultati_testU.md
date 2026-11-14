@@ -1,13 +1,13 @@
-# Test U: risultati (4 modelli, 8 novembre)
+# Test U: risultati (4 modelli, 8 novembre), v2 dopo la revisione di Simona
 
-Protocollo: `Protocollo_testU_v2.md`. Notebook: `TestU_astensione_4_modelli_v3.ipynb` (versione U-v1-notebook-2), modalità completa, 4 modelli su 4.
+Protocollo: `PHI/Step2_uscite/Protocollo_testU_v2.md` (stessa cartella di questo file; criterio di allineamento a riga 114). La bozza v1 indicava Spearman > 0.999; la v2, approvata prima del lancio, è passata a Pearson ≥ 0.999 perché su 20 punti basta uno scambio di due valori vicini per portare Spearman a 0.9985. Con Spearman OLMo (0.994) non avrebbe superato il controllo SQuAD; con Pearson (0.9993–0.9998) lo supera. Notebook: `TestU_astensione_4_modelli_v3.ipynb` (versione U-v1-notebook-2), modalità completa, 4 modelli su 4.
 Dati: `testU_risultati/` (esiti.json, benchmark.csv, rapporto.txt, una cartella per modello). Revisione Llama: 0e9e39f2.
 
 ## In breve
 
 1. **p(UNKNOWN) separa C da B in tutti e 4 i modelli solo nel formato in prosa (V2).** È l'unico formato in cui la regola della libreria (3 conferme su 4) è soddisfatta. Su ADD e V1 il segnale si conferma in un solo modello per formato, e in V1 OLMo e Llama vanno nella direzione opposta.
 2. **La soglia fissata su ADD non si trasferisce.** In nessun formato si arriva a 3 su 4. In prosa la soglia fa peggio della risposta del modello in 3 modelli su 4, perché in prosa quei modelli si astengono già da soli.
-3. **Il rilevatore SQuAD non reagisce alla parola «o» in sé.** Una «o» neutra abbassa il punteggio in tutti e 4 i modelli (HO1 rovesciata). Ciò che lo fa salire è la presenza di due valori. Questo corregge in parte la lettura dello Step 1.
+3. **Il rilevatore SQuAD non reagisce alla parola «o» in sé.** Una «o» neutra abbassa il punteggio in tutti e 4 i modelli (HO1 rovesciata). Lo fa salire la modifica che introduce due valori (che aggiunge anche due token). Questo corregge in parte la lettura dello Step 1.
 4. **Il controllo della polarità non è valutabile** per nessun modello: nessuna formulazione della domanda negata ha superato il filtro.
 
 Tutti i controlli di allineamento sono superati, quindi i numeri sono confrontabili con i test precedenti.
@@ -36,20 +36,20 @@ W è la quota di coppie in cui C supera B (con i pareggi contati 0.5), media per
 
 In V1, OLMo e Llama hanno W sotto 0.5 con l'intervallo tutto sotto: il modello dà più probabilità a UNKNOWN sulla storia determinata che su quella indeterminata. In V3 OLMo è rovesciato allo stesso modo (0.26).
 
-**Quanto del segnale in prosa viene dall'astensione esplicita.** Ricalcolando W solo sulle coppie in cui il modello non risponde UNKNOWN su C:
+**Quanto del segnale in prosa viene dall'astensione esplicita.** Il W preregistrato «senza UNKNOWN generato» tiene solo le coppie in cui il modello non risponde UNKNOWN su C. Il W a parità di risposta (descrittivo, aggiunto dopo la revisione) tiene le coppie in cui il modello dà la stessa risposta su B e su C, media per storia.
 
-| Modello | W in V2 | W senza le coppie in cui C riceve UNKNOWN | quota di C con UNKNOWN |
-|---|---|---|---|
-| Qwen | 0.914 | 0.794 | 83% |
-| Mistral | 0.834 | 0.589 | 77% |
-| OLMo | 0.736 | 0.727 | 4% |
-| Llama | 0.839 | 0.054 | 95% |
+| Modello | W in V2 | W senza UNKNOWN su C (coppie) | W con UNKNOWN su entrambi (coppie) | W senza UNKNOWN su entrambi (coppie) |
+|---|---|---|---|---|
+| Qwen | 0.914 | 0.794 (139) | 0.851 (224) | 0.835 (134) |
+| Mistral | 0.834 | 0.589 (186) | 0.859 (332) | 0.811 (123) |
+| OLMo | 0.736 | 0.727 (766) | 1 coppia | 0.728 (765) |
+| Llama | 0.839 | 0.054 (40) | 0.859 (595) | 4 coppie |
 
-In Llama il segnale in prosa coincide con l'astensione esplicita. Nel 5% dei casi in cui Llama risponde su C, p(UNKNOWN) è più basso che sul B corrispondente, che spesso riceve UNKNOWN. Il caso di OLMo è l'opposto: il modello non si astiene quasi mai, ma la probabilità di UNKNOWN separa comunque C da B.
+A parità di risposta, p(UNKNOWN) resta più alto su C che su B in tutti e 4 i modelli (W 0.81–0.86 dove le coppie bastano). Il segnale quindi non si riduce all'astensione generata. Il W di 0.054 di Llama riguarda solo le 40 coppie in cui risponde su C, e in 36 di queste si astiene invece su B: è un confronto tra risposte diverse, non una prova che manchi il segnale. In OLMo, che non si astiene quasi mai, la probabilità di UNKNOWN separa comunque C da B.
 
 ## HU2: soglia fissata su ADD e applicata agli altri formati
 
-ΔBA è la balanced accuracy della regola «UNKNOWN se p(UNKNOWN) ≥ τ» meno quella della risposta generata dal modello. Il criterio è ΔBA ≥ 0.05 con il limite inferiore dell'IC sopra 0. L'IC viene dal bootstrap congiunto, che ristima τ su ADD a ogni replica.
+ΔBA è la balanced accuracy della regola «UNKNOWN se p(UNKNOWN) > τ» (disuguaglianza stretta, come nel codice) meno quella della risposta generata dal modello. Il criterio è ΔBA ≥ 0.05 con il limite inferiore dell'IC sopra 0. L'IC viene dal bootstrap congiunto, che ristima τ su ADD a ogni replica.
 
 | Modello | τ (da ADD) | V1: ΔBA [IC] | V2: ΔBA [IC] | V2: BA del modello | V3: ΔBA (descr.) |
 |---|---|---|---|---|---|
@@ -59,7 +59,16 @@ In Llama il segnale in prosa coincide con l'astensione esplicita. Nel 5% dei cas
 | Llama | 0.119 | +0.041 [0.021, 0.058] NC | −0.148 [−0.17, −0.13] NON CONF | 0.72 | +0.19 |
 | **Conferme** | | 1 su 4 | 1 su 4 | | |
 
-In V1 e V3 i modelli non rispondono mai UNKNOWN, quindi la loro BA è 0.5 e qualunque soglia sensata la migliora. In V3 il guadagno è grande (Qwen, Mistral), ma V3 è solo descrittivo e ha 60 storie. In V2 le soglie stimate su ADD sono molto basse (per Qwen quasi zero), perché su ADD p(UNKNOWN) è minuscolo anche sui C. Applicate alla prosa, classificano quasi tutto come UNKNOWN. La soglia aiuta solo dove il modello non si astiene già da sé (OLMo).
+In V1 e V3 i modelli non rispondono mai UNKNOWN, quindi la BA della risposta generata è 0.5. Un guadagno di BA lì non significa che la soglia funzioni bene: va letto insieme alle false astensioni che produce. Quota di prompt classificati UNKNOWN dalla soglia:
+
+| Modello | V1: B | V1: C | V2: B | V2: C | V3: B | V3: C |
+|---|---|---|---|---|---|---|
+| Qwen | 66% | 66% | 99.9% | 100% | 9.6% | 99.6% |
+| Mistral | 91% | 91% | 100% | 100% | 2.1% | 99.6% |
+| OLMo | 92% | 85% | 72.9% | 96% | 75% | 50% |
+| Llama | 81% | 66% | 99.6% | 100% | 34% | 54% |
+
+Le soglie stimate su ADD sono molto basse (per Qwen quasi zero), perché su ADD p(UNKNOWN) è minuscolo anche sui C. Applicate a V1 e V2, classificano come UNKNOWN gran parte dei B. Anche la conferma di Mistral su V1 (ΔBA +0.119) convive con il 91% di false astensioni sui B, e quella di OLMo su V2 (+0.157) con il 72.9%. L'unico caso in cui la soglia separa davvero è V3 per Qwen e Mistral, che però è solo descrittivo e ha 60 storie.
 
 ## Comportamento generato (descrittivo)
 
@@ -67,7 +76,7 @@ Quota di risposte UNKNOWN:
 
 | Modello | C in ADD, V1, V3 | C in V2 | B in V2 |
 |---|---|---|---|
-| Qwen | ≈ 0 | 83% | 29% |
+| Qwen | ≈ 0 (1 C su 240 in V3) | 83% | 29% |
 | Mistral | 0 | 77% | 49% |
 | OLMo | 0 | 4% | 0.25% |
 | Llama | 0 | 95% | 79% |
@@ -93,30 +102,31 @@ Il punteggio è quello del rilevatore SQuAD ricostruito per ciascun modello. Val
 |---|---|---|---|---|
 | HO1: A con «o» neutra > A con «e» | 0.32 NON CONF | 0.15 NON CONF | 0.22 NON CONF | 0.28 NON CONF |
 | HO2: B scritto «false or true» > B scritto «false, true» | 0.12 NON CONF | **0.60 CONF** | **1.00 CONF** | 0.36 NON CONF |
-| Due valori senza «o» (B_set > A_and), descrittivo | 0.96 | 1.00 | 0.55 | 1.00 |
-| Rilevatore, C contro B nell'insieme O | 0.43–0.65 in tutti i modelli | | | |
+| Due valori senza «o» (B_set > A_and; due token in più), descrittivo | 0.96 | 1.00 | 0.55 | 1.00 |
+| Rilevatore, C_set > B_set | 0.55 | 0.60 | 0.43 | 0.55 |
+| Rilevatore, C_or > B_or | 0.53 | 0.65 | 0.48 | 0.53 |
 
 Lettura secondo le regole fissate nel protocollo:
-- **Qwen e Llama:** l'allarme dipende dalla presenza di due valori, non dalla parola. Scrivere la «or» fra i valori lo abbassa.
-- **Mistral:** contano i due valori e, in misura minore, la parola nella notazione.
+- **Qwen e Llama:** l'allarme sale con la modifica che introduce due valori, non con la parola. Scrivere la «or» fra i valori lo abbassa.
+- **Mistral:** sale con la modifica che introduce due valori e, in misura minore, con la parola nella notazione.
 - **OLMo:** conta solo la parola nella notazione, non i due valori.
 - **In tutti e 4 i modelli** una «o» neutra nella frase di chiusura abbassa il punteggio. p(UNKNOWN) va nella stessa direzione (W 0.18–0.38), tranne in Qwen dove è quasi neutra (0.47).
 
-Il confronto «due valori senza o» ha due token in più nel B, quindi va letto con la riserva della lunghezza (lo Step 1 aveva trovato in Qwen un bias di lunghezza del prompt). Il rilevatore non distingue C da B nemmeno in questo insieme. Sui C dell'insieme O, sia nella forma con la virgola sia in quella con «or», nessun modello genera UNKNOWN. p(UNKNOWN) separa C da B in questo insieme solo in Qwen (0.77), come su ADD.
+Il confronto «due valori senza o» cambia insieme il contenuto e la lunghezza (due token in più nel B): l'aumento del punteggio va attribuito alla modifica complessiva del prompt, non ai due valori da soli (lo Step 1 aveva trovato in Qwen un bias di lunghezza del prompt). La distinzione C/B del rilevatore in questo insieme è debole e variabile: da 0.43 (OLMo) a 0.646 (Mistral con «false or true»). Sui C dell'insieme O l'astensione generata è quasi nulla: 1 UNKNOWN su 240 per Qwen in C_or, 0 negli altri casi. p(UNKNOWN) separa C da B in questo insieme solo in Qwen (0.77), come su ADD.
 
-**Rispetto allo Step 1:** la frase «il rilevatore SQuAD scatta sulla "o" nella regola» va precisata. In Qwen (e ora in Llama) reagisce alla presenza di due valori; in Mistral e OLMo la parola nella notazione conta. In nessun modello reagisce a una «o» qualunque.
+**Rispetto allo Step 1:** la frase «il rilevatore SQuAD scatta sulla "o" nella regola» va precisata. In Qwen (e ora in Llama) sale con la modifica che introduce due valori; in Mistral e OLMo la parola nella notazione conta. In nessun modello reagisce a una «o» qualunque.
 
 ## Polarità (domanda negata)
 
 NON VALUTABILE per tutti e 4 i modelli. Nessun candidato ha raggiunto min(acc_YES, acc_NO) ≥ 0.90.
 - Con la definizione (N1, N3) le risposte pendono verso YES. In Llama, Mistral e OLMo è quasi sempre YES (per esempio Llama N1: acc_YES 0.96, acc_NO 0.02); in Qwen in modo meno netto (N1: 0.65 e 0.14).
-- Con l'esempio svolto (N2), Qwen e OLMo rispondono sempre NO.
+- Con l'esempio svolto (N2), Qwen risponde NO 240 volte su 240 e OLMo 232 su 240.
 
 I modelli non seguono la domanda negata in modo affidabile in questo formato, quindi la bidirezionalità resta non verificata.
 
 ## Riserve
 
-1. **Istruzione diversa in V2.** L'istruzione della prosa dice esplicitamente che «either case is possible and you are not told which». Il successo in V2 non si può attribuire alla prosa in sé: può dipendere dall'istruzione che autorizza l'astensione. Per separare le due cose servirebbe la prosa con l'istruzione degli altri formati.
+1. **Istruzione diversa in V2.** L'istruzione della prosa dice esplicitamente che «either case is possible and you are not told which». Il successo in V2 non si può attribuire alla prosa in sé: può dipendere dall'istruzione che autorizza l'astensione. Per separare le due cose servirebbe la prosa con l'istruzione degli altri formati. **Aggiornamento (9 novembre, Test U2):** senza la frase, p(UNKNOWN) separa ancora C da B in tutti e 4 i modelli (W 0.69–0.98), mentre la frase non migliora W in modo generale (2 su 4). Il risultato in prosa dipende dal template in prosa, non dalla frase. Vedi `Risultati_testU2.md`.
 2. **V1 ha accuratezza bassa sulle storie determinate** (OLMo A/B 0.50/0.48, Mistral 0.63/0.63). Dove il modello non risolve nemmeno i B, è poco sensato chiedere che riconosca i C.
 3. **Analisi post hoc condizionata a B corretto** (con il rischio di selezione). W è molto più alto quando il modello risponde bene al B: Mistral ADD 0.665 contro 0.005, Mistral V1 0.81 contro 0.44, Qwen V1 0.63 contro 0.32. Indica che il segnale c'è soprattutto dove il modello capisce la storia. È esplorativo, non preregistrato.
 4. **Le soglie di Qwen e Mistral sono minuscole** (dell'ordine di 1e-10 e 1e-3), quindi la regola su ADD è sensibile a piccole variazioni di calibrazione.
@@ -124,8 +134,8 @@ I modelli non seguono la domanda negata in modo affidabile in questo formato, qu
 ## Cosa significa per la libreria
 
 - **p(UNKNOWN) è una misura utile ma condizionata al formato.** Funziona su 4 modelli quando il prompt rende l'astensione una risposta legittima (V2). Sui formati logici compatti (ADD, V1) non regge come misura generale. Va documentata così, con il formato come parte del metodo.
-- **Le soglie non si trasferiscono tra formati.** La libreria deve calibrarle per formato (o per dominio), e il benchmark deve riportare la BA della risposta del modello accanto a quella della soglia.
-- **L'astensione generata e p(UNKNOWN) non sono la stessa cosa.** In Llama coincidono, in OLMo p(UNKNOWN) porta un segnale che il modello non esprime. Conviene riportarle separate.
+- **Le soglie non si trasferiscono tra formati.** La libreria deve calibrarle per formato (o per dominio), e il benchmark deve riportare la BA della risposta del modello accanto a quella della soglia, insieme alla quota di false astensioni sui casi determinati.
+- **L'astensione generata e p(UNKNOWN) non sono la stessa cosa.** A parità di risposta p(UNKNOWN) separa ancora C da B (W 0.81–0.86), e in OLMo porta un segnale che il modello non esprime. Conviene riportarle separate.
 - **Falsi allarmi dovuti alla posizione.** In Qwen e Mistral una riga incerta in fondo fa astenere il modello anche sulle storie determinate. Il benchmark deve bilanciare la posizione.
 - **Rilevatori addestrati su SQuAD:** reagiscono alla forma (due valori, notazione), non all'indeterminatezza, e non distinguono C da B. Il protocollo di validazione delle sonde deve includere un insieme di controllo come O.
 

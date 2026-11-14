@@ -1,0 +1,41 @@
+modello,tipo_attributo,categorie,n,corretta,astensione,altro
+qwen,anno,completo,50,0.34,0.66,0.0
+qwen,anno,dopo la rigenerazione,50,0.34,0.66,0.0
+qwen,luogo,completo,50,0.68,0.32,0.0
+qwen,luogo,dopo la rigenerazione,50,0.68,0.32,0.0
+qwen,numero,completo,50,0.94,0.06,0.0
+qwen,numero,dopo la rigenerazione,50,0.94,0.06,0.0
+qwen,persona,completo,50,0.9,0.1,0.0
+qwen,persona,dopo la rigenerazione,50,0.9,0.1,0.0
+qwen,tutti,completo,200,0.715,0.285,0.0
+qwen,tutti,dopo la rigenerazione,200,0.715,0.285,0.0
+mistral,anno,completo,50,0.14,0.86,0.0
+mistral,anno,dopo la rigenerazione,50,0.14,0.86,0.0
+mistral,luogo,completo,50,0.52,0.48,0.0
+mistral,luogo,dopo la rigenerazione,50,0.52,0.48,0.0
+mistral,numero,completo,50,0.4,0.6,0.0
+mistral,numero,dopo la rigenerazione,50,0.4,0.6,0.0
+mistral,persona,completo,50,1.0,0.0,0.0
+mistral,persona,dopo la rigenerazione,50,1.0,0.0,0.0
+mistral,tutti,completo,200,0.515,0.485,0.0
+mistral,tutti,dopo la rigenerazione,200,0.515,0.485,0.0
+olmo,anno,completo,50,0.96,0.04,0.0
+olmo,anno,dopo la rigenerazione,50,0.96,0.04,0.0
+olmo,luogo,completo,50,1.0,0.0,0.0
+olmo,luogo,dopo la rigenerazione,50,1.0,0.0,0.0
+olmo,numero,completo,50,0.62,0.38,0.0
+olmo,numero,dopo la rigenerazione,50,0.62,0.38,0.0
+olmo,persona,completo,50,1.0,0.0,0.0
+olmo,persona,dopo la rigenerazione,50,1.0,0.0,0.0
+olmo,tutti,completo,200,0.895,0.105,0.0
+olmo,tutti,dopo la rigenerazione,200,0.895,0.105,0.0
+llama,anno,completo,50,0.0,1.0,0.0
+llama,anno,dopo la rigenerazione,50,0.0,1.0,0.0
+llama,luogo,completo,50,0.32,0.68,0.0
+llama,luogo,dopo la rigenerazione,50,0.32,0.68,0.0
+llama,numero,completo,50,0.16,0.84,0.0
+llama,numero,dopo la rigenerazione,50,0.16,0.84,0.0
+llama,persona,completo,50,0.58,0.42,0.0
+llama,persona,dopo la rigenerazione,50,0.58,0.42,0.0
+llama,tutti,completo,200,0.265,0.735,0.0
+llama,tutti,dopo la rigenerazione,200,0.265,0.735,0.0

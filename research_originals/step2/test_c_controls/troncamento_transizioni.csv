@@ -1,0 +1,41 @@
+modello,origine,insieme,famiglia,lato,prima,dopo,classe_prima,classe_dopo,cambia_classe,n
+qwen,riferimento,naturale,DUE-nat,C,alternative,astensione,supportata,esclusa,True,3
+qwen,riferimento,naturale,DUE-nat,C,un valore del contesto,alternative,non supportata,supportata,True,3
+qwen,riferimento,naturale,RIM-nat,B,valore assente dal contesto,corretta,non supportata,supportata,True,1
+qwen,riferimento,sintetico_definitivo,CONF,C,attribuite,astensione,supportata,esclusa,True,13
+qwen,riferimento,sintetico_definitivo,CONF,C,entrambi affermati,astensione,non supportata,esclusa,True,1
+qwen,riferimento,sintetico_definitivo,CONF,C,un valore del contesto,astensione,non supportata,esclusa,True,1
+qwen,riferimento,sintetico_definitivo,DUE,C,alternative,astensione,supportata,esclusa,True,1
+qwen,riferimento,sintetico_definitivo,LOG,C,alternative,astensione,supportata,esclusa,True,5
+qwen,riferimento,sintetico_definitivo,LOG,C,alternative,attribuite,supportata,supportata,False,6
+qwen,riferimento,sintetico_definitivo,LOG,C,attribuite,astensione,supportata,esclusa,True,15
+qwen,M1-LM-Polygraph,naturale,DUE-nat,C,alternative,astensione,supportata,esclusa,True,3
+qwen,M1-LM-Polygraph,naturale,DUE-nat,C,un valore del contesto,alternative,non supportata,supportata,True,3
+qwen,M1-LM-Polygraph,naturale,RIM-nat,B,valore assente dal contesto,corretta,non supportata,supportata,True,1
+qwen,M1-LM-Polygraph,sintetico_definitivo,CONF,C,attribuite,astensione,supportata,esclusa,True,9
+qwen,M1-LM-Polygraph,sintetico_definitivo,CONF,C,entrambi affermati,astensione,non supportata,esclusa,True,1
+qwen,M1-LM-Polygraph,sintetico_definitivo,CONF,C,un valore del contesto,astensione,non supportata,esclusa,True,1
+qwen,M1-LM-Polygraph,sintetico_definitivo,LOG,C,alternative,astensione,supportata,esclusa,True,4
+qwen,M1-LM-Polygraph,sintetico_definitivo,LOG,C,alternative,attribuite,supportata,supportata,False,6
+qwen,M1-LM-Polygraph,sintetico_definitivo,LOG,C,attribuite,astensione,supportata,esclusa,True,15
+olmo,riferimento,naturale,DUE-nat,C,un valore del contesto,alternative,non supportata,supportata,True,1
+olmo,riferimento,naturale,DUE-nat,C,valore assente dal contesto,astensione,non supportata,esclusa,True,1
+olmo,riferimento,naturale,RIM-nat,B,valore assente dal contesto,corretta,non supportata,supportata,True,1
+olmo,riferimento,naturale,RIM-nat,C,un valore del contesto,qualificata,non supportata,esclusa,True,1
+olmo,riferimento,naturale,RIM-nat,C,un valore del contesto,valore assente dal contesto,non supportata,non supportata,False,2
+olmo,riferimento,naturale,RIM-nat,C,valore assente dal contesto,astensione,non supportata,esclusa,True,1
+olmo,riferimento,sintetico_definitivo,CONF,C,attribuite,astensione,supportata,esclusa,True,4
+olmo,riferimento,sintetico_definitivo,RIM,C,un valore del contesto,astensione,non supportata,esclusa,True,1
+olmo,M1-LM-Polygraph,naturale,DUE-nat,C,un valore del contesto,alternative,non supportata,supportata,True,1
+olmo,M1-LM-Polygraph,naturale,DUE-nat,C,valore assente dal contesto,astensione,non supportata,esclusa,True,1
+olmo,M1-LM-Polygraph,naturale,RIM-nat,B,valore assente dal contesto,corretta,non supportata,supportata,True,1
+olmo,M1-LM-Polygraph,naturale,RIM-nat,C,un valore del contesto,qualificata,non supportata,esclusa,True,1
+olmo,M1-LM-Polygraph,naturale,RIM-nat,C,un valore del contesto,valore assente dal contesto,non supportata,non supportata,False,2
+olmo,M1-LM-Polygraph,naturale,RIM-nat,C,valore assente dal contesto,astensione,non supportata,esclusa,True,1
+olmo,M1-LM-Polygraph,sintetico_definitivo,CONF,C,attribuite,astensione,supportata,esclusa,True,2
+olmo,M1-LM-Polygraph,sintetico_definitivo,RIM,C,un valore del contesto,astensione,non supportata,esclusa,True,1
+llama,riferimento,sintetico_definitivo,CONF,C,alternative,attribuite,supportata,supportata,False,1
+llama,riferimento,sintetico_definitivo,CONF,C,entrambi affermati,attribuite,non supportata,supportata,True,1
+llama,M1-LM-Polygraph,sintetico_definitivo,CONF,C,alternative,attribuite,supportata,supportata,False,1
+llama,M1-LM-Polygraph,sintetico_definitivo,CONF,C,entrambi affermati,attribuite,non supportata,supportata,True,1
+llama,M4-generazione,sintetico_definitivo,CONF,C,entrambi affermati,attribuite,non supportata,supportata,True,1

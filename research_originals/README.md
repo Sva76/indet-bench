@@ -5,13 +5,20 @@ These files preserve the original research provenance of **Step 1** (tests 4–7
 
 ## Preserved files
 
-- `step1/Riepilogo_Step1.md`: original Step 1 summary.
+- `step1/Riepilogo_Step1.md`: Step 1 summary, final version (v3, approved 8 November).
 - `step2/Riepilogo_Step2.md`: original Step 2 summary.
-- `step2/protocols/`: original U2/M/C protocols and M2 configuration note, preserving their historical wording and limits.
-- `step2/results/`: original U/U2/M-A/M-B written research reports.
+- `step2/protocols/`: U, U2, M and C protocols and the M2 configuration note, in their approved final versions (Test C protocol v3 including the C-gen-4 and C-sel corrections).
+- `step2/results/`: written reports for U, U2, M-A and M-B (owner-reviewed versions) and Test C (draft v2 of 13 November, still under owner review).
+- `step2/test_c_controls/`: aggregate outputs of the post-run controls notebook (C-controlli-1a): HC0 of M1 with natural generation, truncation sensitivity, LOG analysis, classifier agreement result, and the owner's review of the notebook. Per-answer model outputs and reading sheets are not committed.
+- `step2/test_c_selection/`: written closure of selection C-sel-8 at 199/200 DUE-nat pairs.
+- `hf_revisions_verified.json`: every model and dataset revision used in Steps 1–2 and in the 13 November CPU studies, checked on the Hugging Face Hub on 13 November (metadata only).
 - `step2/notebooks/`: original Test C C-sel-8 selection and full inference notebooks, valid unexecuted JSON.
 - `step2/scripts/`: seven original Python scripts extracted from the `%%writefile` cells of the C-sel-8 notebook. All seven were independently compared *byte-for-byte* with the named scripts in the owner's original `testC_selezione.zip`; no changes were made.
 - `step2/frozen/`: **five GZIP-compressed copies of unchanged frozen synthetic JSON files** (Test M 4,800 source rows; Test C synthetic definitive, technical test and deterministic reserves). These were copied from the original experiment ZIP members; decompression recovers the original JSON byte-for-byte.
+
+## Document versions
+
+The protocol and report files first added at commit `3e0e9fb` were earlier drafts (for example marked «bozza» or «da approvare»). They were replaced by the final versions kept in the owner's project archive; each file's SHA-256 is listed under `documents_final_versions` in the manifest. The drafts remain in git history.
 
 ## Original machine-readable statistical reports
 
