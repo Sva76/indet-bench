@@ -47,16 +47,48 @@ class OriginalBenchmarkTests(unittest.TestCase):
         self.assertEqual(set(rep["W_by_family_descriptive"].values()), {1.0})
         self.assertEqual(rep["behaviour"]["B/AND"]["accuracy"], 1.0)
         self.assertEqual(rep["warnings"], [])
+        self.assertTrue(rep["competence_gate"]["passed"])
+        self.assertTrue(rep["verdict"].startswith("NO INTERVAL"))
 
     def test_report_flags_missing_label_and_low_accuracy(self):
+        out = ob.export_rows(self.rows, "PN")
+        scores = [{"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
+                   "side": o["side"], "score": "0.5", "parsed": "UNKNOWN",
+                   "model_id": "fake", "model_revision": "0" * 40} for o in out]
+        rep = ob.report(scores, self.rows, n_bootstrap=0)
+        self.assertEqual(rep["W_p_unknown"]["value"], 0.5)
+        self.assertIn("label never generated: NO", rep["warnings"])
+        self.assertFalse(rep["competence_gate"]["passed"])
+        self.assertTrue(rep["verdict"].startswith("NOT EVALUABLE"))
+
+    def test_constant_yes_answer_passes_overall_gate_but_is_flagged(self):
+        # 532 of the 800 B cases have gold YES, so always answering YES gives 0.665.
         out = ob.export_rows(self.rows, "PN")
         scores = [{"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
                    "side": o["side"], "score": "0.5", "parsed": "YES",
                    "model_id": "fake", "model_revision": "0" * 40} for o in out]
         rep = ob.report(scores, self.rows, n_bootstrap=0)
-        self.assertEqual(rep["W_p_unknown"]["value"], 0.5)
+        self.assertAlmostEqual(rep["competence_gate"]["accuracy_B"], 532 / 800)
+        self.assertEqual(rep["competence_gate"]["accuracy_B_by_gold"], {"NO": 0.0, "YES": 1.0})
         self.assertIn("label never generated: NO", rep["warnings"])
-        self.assertTrue(any("below 0.80" in w for w in rep["warnings"]))
+
+    def test_gate_threshold_is_inclusive_and_verdict_rule(self):
+        out = ob.export_rows(self.rows, "PN")
+        b_rows = [o for o in out if o["side"] == "B"]
+        right = {o["row_id"] for o in b_rows[: len(b_rows) // 2]}       # exactly 0.50 correct
+        scores = [{"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
+                   "side": o["side"], "score": "0.9" if o["side"] == "C" else "0.1",
+                   "parsed": o["gold"] if o["row_id"] in right else ("UNKNOWN" if o["side"] == "C" else "ALTRO"),
+                   "model_id": "fake", "model_revision": "0" * 40} for o in out]
+        rep = ob.report(scores, self.rows, n_bootstrap=200)
+        self.assertEqual(rep["competence_gate"]["accuracy_B"], 0.5)
+        self.assertTrue(rep["competence_gate"]["passed"])
+        self.assertEqual(rep["verdict"], "CONFIRMED")
+        w = {"value": 0.55, "ci_lower": 0.49, "ci_upper": 0.61}
+        self.assertEqual(ob.verdict(w, True, "PN"), "NOT CONCLUSIVE")
+        self.assertEqual(ob.verdict({"value": 0.4, "ci_lower": 0.3, "ci_upper": 0.5}, True, "PN"),
+                         "NOT CONFIRMED")
+        self.assertTrue(ob.verdict(w, True, "SN").startswith("DESCRIPTIVE"))
 
     def test_report_rejects_rows_outside_benchmark(self):
         with self.assertRaisesRegex(ValueError, "not in the frozen benchmark"):

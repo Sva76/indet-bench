@@ -44,4 +44,4 @@ B and C are **minimal pairs**: the same story, in which one variable is stated w
 - The reference p(UNKNOWN) is close to 1 in Test C, so an advantage of other methods could not have been seen there.
 - Many comparisons without multiplicity correction; the 3-of-4 rule mitigates but does not solve this.
 
-To check these results on another model, follow [`VERIFY_ON_NEW_MODELS.md`](VERIFY_ON_NEW_MODELS.md).
+To check these results on another model, follow [`VERIFY_ON_NEW_MODELS.md`](VERIFY_ON_NEW_MODELS.md). For new models it adds a binding competence gate, fixed on 14 November 2026 before any new-model data: accuracy ≥ 0.50 on the determined B cases. The original protocols had no such gate; all four original models pass it.

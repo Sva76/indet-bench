@@ -26,9 +26,33 @@ Use `--model-key qwen` for Qwen3 models, which turns thinking off as in the orig
 |---|---|---|
 | Tokenizer labels | `hf_runner` | The runner stops if YES, NO and UNKNOWN share a first token (TinyLlama does). Then p(UNKNOWN) is not defined for that model: report it as *not measurable*, not as a negative result. |
 | All three labels generated | `report.json` → `warnings` | A model that never generates one of the labels (SmolLM2 never said NO) is flagged. |
-| Accuracy on determined B cases, by family | `report.json` → `behaviour` | Descriptive flag below 0.80, as HC0-set in Test C. The original protocols of Tests U2/M had **no** competence gate on B. For reference, P−S accuracy on B was Qwen 1.00, Llama 0.94, OLMo 0.79 and Mistral 0.57; Mistral would have failed a 0.80 gate. A gate for new models is a protocol decision that must be fixed before the data; it is not yet fixed. |
+| **Competence gate (binding)** | `report.json` → `competence_gate`, `verdict` | Accuracy of the generated answer on all 800 B cases must be **≥ 0.50**. Below it the result is **NOT EVALUABLE**. See the section below. |
+| Accuracy on B by family and by gold label | `report.json` → `behaviour`, `competence_gate.accuracy_B_by_gold` | Descriptive only. |
 | Primary result | `W_p_unknown` | As in Test U/U2 (HU1, HI1): **confirmed** if W ≥ 0.60 and the lower bound of the 95% interval is above 0.5; **not confirmed** if the upper bound is at or below 0.5; otherwise **not conclusive**. |
 | Families | `W_by_family_descriptive` | Descriptive only. In the original models W varied strongly by family. |
+
+## Competence gate on the determined cases
+
+**Rule.** For a new model, the primary result on the prose set is evaluated only if the model's generated answer is correct on at least **50% of the 800 determined B cases**. Below that threshold, `report` returns `NOT EVALUABLE` whatever the value of W. Accuracy per family and per gold label is reported, but it does not decide.
+
+**When and by whom.** The project owner fixed this rule on 14 November 2026, before running the benchmark on any new model.
+
+**Not in the original protocols.** Tests U, U2 and M had no competence gate on B. The rule does not change any original result: all four original models pass it.
+
+| Original model (P−S, archived runs) | Accuracy on B | on gold NO (AND) | on gold YES (OR, IMPLIES) | W of p(UNKNOWN) | Verdict |
+|---|---|---|---|---|---|
+| Qwen3-8B | 1.000 | 1.000 | 1.000 | 0.975 | CONFIRMED |
+| Llama-3.1-8B-Instruct | 0.943 | 0.978 | 0.925 | 0.746 | CONFIRMED |
+| OLMo-2-1124-7B-Instruct | 0.792 | 1.000 | 0.688 | 0.694 | CONFIRMED |
+| Mistral-Nemo-Instruct-2407 | 0.570 | 0.690 | 0.509 | 0.783 | CONFIRMED |
+
+These values are recomputed by `report` from the archived Test M reference scores, which match Test U2 exactly.
+
+**Why 0.50 and not 0.80.**
+- A 0.80 gate, the descriptive flag of Test C, would have excluded Mistral (0.57). Yet Mistral's p(UNKNOWN) separates C from B (W 0.783).
+- The purpose of the gate is to exclude models that do not perform the task at all. SmolLM2-360M is one: 0.38 on B, and it never answered NO. That figure comes from the separate 240-pair set, not from this benchmark.
+
+**Known limit of the rule.** The B cases are not balanced by answer: 532 have gold YES (OR and IMPLIES families) and 268 gold NO (AND family). A model that always answers YES therefore reaches 0.665 and passes the gate. `report` makes this visible in two ways: `accuracy_B_by_gold`, and the warning `label never generated: NO`. Such a model must be described with that warning; the gate alone does not exclude it.
 
 ## Comparison with the published values
 
@@ -40,5 +64,5 @@ Running one of these four models again at its pinned revision should give a clos
 
 - A confirmed W supports the original finding for that model, in this prose format only.
 - A not-confirmed W on a model that answers the determined cases correctly is evidence against generalisation to that model.
-- A not-confirmed W on a model that fails the determined cases, or never generates a label, tells nothing about the method.
+- A model below the competence gate is NOT EVALUABLE: its W tells nothing about the method. The same holds, as a warning, for a model that never generates one of the labels.
 - None of these results bears on hallucination detection with context, which remains unshown (see [`SCIENTIFIC_STATUS.md`](SCIENTIFIC_STATUS.md)).
