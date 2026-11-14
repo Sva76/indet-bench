@@ -61,7 +61,7 @@ class OriginalBenchmarkTests(unittest.TestCase):
         self.assertFalse(rep["competence_gate"]["passed"])
         self.assertTrue(rep["verdict"].startswith("NOT EVALUABLE"))
 
-    def test_constant_yes_answer_passes_overall_gate_but_is_flagged(self):
+    def test_constant_yes_answer_passes_overall_part_but_fails_gate(self):
         # 532 of the 800 B cases have gold YES, so always answering YES gives 0.665.
         out = ob.export_rows(self.rows, "PN")
         scores = [{"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
@@ -71,17 +71,17 @@ class OriginalBenchmarkTests(unittest.TestCase):
         self.assertAlmostEqual(rep["competence_gate"]["accuracy_B"], 532 / 800)
         self.assertEqual(rep["competence_gate"]["accuracy_B_by_gold"], {"NO": 0.0, "YES": 1.0})
         self.assertIn("label never generated: NO", rep["warnings"])
+        # The overall part passes, but the per-gold-label part excludes the constant answer.
+        self.assertTrue(rep["competence_gate"]["passed_overall"])
+        self.assertEqual(rep["competence_gate"]["failed_parts"], ["NO"])
+        self.assertFalse(rep["competence_gate"]["passed"])
+        self.assertTrue(rep["verdict"].startswith("NOT EVALUABLE"))
 
     def test_gate_threshold_is_inclusive_and_verdict_rule(self):
-        out = ob.export_rows(self.rows, "PN")
-        b_rows = [o for o in out if o["side"] == "B"]
-        right = {o["row_id"] for o in b_rows[: len(b_rows) // 2]}       # exactly 0.50 correct
-        scores = [{"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
-                   "side": o["side"], "score": "0.9" if o["side"] == "C" else "0.1",
-                   "parsed": o["gold"] if o["row_id"] in right else ("UNKNOWN" if o["side"] == "C" else "ALTRO"),
-                   "model_id": "fake", "model_revision": "0" * 40} for o in out]
-        rep = ob.report(scores, self.rows, n_bootstrap=200)
+        # Exactly 0.50 overall and on each gold label: 134/268 NO and 266/532 YES.
+        rep = ob.report(self._scores_with_b_correct({"NO": 134, "YES": 266}), self.rows, n_bootstrap=200)
         self.assertEqual(rep["competence_gate"]["accuracy_B"], 0.5)
+        self.assertEqual(rep["competence_gate"]["accuracy_B_by_gold"], {"NO": 0.5, "YES": 0.5})
         self.assertTrue(rep["competence_gate"]["passed"])
         self.assertEqual(rep["verdict"], "CONFIRMED")
         w = {"value": 0.55, "ci_lower": 0.49, "ci_upper": 0.61}
@@ -89,6 +89,76 @@ class OriginalBenchmarkTests(unittest.TestCase):
         self.assertEqual(ob.verdict({"value": 0.4, "ci_lower": 0.3, "ci_upper": 0.5}, True, "PN"),
                          "NOT CONFIRMED")
         self.assertTrue(ob.verdict(w, True, "SN").startswith("DESCRIPTIVE"))
+
+    def _scores_with_b_correct(self, n_correct: dict) -> list[dict]:
+        """Synthetic PN scores: the first n_correct[label] B cases of each gold label right,
+        the other B cases wrong (ALTRO); C always UNKNOWN with a higher score."""
+        out = ob.export_rows(self.rows, "PN")
+        seen = {"NO": 0, "YES": 0}
+        scores = []
+        for o in out:
+            if o["side"] == "B":
+                seen[o["gold"]] += 1
+                parsed = o["gold"] if seen[o["gold"]] <= n_correct[o["gold"]] else "ALTRO"
+            else:
+                parsed = "UNKNOWN"
+            scores.append({"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
+                           "side": o["side"], "score": "0.9" if o["side"] == "C" else "0.1",
+                           "parsed": parsed, "model_id": "fake", "model_revision": "0" * 40})
+        return scores
+
+    def test_b_cases_are_unbalanced_by_gold_label(self):
+        out = ob.export_rows(self.rows, "PN")
+        counts = {label: sum(o["side"] == "B" and o["gold"] == label for o in out) for label in ("NO", "YES")}
+        self.assertEqual(counts, {"NO": 268, "YES": 532})
+        self.assertEqual({o["family"] for o in out if o["side"] == "B" and o["gold"] == "NO"}, {"AND"})
+
+    def test_constant_no_answer_fails_overall_and_yes(self):
+        rep = ob.report(self._scores_with_b_correct({"NO": 268, "YES": 0}), self.rows, n_bootstrap=0)
+        gate = rep["competence_gate"]
+        self.assertAlmostEqual(gate["accuracy_B"], 268 / 800)
+        self.assertEqual(gate["failed_parts"], ["overall", "YES"])
+        self.assertTrue(rep["verdict"].startswith("NOT EVALUABLE"))
+
+    def test_per_label_threshold_is_inclusive_and_binding_when_overall_passes(self):
+        # 266/532 = 0.500 on gold YES: passes (inclusive).
+        rep = ob.report(self._scores_with_b_correct({"NO": 268, "YES": 266}), self.rows, n_bootstrap=200)
+        self.assertEqual(rep["competence_gate"]["accuracy_B_by_gold"]["YES"], 0.5)
+        self.assertTrue(rep["competence_gate"]["passed"])
+        self.assertEqual(rep["verdict"], "CONFIRMED")
+        # 265/532 < 0.50 on gold YES: overall 533/800 = 0.666 passes, the gate does not.
+        rep = ob.report(self._scores_with_b_correct({"NO": 268, "YES": 265}), self.rows, n_bootstrap=0)
+        gate = rep["competence_gate"]
+        self.assertTrue(gate["passed_overall"])
+        self.assertEqual(gate["passed_by_gold"], {"NO": True, "YES": False})
+        self.assertEqual(gate["failed_parts"], ["YES"])
+        self.assertTrue(rep["verdict"].startswith("NOT EVALUABLE"))
+        # Same on gold NO: 133/268 < 0.50 fails, 134/268 = 0.50 passes.
+        self.assertFalse(ob.report(self._scores_with_b_correct({"NO": 133, "YES": 532}),
+                                   self.rows, n_bootstrap=0)["competence_gate"]["passed"])
+        self.assertTrue(ob.report(self._scores_with_b_correct({"NO": 134, "YES": 532}),
+                                  self.rows, n_bootstrap=0)["competence_gate"]["passed"])
+
+    def test_original_four_models_pass_both_parts_of_the_gate(self):
+        for model, counts in ob.REFERENCE_B_ACCURACY_BY_GOLD_PS.items():
+            with self.subTest(model=model):
+                self.assertEqual({k: v[1] for k, v in counts.items()}, {"NO": 268, "YES": 532})
+                overall = (counts["NO"][0] + counts["YES"][0]) / 800
+                self.assertAlmostEqual(overall, ob.REFERENCE_B_ACCURACY_PS[model]["all"], places=3)
+                rep = ob.report(self._scores_with_b_correct({k: v[0] for k, v in counts.items()}),
+                                self.rows, n_bootstrap=0)
+                self.assertTrue(rep["competence_gate"]["passed"], model)
+                self.assertEqual(rep["competence_gate"]["failed_parts"], [])
+
+    def test_missing_gold_label_fails_gate(self):
+        scores = self._scores_with_b_correct({"NO": 268, "YES": 532})
+        gold = {r["row_id"]: r for r in self.rows}
+        b_yes_only = [s for s in scores if s["side"] == "B" and gold[s["row_id"]]["condition"] == "YES"]
+        gate = ob.competence_gate(b_yes_only, gold)
+        self.assertIsNone(gate["accuracy_B_by_gold"]["NO"])
+        self.assertEqual(gate["n_B_by_gold"]["NO"], 0)
+        self.assertFalse(gate["passed"])
+        self.assertEqual(gate["failed_parts"], ["NO"])
 
     def test_report_rejects_rows_outside_benchmark(self):
         with self.assertRaisesRegex(ValueError, "not in the frozen benchmark"):

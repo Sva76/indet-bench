@@ -45,15 +45,32 @@ REFERENCE_W_PS = {
 # Binding competence gate for NEW models (owner decision of 14 November 2026, fixed before
 # any new-model data). The original protocols of Tests U2/M had no such gate. Overall
 # accuracy of the generated answer on the determined B cases of the prose set (PN) must be
-# at least 0.50; below it the primary result is NOT EVALUABLE, because the model does not
+# at least 0.50 (and also per gold label, see GATE_LABELS below); below it the primary result is NOT EVALUABLE, because the model does not
 # perform the task. A 0.80 gate would have excluded Mistral-Nemo (0.57); 0.50 keeps all four
 # original models and excludes models that do not answer determined cases (SmolLM2-360M:
 # 0.38 on the separate 240-pair set). Per-family accuracy stays descriptive.
 COMPETENCE_GATE_B_ACCURACY = 0.50
+# Second part of the same gate, added on 14 November 2026 by the owner, also before any
+# new-model data: the threshold must be met SEPARATELY on the B cases whose gold answer is
+# YES (OR and IMPLIES, 532 cases) and on those whose gold answer is NO (AND, 268 cases).
+# Reason: the B cases are not balanced by answer, so a model that always answers YES would
+# reach 532/800 = 0.665 overall and pass the overall threshold without discriminating at
+# all. Requiring >= 0.50 on each gold label excludes any constant answer. The original four
+# models all pass (lowest: Mistral-Nemo on gold YES, 271/532 = 0.509). Because the overall
+# accuracy is a weighted mean of the two per-label accuracies, this part implies the overall
+# one; both are reported. Per-family accuracy stays descriptive.
+GATE_LABELS = ("NO", "YES")
 GATE_SUBSET = "PN"
 
 # Generated-answer accuracy on B, P-S, same runs (env_m1 reference of Test M, identical
 # to Test U2). Descriptive: the original protocols had no competence gate on B.
+# Same runs, accuracy on B by gold label (Test U2 punteggi.csv, set PN; counts correct/total).
+REFERENCE_B_ACCURACY_BY_GOLD_PS = {
+    "Qwen/Qwen3-8B": {"NO": (268, 268), "YES": (532, 532)},
+    "mistralai/Mistral-Nemo-Instruct-2407": {"NO": (185, 268), "YES": (271, 532)},
+    "allenai/OLMo-2-1124-7B-Instruct": {"NO": (268, 268), "YES": (366, 532)},
+    "meta-llama/Llama-3.1-8B-Instruct": {"NO": (262, 268), "YES": (492, 532)},
+}
 REFERENCE_B_ACCURACY_PS = {
     "Qwen/Qwen3-8B": {"AND": 1.000, "OR": 1.000, "IMPLIES": 1.000, "all": 1.000},
     "mistralai/Mistral-Nemo-Instruct-2407": {"AND": 0.690, "OR": 0.597, "IMPLIES": 0.420, "all": 0.570},
@@ -144,25 +161,47 @@ def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
     result["warnings"] = [f"label never generated: {label}" for label in ("YES", "NO", "UNKNOWN")
                           if label not in labels_seen]
     b_rows = [s for s in score_rows if gold[s["row_id"]]["kind"] == "B"]
-    b_accuracy = sum(s.get("parsed") == gold[s["row_id"]]["condition"] for s in b_rows) / len(b_rows)
-    passed = b_accuracy >= COMPETENCE_GATE_B_ACCURACY
-    result["competence_gate"] = {
-        "rule": "accuracy of generated answers on all B cases >= 0.50 (binding for new models, "
-                "prose set PN; decided 14 Nov 2026 before new-model data; not part of the "
-                "original Test U2/M protocols)",
-        "threshold": COMPETENCE_GATE_B_ACCURACY, "accuracy_B": b_accuracy, "n_B": len(b_rows),
-        "passed": passed,
-        # Descriptive: 532 of 800 B cases have gold YES (OR, IMPLIES) and 268 gold NO (AND),
-        # so a model that always answers YES reaches 0.665 overall.
-        "accuracy_B_by_gold": {label: sum(s.get("parsed") == label for s in grp) / len(grp)
-                               for label in ("NO", "YES")
-                               for grp in [[s for s in b_rows if gold[s["row_id"]]["condition"] == label]]
-                               if grp},
-    }
+    result["competence_gate"] = competence_gate(b_rows, gold)
+    passed = result["competence_gate"]["passed"]
     result["verdict"] = verdict(result["W_p_unknown"], passed, result["subset"])
     result["published_reference_P-S"] = {k: dict(zip(("W", "ci_lower", "ci_upper"), v))
                                          for k, v in REFERENCE_W_PS.items()}
     return result
+
+
+def competence_gate(b_rows: list[dict], gold: dict) -> dict:
+    """Binding competence gate on the determined B cases (new models, set PN).
+
+    Passed only if the accuracy of the generated answer is >= 0.50 (inclusive) both overall
+    and separately on the B cases with gold NO and on those with gold YES. A gold label with
+    no B rows in the scores counts as not passed: the gate cannot be checked on it.
+    """
+    def accuracy(group):
+        if not group:
+            return None
+        return sum(s.get("parsed") == gold[s["row_id"]]["condition"] for s in group) / len(group)
+
+    by_gold_rows = {label: [s for s in b_rows if gold[s["row_id"]]["condition"] == label]
+                    for label in GATE_LABELS}
+    b_accuracy = accuracy(b_rows)
+    by_gold = {label: accuracy(grp) for label, grp in by_gold_rows.items()}
+    overall_ok = b_accuracy is not None and b_accuracy >= COMPETENCE_GATE_B_ACCURACY
+    labels_ok = {label: acc is not None and acc >= COMPETENCE_GATE_B_ACCURACY
+                 for label, acc in by_gold.items()}
+    failed = ([] if overall_ok else ["overall"]) + [label for label, ok in labels_ok.items() if not ok]
+    return {
+        "rule": "accuracy of generated answers on B >= 0.50 overall AND separately on gold NO "
+                "and on gold YES (binding for new models, prose set PN; decided 14 Nov 2026 "
+                "before new-model data; not part of the original Test U2/M protocols)",
+        "threshold": COMPETENCE_GATE_B_ACCURACY,
+        "accuracy_B": b_accuracy, "n_B": len(b_rows),
+        "accuracy_B_by_gold": by_gold,
+        "n_B_by_gold": {label: len(grp) for label, grp in by_gold_rows.items()},
+        "passed_overall": overall_ok,
+        "passed_by_gold": labels_ok,
+        "failed_parts": failed,
+        "passed": not failed,
+    }
 
 
 def verdict(w: dict, gate_passed: bool, subset: str) -> str:
@@ -170,7 +209,7 @@ def verdict(w: dict, gate_passed: bool, subset: str) -> str:
     if subset != GATE_SUBSET:
         return "DESCRIPTIVE (only the prose set PN has a decision rule)"
     if not gate_passed:
-        return "NOT EVALUABLE (competence gate on B not passed)"
+        return "NOT EVALUABLE (competence gate on B not passed; see competence_gate.failed_parts)"
     if w["ci_lower"] is None or w["ci_upper"] is None:
         return "NO INTERVAL (bootstrap disabled; rerun with --bootstrap 2000)"
     if w["ci_lower"] > 0.5 and w["value"] >= 0.60:
