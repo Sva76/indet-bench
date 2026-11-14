@@ -66,7 +66,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        model: [qwen05, tinyllama11]
+        # Must list exactly the models of the inference matrix above.
+        # Before this fix it still listed qwen05/tinyllama11, so run
+        # 43582196401 produced 12 successful inference shards and no report.
+        model: [qwen15, smol17, olmo1]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

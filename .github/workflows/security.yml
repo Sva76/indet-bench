@@ -2,8 +2,9 @@ name: Python security checks (Bandit)
 on:
   push:
     branches: [main, feature/initial-cpu-metrics]
+  # Every pull request, whatever its base branch: PRs into the development
+  # branches (#2, #3) previously ran no unit tests at all.
   pull_request:
-    branches: [main]
 
 permissions:
   contents: read
