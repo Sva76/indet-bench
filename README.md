@@ -35,6 +35,7 @@ The command computes block-averaged W(C>B), ties worth 0.5, paired delta-W using
 - **[Verify the results on a new model](docs/VERIFY_ON_NEW_MODELS.md)**: run the frozen original benchmark (800 prose B/C pairs) on any Hugging Face model and compare with the published values.
 - [Development plan, acceptance and limits](docs/ROADMAP.md).
 - [AI assistance disclosure](docs/AI_USAGE.md) — AI-assisted planning, coding, analysis and writing, with human oversight and documented limits.
+- **[Related work](docs/RELATED_WORK.md)**: closest published work, what IndetBench adds and what it does not claim.
 - [References and attribution](docs/REFERENCES.md) — verified core paper citations in [BibTeX](docs/REFERENCES.bib); model revisions and remaining references require further checks.
 - [Third-party terms](docs/THIRD_PARTY.md) — per-model, library and dataset licensing.
 - [Copyright notice](LICENSE) — **all rights reserved, Simona Vargiu; no license is granted for now.** A noncommercial license (PolyForm Noncommercial 1.0.0 is under consideration) will be evaluated when the repository is opened to researchers. Third-party terms are unaffected.
