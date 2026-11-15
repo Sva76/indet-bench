@@ -1,6 +1,6 @@
 # Archived-results reproducibility — Step 3 progress
 
-**Status:** CPU replay implemented for Test C and Test M notebooks A/B. These are *not* new model experiments. Since 15 November 2026 the source archives of Tests U2, M and C are published in [`research_originals/step2/outputs/`](../research_originals/step2/outputs/README.md); the notebook A archive without its TriviaQA rows (SHA-256 `fa9577be…6e033`; the replay passes on it with the same 498 values). `tests/test_original_archives.py` runs the three replays in CI.
+**Status:** CPU replay implemented for Tests U, U2, C (including HC4) and Test M notebooks A/B. These are *not* new model experiments. Since 15 November 2026 the source archives of Tests U, U2, M and C are published in [`research_originals/step2/outputs/`](../research_originals/step2/outputs/README.md); the notebook A archive without its TriviaQA rows (SHA-256 `fa9577be…6e033`; the replay passes on it with the same 498 values). `tests/test_original_archives.py` runs all six replays in CI.
 
 ## Evidence from local replay against original archives
 
@@ -29,7 +29,19 @@ The committed replayer (`python -m indetbench.replay`, this branch) was executed
 | `testM_A_risultati_completo.zip` | `5f2922d7…1cbc` | M-A | 498 numeric values (116 metric groups) | 0 |
 | `testM_B_risultati_completo.zip` | `a78cf5a0…bbea3a` | M-B | 176 | 0 |
 
-The 498 values of the CLI (M-A) and the 400 scalar fields of the earlier independent check are two different counts of the same archive; both match. Boundary 1 below is therefore closed. Test U/U2 replay (boundary 2) and HC4 (boundary 3) remain open. For boundary 2, the U2 archive is now published and a unit test recomputes the HI1 W on set PN for the four models (equal to the archived estimates); the other U2 hypotheses and Test U are not replayed.
+The 498 values of the CLI (M-A) and the 400 scalar fields of the earlier independent check are two different counts of the same archive; both match. Boundary 1 below is therefore closed. Boundaries 2 (Tests U and U2) and 3 (HC4 reproducibility) were closed on 15 November 2026; see the table below. What remains open for HC4 is the correctness of the labels, not their reproducibility.
+
+## Replays added on 2026-11-15 (published archives, CI)
+
+Run with `python -m indetbench.replay <archive> --kind <kind>` on the archives in `research_originals/step2/outputs/`; `tests/test_original_archives.py` runs them on every change. Python 3.11, NumPy 2.x locally; CI on Python 3.10 and 3.12.
+
+| Archive | SHA-256 | `--kind` | Values checked | Differences |
+|---|---|---|---:|---:|
+| `testU_risultati.zip` | `f47231eb…9b30` | U | 8,517 (`esiti.json` of 4 models and 4 `celle.csv`) | 0 |
+| `testU2_risultati.zip` | `dbcd61fa…9433` | U2 | 1,319 (`esiti.json` of 4 models, `conferme`) | 0 |
+| `completo_Drive_20261113.zip` | `da84d9bf…bbed` | C-HC4 | 44,969 (21,582 answer labels and details, category counts, HC4 of 38 results) | 0 |
+
+The U and U2 replays are NumPy re-implementations of the analysis cells of the two notebooks, now in `research_originals/step2/notebooks/`. The bootstrap uses the same seed (20261108) and the same calls, so the intervals match to 1e-10, not only the point estimates; with another seed the replay reports differences (unit test). They do not re-run models: the SQuAD-detector fit of Test U, the tokenizer lengths and the 24-value GPU alignment of U2 cannot be recomputed from the scores.
 
 ## Run the proposed replay code
 
@@ -45,8 +57,8 @@ The replay command returns nonzero when a statistic differs from its archived ta
 ## Boundaries and remaining work
 
 1. Test M **notebook A**: closed on 2026-11-14 — the committed replayer was run directly on the original file (498 values, 0 differences; see table above).
-2. Test U and Test U2: numeric replay is not part of the current implementation.
-3. Test C **HC4**: response labels and classifier agreement require separate analysis. No HC4 revalidation is implied by W and ΔW parity.
+2. Test U and Test U2: closed on 2026-11-15 (table above).
+3. Test C **HC4**: reproducibility closed on 2026-11-15 — the frozen classifier gives the archived label for all 21,582 answers and the HC4 statistics follow (table above). Still open: whether the labels are right. The classifier agreed with the owner's blind classification of 100 answers in 0.680 of cases (threshold 0.90, kappa 0.619), so HC4 carries the protocol's warning; a second, independent human annotation has not been done. HC4 within C is also confounded with passage family.
 4. Classification sample and natural-language semantic review were partly AI assisted; do not describe them as independently double-blind.
 5. An optional first-token p(UNKNOWN) Hugging Face runner has been implemented and unit tested; a real-model inference smoke test with an immutable model SHA is still required.
 6. A fresh run of the code committed to GitHub and CI validation should be captured before a v0.1 release; this table records local parity checks from the development process.
@@ -56,4 +68,4 @@ The replay command returns nonzero when a statistic differs from its archived ta
 - Frozen archive provenance must be checked by SHA-256.
 - Different reference environments are not silently interchanged: M1 uses its own reference, M2/M3 use env_sirin, M4 uses its recorded reference.
 - Missing B/C scores are never silently replaced by zero.
-- No model weights or third-party implementations are committed. Since 15 November 2026 the original per-row outputs of Tests U2, M and C, including SQuAD 2.0-derived passages under CC BY-SA 4.0, are committed in `research_originals/step2/outputs/`; see [`THIRD_PARTY.md`](THIRD_PARTY.md).
+- No model weights or third-party implementations are committed. Since 15 November 2026 the original per-row outputs of Tests U, U2, M and C, including SQuAD 2.0-derived passages under CC BY-SA 4.0, are committed in `research_originals/step2/outputs/`; see [`THIRD_PARTY.md`](THIRD_PARTY.md).
