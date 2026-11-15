@@ -40,6 +40,10 @@ This is **not** a claim that the full original Step 1/Step 2 research package is
 
 The complete Test C selection `dati/righe_C.json` (2,478 rows including technical and natural cases) is **intentionally not committed**, because it includes natural examples derived from third-party SQuAD 2.0. Its SHA-256 and the source archive's SHA-256 are recorded; inspect attribution and licensing before any distribution. Model outputs and third-party weights are also held back for rights review.
 
+## What is not here
+
+This is a substantial partial recovery, not the entire historical research archive. Not committed: complete natural SQuAD-derived rows (third-party content), several original Test U/U2 and Step 1 files, the per-row model-output ZIPs of Tests U2, M and C, environment captures and model weights. The output ZIPs are held by the owner, not published; their SHA-256 values are in [`docs/REPRODUCIBILITY_STATUS.md`](../docs/REPRODUCIBILITY_STATUS.md), so any copy can be checked byte for byte with `python -m indetbench.replay --expected-sha256`. The M-A and M-B original frozen inputs were checked to be identical.
+
 ## Rights and provenance
 
 The root license (PolyForm Noncommercial 1.0.0, © Simona Vargiu) covers the owner's original material archived here; third-party content is excluded or keeps its own terms. **Do not change licensing without explicit owner approval and third-party rights review.**
