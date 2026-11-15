@@ -1,6 +1,6 @@
 # Test your own model (experimental Hugging Face runner)
 
-This is an **experimental adapter API and CLI**; it has passed a CPU smoke test on SmolLM2-360M-Instruct and has been run on CPU on five more small models on the 240-pair set ([competence verdicts](COMPETENCE_240_PAIRS.md)), but general model support and semantic answer correctness are not yet validated. It requires a separate GPU/CPU environment suitable for the weights.
+This is an **experimental adapter API and CLI**; it has passed a CPU smoke test on SmolLM2-360M-Instruct and has been run on CPU on five more small models on the 240-pair set ([competence verdicts](COMPETENCE_240_PAIRS.md)), but general model support and semantic answer correctness are not yet validated. For every row the runner records the generated text, the parsed label (`ALTRO` when the text does not start with YES, NO or UNKNOWN) and `mass_total`, the first-token probability of all label variants, so a model whose answer does not start with a label, or whose first token is not a label variant, is visible (`ALTRO` count, low mass). These indicators do not catch every verbose answer: `YES, because …` is parsed as `YES` and can have high mass, so inspect the `generated` column as well. What is still missing is a human check, on a sample of real outputs, that the parsed label matches the meaning of the generated text. It requires a separate GPU/CPU environment suitable for the weights.
 
 ## Input schema
 
