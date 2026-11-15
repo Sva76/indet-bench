@@ -41,6 +41,10 @@ MIN_PASSAGES = 15    # MIN_PASSAGGI_HC4
 M1_ESTIMATORS = ("MSP", "Perplexity", "MeanTokenEntropy", "SemanticEntropy", "PTrue")
 MODELS = ("qwen", "mistral", "olmo", "llama")
 EXPECTED_RESULTS = 38  # method/model results with HC4 in the frozen run
+EXPECTED_KEYS = frozenset(
+    [(m, model) for model in MODELS for m in ("riferimento p(UNKNOWN)", *("M1-" + e for e in M1_ESTIMATORS),
+                                              "M2", "M2-senzaℓ2", "M3")]
+    + [("M4-lin", "llama"), ("M4-LoRA", "llama")])
 
 
 def finite(x):
@@ -224,6 +228,11 @@ def replay_c_hc4(path, seed=SEED, n_boot=BOOT):
                         "entro_C": computed["entro_C"]["esito"], "entro_B": computed["entro_B"]["esito"]})
     if len(results) != EXPECTED_RESULTS:
         errors.append({"field": "HC4.results", "expected": EXPECTED_RESULTS, "actual": len(results)})
+    keys = [(r["metodo"], r["modello"]) for r in results]
+    duplicates = sorted({k for k in keys if keys.count(k) > 1})
+    if duplicates or set(keys) != EXPECTED_KEYS:
+        errors.append({"field": "HC4.coverage", "duplicates": duplicates,
+                       "missing": sorted(EXPECTED_KEYS - set(keys)), "unexpected": sorted(set(keys) - EXPECTED_KEYS)})
     return {
         "test": "C-HC4", "passed": not errors, "values_checked": checked, "errors": errors[:50],
         "n_errors": len(errors), "labels": label_stats, "hc4": results, "rules": K.VERSIONE_REGOLE,
