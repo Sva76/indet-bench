@@ -35,13 +35,17 @@ W = share of pairs in which C scores above B, averaged within stories (ties coun
 | | Falcon3-7B-Instruct | 0.931 [0.911, 0.950] | exploratory |
 | | Gemma-2-9B-it | 0.818 [0.788, 0.848] | exploratory |
 | | Yi-1.5-9B-Chat | – | not evaluable (technical: label mass ≈ 0 at the first token) |
+| Same benchmark, larger models (15 Nov 2026) | Qwen3-32B | 0.975 [0.961, 0.988] | exploratory |
+| | Llama-3.3-70B-Instruct (4-bit nf4) | 0.908 [0.889, 0.928] | exploratory |
+| | OLMo-2-0325-32B-Instruct | 0.886 [0.861, 0.910] | exploratory |
+| | Gemma-2-27B-it | 0.870 [0.839, 0.900] | exploratory |
 
 - **Published methods (Tests M and C, preregistered):** no tested method (LM-Polygraph estimators, SIRIN probe and judge, Obeso et al. probes) showed a *replicated* improvement over `p(UNKNOWN)`. The one positive case, an Obeso LoRA probe on Llama in Test M, did not replicate in Test C. This does **not** mean that `p(UNKNOWN)` is universally better.
-- **Not specific, so far:** on the new models, generic uncertainty from the same outputs (entropy, maximum probability) does about as well as `p(UNKNOWN)` and better on Gemma (descriptive). It is not shown that `p(UNKNOWN)` carries information specific to indeterminacy.
-- **Limits:** prose format only (weak or reversed in symbolic formats); strong dependence on logical family and wording; the NOT variant is weaker in all new models (open question).
+- **Not specific, so far:** on the new models, generic uncertainty from the same outputs (entropy, maximum probability) does about as well as `p(UNKNOWN)` and better on Gemma-2-9B (descriptive). On the larger models the sign is split: `p(UNKNOWN)` is above the best baseline on Qwen3-32B and Gemma-2-27B, below it on OLMo-2-32B and Llama-3.3-70B (descriptive). It is not shown that `p(UNKNOWN)` carries information specific to indeterminacy.
+- **Limits:** prose format only (weak or reversed in symbolic formats); strong dependence on logical family and wording; the NOT variant was weaker in all 14 November models, but stronger than POS in Qwen3-32B and Llama-3.3-70B, so "NOT is always weaker" is falsified (open question, [§2.1](docs/LARGER_MODELS_RESULTS_2026-11-15.md)).
 - **Small models (240-pair set, CPU, exploratory):** only Qwen2.5-1.5B passes the competence gate; SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B and OLMo-2-1B fail it and are not evaluable; TinyLlama is not measurable ([verdicts](docs/COMPETENCE_240_PAIRS.md), [SmolLM2-360M study](docs/SMOLLM2_STAT_STUDY_RESULTS.md)).
 
-Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model report](docs/NEW_MODELS_RESULTS_2026-11-14.md), [Related work](docs/RELATED_WORK.md).
+Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model report](docs/NEW_MODELS_RESULTS_2026-11-14.md), [larger-model report](docs/LARGER_MODELS_RESULTS_2026-11-15.md), [part B protocol (reasoning models)](docs/REASONING_PART_B_PROTOCOL.md), [Related work](docs/RELATED_WORK.md).
 
 ## Reproducibility
 
