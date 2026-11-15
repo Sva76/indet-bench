@@ -1,0 +1,101 @@
+n,row_id,modello,origine,categoria_Simona
+1,C-0162|CONF|C,olmo,M1-riferimento,attribuite
+2,C-0034|RIM|B,mistral,M1-LM-Polygraph,corretta
+3,C-0025|CONF|C,llama,M1-riferimento,astensione
+4,C-0074|DUE|C,qwen,M1-riferimento,alternative
+5,C-0032|CONF|B,olmo,M1-riferimento,corretta
+6,C-0018|RIM|C,olmo,M1-riferimento,entrambi affermati
+7,C-0191|DUE|C,llama,M1-riferimento,corretta
+8,C-0188|CONF|C,llama,M1-LM-Polygraph,entrambi affermati
+9,C-0127|CONF|C,llama,M1-LM-Polygraph,attribuite
+10,C-0106|RIM|B,mistral,M1-riferimento,corretta
+11,C-0119|CONF|C,olmo,M1-riferimento,corretta
+12,C-0094|RIM|C,mistral,M1-riferimento,astensione
+13,C-0005|DUE|C,olmo,M1-riferimento,alternative
+14,C-0100|LOG|C,olmo,M1-LM-Polygraph,corretta
+15,C-0018|RIM|C,olmo,M1-LM-Polygraph,entrambi affermati
+16,C-0050|CONF|C,qwen,M1-riferimento,attribuite
+17,C-0048|RIM|C,llama,M1-LM-Polygraph,astensione
+18,C-0090|CONF|C,qwen,M1-riferimento,attribuite
+19,C-0141|CONF|C,llama,M1-riferimento,attribuite
+20,C-0119|DUE|C,mistral,M1-LM-Polygraph,corretta
+21,C-0130|CONF|C,olmo,M1-LM-Polygraph,attribuite
+22,C-0146|LOG|B,olmo,M1-riferimento,corretta
+23,C-0169|LOG|C,olmo,M1-riferimento,astensione
+24,C-0056|DUE|C,mistral,M1-riferimento,alternative
+25,C-0135|CONF|C,qwen,M1-riferimento,astensione
+26,C-0146|CONF|C,qwen,M1-LM-Polygraph,attribuite
+27,C-0171|CONF|C,olmo,M1-LM-Polygraph,corretta
+28,C-0186|DUE|C,llama,M4-generazione,alternative
+29,C-0095|DUE|C,llama,M1-riferimento,alternative
+30,C-0167|DUE|C,olmo,M1-LM-Polygraph,alternative
+31,C-0158|LOG|C,qwen,M1-LM-Polygraph,attribuite
+32,C-0020|CONF|C,llama,M4-generazione,entrambi affermati
+33,C-0066|RIM|C,llama,M1-riferimento,corretta
+34,C-0042|CONF|C,olmo,M1-riferimento,un valore del contesto
+35,C-0180|LOG|B,llama,M1-LM-Polygraph,corretta
+36,C-0036|DUE|C,llama,M4-generazione,alternative
+37,C-0161|DUE|C,qwen,M1-LM-Polygraph,alternative
+38,C-0189|LOG|C,olmo,M1-riferimento,alternative
+39,C-0078|DUE|C,olmo,M1-riferimento,alternative
+40,C-0158|LOG|C,olmo,M1-riferimento,astensione
+41,C-0005|CONF|C,llama,M1-LM-Polygraph,corretta
+42,C-0166|DUE|C,llama,M1-LM-Polygraph,alternative
+43,C-0190|RIM|C,mistral,M1-LM-Polygraph,astensione
+44,C-0054|LOG|C,qwen,M1-LM-Polygraph,attribuite
+45,C-0082|CONF|C,qwen,M1-riferimento,attribuite
+46,C-0083|LOG|B,qwen,M1-riferimento,corretta
+47,C-0082|DUE|C,llama,M1-LM-Polygraph,alternative
+48,C-0020|CONF|C,llama,M1-riferimento,entrambi affermati
+49,C-0084|CONF|C,llama,M1-riferimento,entrambi affermati
+50,C-0059|CONF|C,qwen,M1-riferimento,astensione
+51,C-0103|DUE|B,llama,M4-generazione,corretta
+52,C-0122|RIM|C,llama,M4-generazione,corretta
+53,C-0118|LOG|B,qwen,M1-LM-Polygraph,corretta
+54,C-0067|CONF|C,llama,M4-generazione,entrambi affermati
+55,C-0108|CONF|C,olmo,M1-LM-Polygraph,entrambi affermati
+56,C-0016|LOG|B,qwen,M1-riferimento,corretta
+57,C-0197|LOG|B,qwen,M1-LM-Polygraph,astensione
+58,C-0001|DUE|C,mistral,M1-riferimento,alternative
+59,C-0176|RIM|B,olmo,M1-LM-Polygraph,corretta
+60,C-0008|DUE|C,mistral,M1-LM-Polygraph,alternative
+61,C-0185|CONF|C,llama,M4-generazione,attribuite
+62,C-0039|CONF|C,llama,M4-generazione,astensione
+63,C-0049|DUE|C,qwen,M1-riferimento,alternative
+64,C-0059|CONF|C,llama,M4-generazione,entrambi affermati
+65,C-0182|CONF|C,qwen,M1-LM-Polygraph,attribuite
+66,C-0174|RIM|C,mistral,M1-LM-Polygraph,astensione
+67,C-0100|DUE|C,mistral,M1-LM-Polygraph,alternative
+68,C-0109|CONF|C,llama,M1-riferimento,corretta
+69,C-0154|LOG|C,mistral,M1-riferimento,astensione
+70,C-0011|CONF|C,llama,M1-riferimento,entrambi affermati
+71,C-0091|RIM|B,olmo,M1-riferimento,corretta
+72,C-0036|CONF|C,llama,M4-generazione,entrambi affermati
+73,C-0131|CONF|B,llama,M4-generazione,corretta
+74,C-0173|CONF|C,llama,M4-generazione,corretta
+75,C-0058|RIM|C,olmo,M1-LM-Polygraph,astensione
+76,C-0013|RIM|B,mistral,M1-LM-Polygraph,corretta
+77,C-0189|LOG|C,olmo,M1-LM-Polygraph,alternative
+78,C-0052|CONF|C,llama,M1-riferimento,astensione
+79,C-0171|RIM|B,llama,M1-LM-Polygraph,corretta
+80,C-0173|RIM|C,olmo,M1-LM-Polygraph,astensione
+81,C-0180|LOG|B,mistral,M1-riferimento,corretta
+82,C-0020|CONF|C,llama,M1-LM-Polygraph,entrambi affermati
+83,C-0163|CONF|C,llama,M1-LM-Polygraph,entrambi affermati
+84,C-0166|RIM|B,qwen,M1-LM-Polygraph,corretta
+85,C-0044|LOG|C,olmo,M1-riferimento,corretta
+86,C-0104|CONF|C,olmo,M1-LM-Polygraph,alternative
+87,C-0043|LOG|C,qwen,M1-LM-Polygraph,corretta
+88,C-0122|RIM|B,llama,M1-riferimento,corretta
+89,C-0003|DUE|B,llama,M1-riferimento,corretta
+90,C-0160|LOG|B,llama,M1-LM-Polygraph,astensione
+91,C-0130|LOG|C,qwen,M1-riferimento,corretta
+92,C-0186|DUE|C,qwen,M1-LM-Polygraph,alternative
+93,C-0183|DUE|C,mistral,M1-riferimento,corretta
+94,C-0161|RIM|B,olmo,M1-LM-Polygraph,corretta
+95,C-0091|RIM|B,olmo,M1-LM-Polygraph,corretta
+96,C-0083|CONF|C,llama,M1-LM-Polygraph,attribuite
+97,C-0083|CONF|C,llama,M1-riferimento,attribuite
+98,C-0055|DUE|C,qwen,M1-LM-Polygraph,astensione
+99,C-0159|CONF|C,llama,M4-generazione,astensione
+100,C-0066|RIM|C,llama,M1-LM-Polygraph,corretta

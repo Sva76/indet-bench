@@ -304,6 +304,11 @@
         "source": "PHI/Step2_uscite/TestU2_istruzione_4_modelli_v2.ipynb",
         "sha256": "2249060da0ed4a42879158e94767fc2831b6868b0b124870f335342c2b85ef39",
         "note": "notebook of the complete run (version U2-v1-notebook-2), byte copy, no outputs; its analysis is re-implemented in src/indetbench/replay_u2.py"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/etichette_Simona_campione_C.csv",
+        "source": "PHI/Step2_uscite/testC_completo_risultati/campione_classificazione_Simona_compilato_definitivo.xlsx (columns n, row_id, modello, origine, categoria_Simona)",
+        "note": "owner's blind classification of the 100-answer Test C sample, categories only, notes left out (owner's decision, 15 Nov 2026)"
       }
     ],
     "decision_testU": "owner, 15 Nov 2026: publish the Test U archive if it exists and nothing prevents it",

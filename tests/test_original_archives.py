@@ -127,6 +127,15 @@ class ReplayHelpers(unittest.TestCase):
         self.assertEqual(a["disagreements"], [{"n": 3, "automatic": "un valore del contesto", "human": "corretta"}])
         self.assertFalse(a["meets_threshold"])
 
+    def test_owner_annotations_agreement(self):
+        from indetbench.replay_c_hc4 import key_from_archive, read_human_labels
+        labels = read_human_labels(ROOT / "test_c_controls" / "etichette_Simona_campione_C.csv")
+        a = annotation_agreement(labels, key_from_archive(OUT / "completo_Drive_20261113.zip"))
+        self.assertEqual((a["n"], a["missing"], len(a["disagreements"])), (100, 0, 32))
+        self.assertAlmostEqual(a["agreement"], 0.68)
+        self.assertAlmostEqual(a["kappa"], 0.6194100856327308)
+        self.assertAlmostEqual(a["agreement_hc4_class"], 0.77)
+
     def test_frozen_classifier_is_the_archived_script(self):
         import indetbench.tc_classifica_frozen as K
         with zipfile.ZipFile(OUT / "completo_Drive_20261113.zip") as outer:
