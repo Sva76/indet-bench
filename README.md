@@ -4,22 +4,23 @@
 
 When a passage does or does not uniquely determine an answer, does an uncertainty estimator rank the underdetermined version above the determined one? IndetBench uses paired variants **B** (answer determined) and **C** (answer not determined) and compares candidate methods with a simple, training-free reference: the first-token probability `p(UNKNOWN)`. It is **a benchmark and validation protocol, not a new uncertainty detector**, and it does not certify hallucination detection.
 
-> **Status: public, development / pre-alpha.** Still pending: an independent human check of the Test C answer labels behind HC4, human semantic review of the 240-pair set, broader model compatibility, a tagged release. See [Scientific status](docs/SCIENTIFIC_STATUS.md) and [Roadmap](docs/ROADMAP.md).
+> **Status: public, development / pre-alpha.** Still pending: a documented human review of the gold labels of the 800-pair benchmark and of the 240-pair set (two independent annotators), an independent human check of the Test C answer labels behind HC4, an independent human review of the code, a tagged release. See [Scientific status](docs/SCIENTIFIC_STATUS.md) and [Roadmap](docs/ROADMAP.md).
 
 ## Quickstart
 
 ```bash
-python -m pip install -e '.[hf,replay]'
-python -m unittest discover -s tests -v
+python -m pip install 'indetbench[hf] @ git+https://github.com/Sva76/indet-bench'
+# or, from a clone, to also run the tests and the archive replays:
+#   python -m pip install -e '.[hf,replay]' && python -m unittest discover -s tests -v
 
 # Run the frozen original benchmark (800 prose B/C pairs) on a Hugging Face model
-python -m indetbench.original_benchmark export --set PN --output original_PN.jsonl
+indet-bench-original export --set PN --output original_PN.jsonl
 python -m indetbench.hf_runner --model-id ORG/MODEL --revision FULL_40_CHAR_SHA \
     --model-key other --input original_PN.jsonl --output scores.csv --max-new-tokens 8
-python -m indetbench.original_benchmark report --scores scores.csv > report.json
+indet-bench-original report --scores scores.csv > report.json
 ```
 
-Use `--model-key qwen` for Qwen3 (thinking off, as in the original runs) and a 40-character commit hash from the model provider's history as revision. The report gives W of `p(UNKNOWN)` with a 95% interval, the binding competence gate and the verdict. Full procedure and how to read it: [Verify the results on a new model](docs/VERIFY_ON_NEW_MODELS.md). Your own B/C pairs: [Test your model](docs/RUN_YOUR_MODEL.md). Scores from any method, as a CSV `pair_id,block_id,side,score` (higher = more indeterminate; `block_id` = story): `python -m indetbench --scores my_scores.csv --bootstrap 2000` (demo files in `examples/`, invented values). This generic CLI uses its own deterministic bootstrap, so its intervals are not automatically comparable with the historical reports; the archive replayer below follows the original one.
+Use `--model-key qwen` for Qwen3 (thinking off, as in the original runs) and a 40-character commit hash from the model provider's history as revision. The report checks the score file against the frozen benchmark, then gives W of `p(UNKNOWN)` with a 95% interval, coverage, the binding competence gate and the verdict. All rules: [Protocol](docs/PROTOCOL.md). p(UNKNOWN) needs first-token probabilities, so it cannot be measured on APIs that do not return them; other methods, black-box ones included, can be scored on the same pairs and are reported separately. Full procedure and how to read it: [Verify the results on a new model](docs/VERIFY_ON_NEW_MODELS.md). Your own B/C pairs: [Test your model](docs/RUN_YOUR_MODEL.md). Scores from any method, as a CSV `pair_id,block_id,side,score` (higher = more indeterminate; `block_id` = story): `indet-bench --scores my_scores.csv --bootstrap 2000` (demo files in `examples/`, invented values). This generic CLI uses its own deterministic bootstrap, so its intervals are not automatically comparable with the historical reports; the archive replayer below follows the original one.
 
 ## Main results
 
@@ -41,7 +42,8 @@ W = share of pairs in which C scores above B, averaged within stories (ties coun
 | | Gemma-2-27B-it | 0.870 [0.839, 0.900] | exploratory |
 
 - **Published methods (Tests M and C, preregistered):** no tested method (LM-Polygraph estimators, SIRIN probe and judge, Obeso et al. probes) showed a *replicated* improvement over `p(UNKNOWN)`. The one positive case, an Obeso LoRA probe on Llama in Test M, did not replicate in Test C. This does **not** mean that `p(UNKNOWN)` is universally better.
-- **Not specific, so far:** on the new models, generic uncertainty from the same outputs (entropy, maximum probability) does about as well as `p(UNKNOWN)` and better on Gemma-2-9B (descriptive). On the larger models the sign is split: `p(UNKNOWN)` is above the best baseline on Qwen3-32B and Gemma-2-27B, below it on OLMo-2-32B and Llama-3.3-70B (descriptive). It is not shown that `p(UNKNOWN)` carries information specific to indeterminacy.
+- **Ranking is not abstention:** W counts how often C scores above B, not how often the model answers UNKNOWN. Qwen3-32B has W 0.975 but answers UNKNOWN on only 24.4% of the C cases (0% of the B cases); across the evaluable new and larger models the rate on C is 19–55% ([Protocol §6](docs/PROTOCOL.md#6-what-w-does-not-measure)).
+- **Not specific, so far:** on the new models, generic uncertainty from the same outputs (entropy, maximum probability) does about as well as `p(UNKNOWN)` and better on Gemma-2-9B (descriptive). On the larger models the sign is split: `p(UNKNOWN)` is above the best baseline on Qwen3-32B and Gemma-2-27B, below it on OLMo-2-32B and Llama-3.3-70B (descriptive; 95% intervals added post hoc in [baseline intervals](results/baseline_intervals_2026-11-15/README.md)). It is not shown that `p(UNKNOWN)` carries information specific to indeterminacy.
 - **Limits:** prose format only (weak or reversed in symbolic formats); strong dependence on logical family and wording; the NOT variant was weaker in all 14 November models, but stronger than POS in Qwen3-32B and Llama-3.3-70B, so "NOT is always weaker" is falsified (open question, [§2.1](docs/LARGER_MODELS_RESULTS_2026-11-15.md)).
 - **Small models (240-pair set, CPU, exploratory):** only Qwen2.5-1.5B passes the competence gate; SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B and OLMo-2-1B fail it and are not evaluable; TinyLlama is not measurable ([verdicts](docs/COMPETENCE_240_PAIRS.md), [SmolLM2-360M study](docs/SMOLLM2_STAT_STUDY_RESULTS.md)).
 
@@ -56,7 +58,7 @@ Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model 
 
 ## Documentation
 
-- [Scientific status](docs/SCIENTIFIC_STATUS.md) · [Verify on a new model](docs/VERIFY_ON_NEW_MODELS.md) · [Test your model](docs/RUN_YOUR_MODEL.md) · [Reproducibility](docs/REPRODUCIBILITY_STATUS.md)
+- [Protocol](docs/PROTOCOL.md) · [Scientific status](docs/SCIENTIFIC_STATUS.md) · [Verify on a new model](docs/VERIFY_ON_NEW_MODELS.md) · [Test your model](docs/RUN_YOUR_MODEL.md) · [Reproducibility](docs/REPRODUCIBILITY_STATUS.md)
 - [Related work](docs/RELATED_WORK.md) (IndetBench is not the first or broadest benchmark on abstention and uncertainty; [2018–2026 precedents](docs/NOVELTY_AND_RELATED_WORK_2026.md)) · [References](docs/REFERENCES.md) ([BibTeX](docs/REFERENCES.bib)) · [Roadmap](docs/ROADMAP.md)
 - [Use of AI tools](docs/AI_USAGE.md): research conceived and directed by the author; all Python code generated to her specifications by AI tools (ChatGPT; Claude Opus 5.5 via Claude Code) and validated by execution. Limits of the checks are stated.
 - [Third-party terms](docs/THIRD_PARTY.md) · [Security](SECURITY.md) · [Citation](CITATION.cff)

@@ -1,0 +1,31 @@
+run,model,status,baseline,n_pairs,n_stories,W_p_unknown,W_baseline,W_baseline_lo,W_baseline_hi,dW_punknown_minus_baseline,dW_lo,dW_hi
+new_models_2026-11-14,falcon3_7b,exploratory,entropy,800,200,0.93125,0.9,0.88,0.91875,0.03125,0.005,0.0575
+new_models_2026-11-14,falcon3_7b,exploratory,neg_p_max,800,200,0.93125,0.8925,0.8725,0.91125,0.03875,0.011219,0.06625
+new_models_2026-11-14,falcon3_7b,exploratory,unknown01,800,200,0.93125,0.634375,0.625625,0.64375,0.296875,0.276234,0.3175
+new_models_2026-11-14,gemma2_9b,exploratory,entropy,800,200,0.8175,0.89125,0.86625,0.915,-0.07375,-0.09875,-0.04875
+new_models_2026-11-14,gemma2_9b,exploratory,neg_p_max,800,200,0.8175,0.89125,0.86625,0.915,-0.07375,-0.1,-0.04875
+new_models_2026-11-14,gemma2_9b,exploratory,unknown01,800,200,0.8175,0.615625,0.595625,0.635641,0.201875,0.175,0.2275
+new_models_2026-11-14,phi4,exploratory,entropy,800,200,0.94375,0.93875,0.92125,0.955,0.005,-0.01125,0.0225
+new_models_2026-11-14,phi4,exploratory,neg_p_max,800,200,0.94375,0.94375,0.9275,0.9575,-0.0,-0.0175,0.01875
+new_models_2026-11-14,phi4,exploratory,unknown01,800,200,0.94375,0.67125,0.656875,0.685625,0.2725,0.2525,0.29125
+new_models_2026-11-14,qwen_controllo,positive control (Qwen3-8B),entropy,800,200,0.975,0.94875,0.9325,0.96375,0.02625,0.01125,0.04125
+new_models_2026-11-14,qwen_controllo,positive control (Qwen3-8B),neg_p_max,800,200,0.975,0.9475,0.93125,0.9625,0.0275,0.013719,0.0425
+new_models_2026-11-14,qwen_controllo,positive control (Qwen3-8B),unknown01,800,200,0.975,0.62625,0.611875,0.64,0.34875,0.33,0.36625
+new_models_2026-11-14,yi15_9b,NOT EVALUABLE (technical: label mass ~0; owner decision 14 Nov 2026),entropy,800,200,0.86,0.85,0.8225,0.87625,0.01,-0.0125,0.03375
+new_models_2026-11-14,yi15_9b,NOT EVALUABLE (technical: label mass ~0; owner decision 14 Nov 2026),neg_p_max,800,200,0.86,0.84875,0.82125,0.875,0.01125,-0.01125,0.035
+new_models_2026-11-14,yi15_9b,NOT EVALUABLE (technical: label mass ~0; owner decision 14 Nov 2026),unknown01,800,200,0.86,0.563125,0.552484,0.574375,0.296875,0.269359,0.325641
+larger_models_2026-11-15,gemma2_27b,exploratory,entropy,800,200,0.87,0.81875,0.7825,0.85625,0.05125,0.02625,0.0775
+larger_models_2026-11-15,gemma2_27b,exploratory,neg_p_max,800,200,0.87,0.81625,0.78,0.85375,0.05375,0.02875,0.08
+larger_models_2026-11-15,gemma2_27b,exploratory,unknown01,800,200,0.87,0.74,0.725,0.755,0.13,0.108125,0.150625
+larger_models_2026-11-15,llama33_70b_4bit,exploratory,entropy,800,200,0.9075,0.9875,0.98,0.995,-0.08,-0.09875,-0.06125
+larger_models_2026-11-15,llama33_70b_4bit,exploratory,neg_p_max,800,200,0.9075,0.9875,0.98,0.995,-0.08,-0.09875,-0.06125
+larger_models_2026-11-15,llama33_70b_4bit,exploratory,unknown01,800,200,0.9075,0.63875,0.62625,0.651875,0.26875,0.24875,0.288766
+larger_models_2026-11-15,olmo2_32b,exploratory,entropy,800,200,0.88625,0.92,0.8975,0.94125,-0.03375,-0.05125,-0.0175
+larger_models_2026-11-15,olmo2_32b,exploratory,neg_p_max,800,200,0.88625,0.91875,0.895,0.94,-0.0325,-0.04875,-0.01625
+larger_models_2026-11-15,olmo2_32b,exploratory,unknown01,800,200,0.88625,0.593125,0.581875,0.60375,0.293125,0.269375,0.315625
+larger_models_2026-11-15,qwen3_32b,exploratory,entropy,800,200,0.975,0.89,0.865,0.9125,0.085,0.0625,0.1075
+larger_models_2026-11-15,qwen3_32b,exploratory,neg_p_max,800,200,0.975,0.89,0.865,0.9125,0.085,0.0625,0.1075
+larger_models_2026-11-15,qwen3_32b,exploratory,unknown01,800,200,0.975,0.621875,0.6075,0.635625,0.353125,0.335,0.371875
+larger_models_2026-11-15,qwen_controllo,positive control (Qwen3-8B),entropy,800,200,0.975,0.94875,0.9325,0.96375,0.02625,0.01125,0.04125
+larger_models_2026-11-15,qwen_controllo,positive control (Qwen3-8B),neg_p_max,800,200,0.975,0.9475,0.93125,0.9625,0.0275,0.013719,0.0425
+larger_models_2026-11-15,qwen_controllo,positive control (Qwen3-8B),unknown01,800,200,0.975,0.62625,0.611875,0.64,0.34875,0.33,0.36625

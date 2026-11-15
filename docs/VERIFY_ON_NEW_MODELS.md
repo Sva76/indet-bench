@@ -24,6 +24,7 @@ Use `--model-key qwen` for Qwen3 models, which turns thinking off as in the orig
 
 | Check | Where | Rule |
 |---|---|---|
+| Score file | `report` | Refused if a row is not a B/C row of the frozen benchmark, appears twice, has `pair_id`, `block_id` or `side` different from the frozen row, or if the file mixes subsets or models. Fewer than 760 complete pairs give a DESCRIPTIVE outcome (`coverage`). See [Protocol §5](PROTOCOL.md#5-decision-rules-set-pn). |
 | Tokenizer labels | `hf_runner` | The runner stops if YES, NO and UNKNOWN share a first token (TinyLlama does). Then p(UNKNOWN) is not defined for that model: report it as *not measurable*, not as a negative result. |
 | All three labels generated | `report.json` → `warnings` | A model that never generates one of the labels (SmolLM2 never said NO) is flagged. |
 | **Competence gate (binding)** | `report.json` → `competence_gate`, `verdict` | Accuracy of the generated answer on the 800 B cases must be **≥ 0.50 overall and separately on the 532 B cases with gold YES and on the 268 with gold NO**. If any part fails, the result is **NOT EVALUABLE** (`failed_parts` says which). See the section below. |
