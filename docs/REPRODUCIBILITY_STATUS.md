@@ -1,6 +1,6 @@
 # Archived-results reproducibility — Step 3 progress
 
-**Status:** CPU replay implemented for Test C and Test M notebooks A/B. These are *not* new model experiments. Source archives are NOT redistributed.
+**Status:** CPU replay implemented for Test C and Test M notebooks A/B. These are *not* new model experiments. Since 15 November 2026 the source archives of Tests U2, M and C are published in [`research_originals/step2/outputs/`](../research_originals/step2/outputs/README.md); the notebook A archive without its TriviaQA rows (SHA-256 `fa9577be…6e033`; the replay passes on it with the same 498 values). `tests/test_original_archives.py` runs the three replays in CI.
 
 ## Evidence from local replay against original archives
 
@@ -14,7 +14,7 @@ The first local implementation recalculated individual B/C pair wins (ties = 0.5
 
 The 684 previously checked statistic groups (Test C + Test M notebook B) span W, paired ΔW, per-family W/ΔW, source-specific p(UNKNOWN) baselines, 95% CIs, and Test C's RIM difference; the natural dataset comparisons are descriptive with no CI, per the original protocol.
 
-**Test M notebook A:** 400 individual scalar fields, including point estimates and the two bounds of each 95% CI, match an independent local replay from the uploaded original ZIP. The archived scores cover 23 method/model combinations and nine reference environments. The committed CLI `--kind M-A` adds coverage and identity checks; its real-archive run remains an explicit release validation step. These scalar comparisons are not directly additive to the earlier *metric-group* counts.
+**Test M notebook A:** 400 individual scalar fields, including point estimates and the two bounds of each 95% CI, match an independent local replay from the uploaded original ZIP. The archived scores cover 23 method/model combinations and nine reference environments. The committed CLI `--kind M-A` adds coverage and identity checks; it was run on the real archive on 14 November 2026 (below). These scalar comparisons are not directly additive to the earlier *metric-group* counts.
 
 **Important distinction:** the stored numeric tables were *verification targets*, **not** substitutes for source scores. This does not show out-of-domain generalization or the quality of model-generated answers.
 
@@ -29,7 +29,7 @@ The committed replayer (`python -m indetbench.replay`, this branch) was executed
 | `testM_A_risultati_completo.zip` | `5f2922d7…1cbc` | M-A | 498 numeric values (116 metric groups) | 0 |
 | `testM_B_risultati_completo.zip` | `a78cf5a0…bbea3a` | M-B | 176 | 0 |
 
-The 498 values of the CLI (M-A) and the 400 scalar fields of the earlier independent check are two different counts of the same archive; both match. Boundary 1 below is therefore closed. Test U/U2 replay (boundary 2) and HC4 (boundary 3) remain open.
+The 498 values of the CLI (M-A) and the 400 scalar fields of the earlier independent check are two different counts of the same archive; both match. Boundary 1 below is therefore closed. Test U/U2 replay (boundary 2) and HC4 (boundary 3) remain open. For boundary 2, the U2 archive is now published and a unit test recomputes the HI1 W on set PN for the four models (equal to the archived estimates); the other U2 hypotheses and Test U are not replayed.
 
 ## Run the proposed replay code
 
@@ -56,4 +56,4 @@ The replay command returns nonzero when a statistic differs from its archived ta
 - Frozen archive provenance must be checked by SHA-256.
 - Different reference environments are not silently interchanged: M1 uses its own reference, M2/M3 use env_sirin, M4 uses its recorded reference.
 - Missing B/C scores are never silently replaced by zero.
-- No model weights, raw SQuAD passages, original per-row research outputs, or third-party implementations are committed.
+- No model weights or third-party implementations are committed. Since 15 November 2026 the original per-row outputs of Tests U2, M and C, including SQuAD 2.0-derived passages under CC BY-SA 4.0, are committed in `research_originals/step2/outputs/`; see [`THIRD_PARTY.md`](THIRD_PARTY.md).

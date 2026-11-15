@@ -36,7 +36,7 @@ B and C are **minimal pairs**: the same story, in which one variable is stated w
 
 ## Reproducibility already verified
 
-- The original W, ΔW and confidence intervals of Test C (508 values), Test M notebook A (498) and notebook B (176) are recomputed from the archived per-row scores with **0 differences**. Use `python -m indetbench.replay` with the original ZIPs (SHA-256 in [`REPRODUCIBILITY_STATUS.md`](REPRODUCIBILITY_STATUS.md)).
+- The original W, ΔW and confidence intervals of Test C (508 values), Test M notebook A (498) and notebook B (176) are recomputed from the archived per-row scores with **0 differences**. Use `python -m indetbench.replay` with the original ZIPs, published in [`research_originals/step2/outputs/`](../research_originals/step2/outputs/README.md) (SHA-256 in [`REPRODUCIBILITY_STATUS.md`](REPRODUCIBILITY_STATUS.md)).
 - From the archived Test M reference scores, `python -m indetbench.original_benchmark report` gives the published Test U2 point estimates (0.975, 0.783, 0.694, 0.746) and the per-family values of Test M. Its bootstrap intervals agree to about ±0.004.
 - All 12 pinned model and dataset revisions exist on the Hugging Face Hub and match ([`hf_revisions_verified.json`](../research_originals/hf_revisions_verified.json)).
 
