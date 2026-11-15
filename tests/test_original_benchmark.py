@@ -230,6 +230,16 @@ class OriginalBenchmarkTests(unittest.TestCase):
         self.assertEqual(rep["competence_gate"]["n_B"], 799)
         self.assertEqual(rep["n_rows"], 1598)
 
+    def test_family_without_pairs_has_no_estimate(self):
+        scores = self._full_scores()
+        gold = {r["row_id"]: r for r in self.rows}
+        only_and = [s for s in scores if gold[s["row_id"]]["family"] == "AND"]
+        rep = ob.report(only_and, self.rows, n_bootstrap=0)
+        self.assertEqual(rep["W_by_family_descriptive"]["AND"], 1.0)
+        self.assertIsNone(rep["W_by_family_descriptive"]["OR"])
+        self.assertIsNone(rep["W_by_family_descriptive"]["IMPLIES"])
+        self.assertTrue(rep["verdict"].startswith("DESCRIPTIVE (coverage"))
+
     def test_coverage_rule(self):
         scores = self._full_scores()
         rep = ob.report(scores, self.rows, n_bootstrap=0)

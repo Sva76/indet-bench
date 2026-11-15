@@ -219,7 +219,9 @@ def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
     }
     for family in FAMILIES:
         subset = [p for p, s in zip(pairs, score_rows) if gold[s["row_id"]]["family"] == family]
-        result["W_by_family_descriptive"][family] = w_score(subset, n_bootstrap=0).value
+        # A family with no complete pair in the scores has no estimate (None), not an error.
+        result["W_by_family_descriptive"][family] = (w_score(subset, n_bootstrap=0).value
+                                                     if subset else None)
     counts = defaultdict(Counter)
     for s in score_rows:
         g = gold[s["row_id"]]
