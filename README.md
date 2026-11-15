@@ -4,7 +4,7 @@
 
 When a passage does or does not uniquely determine an answer, does an uncertainty estimator rank the underdetermined version above the determined one? IndetBench uses paired variants **B** (answer determined) and **C** (answer not determined) and compares candidate methods with a simple, training-free reference: the first-token probability `p(UNKNOWN)`. It is **a benchmark and validation protocol, not a new uncertainty detector**, and it does not certify hallucination detection.
 
-> **Status: public, development / pre-alpha.** Still pending: Test U/U2 replay, HC4 validation, human semantic review of the 240-pair set, broader model compatibility, a tagged release. See [Scientific status](docs/SCIENTIFIC_STATUS.md) and [Roadmap](docs/ROADMAP.md).
+> **Status: public, development / pre-alpha.** Still pending: full Test U/U2 replay, HC4 validation, human semantic review of the 240-pair set, broader model compatibility, a tagged release. See [Scientific status](docs/SCIENTIFIC_STATUS.md) and [Roadmap](docs/ROADMAP.md).
 
 ## Quickstart
 
@@ -45,7 +45,7 @@ Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model 
 
 ## Reproducibility
 
-- **Archived results, CPU only:** `python -m indetbench.replay` recomputes the original statistics from per-row scores. On 14 November 2026 it matched Test C (508 values), Test M notebook A (498) and notebook B (176) with **0 differences**. The archives are not public; their SHA-256 values are published so that any copy can be checked ([commands and evidence](docs/REPRODUCIBILITY_STATUS.md)).
+- **Archived results, CPU only:** `python -m indetbench.replay` recomputes the original statistics from per-row scores. On 14 November 2026 it matched Test C (508 values), Test M notebook A (498) and notebook B (176) with **0 differences**. Since 15 November 2026 the archives themselves are in [`research_originals/step2/outputs/`](research_originals/step2/outputs/README.md) (Test U2, M, C; TriviaQA rows removed), and CI replays them on every change ([commands and evidence](docs/REPRODUCIBILITY_STATUS.md)).
 - **New-model run:** per-row scores, reports and manifests are in [`results/new_models_2026-11-14/`](results/new_models_2026-11-14/); a unit test recomputes W, gate and verdict from them.
 - **Original research material** (Step 1 and Step 2 protocols, reports, generator scripts, frozen datasets): [`research_originals/`](research_originals/README.md), with provenance and SHA-256 in its manifest. It is a partial recovery: what is missing and why is listed there.
 - **Data:** the 800-pair benchmark is frozen in `research_originals/step2/frozen/` (SHA-256 checked by the code). `data/smol_stat_v01_frozen.jsonl` (240 pairs, 13 November 2026) was made for a separate experiment and is not original Step 1–2 data.
@@ -57,7 +57,7 @@ Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model 
 - [Use of AI tools](docs/AI_USAGE.md): research conceived and directed by the author; all Python code generated to her specifications by AI tools (ChatGPT; Claude Opus 5.5 via Claude Code) and validated by execution. Limits of the checks are stated.
 - [Third-party terms](docs/THIRD_PARTY.md) · [Security](SECURITY.md) · [Citation](CITATION.cff)
 
-**No third-party model weights, training data, natural SQuAD passages, or proprietary probe files are distributed with this package.**
+**No third-party model weights, training data or proprietary probe files are distributed.** SQuAD 2.0-derived rows in `research_originals/step2/` are distributed under CC BY-SA 4.0 with attribution ([details](research_originals/step2/outputs/README.md#licences-and-attribution)).
 
 ## License
 

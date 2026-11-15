@@ -38,11 +38,11 @@ All expected archive and file SHA-256 values are recorded in [manifest_originals
 
 This is **not** a claim that the full original Step 1/Step 2 research package is already in GitHub. Historical Step 1 frozen datasets and generator notebooks; full output ZIPs for U/U2/M/C; evaluation artifacts, environment snapshots and probe weights remain to be archived or linked to a durable restricted storage source. Refer to the original experiments, not their paraphrases, before asserting full replication.
 
-The complete Test C selection `dati/righe_C.json` (2,478 rows including technical and natural cases) is **intentionally not committed**, because it includes natural examples derived from third-party SQuAD 2.0. Its SHA-256 and the source archive's SHA-256 are recorded; inspect attribution and licensing before any distribution. Model outputs and third-party weights are also held back for rights review.
+The complete Test C selection `dati/righe_C.json` (2,478 rows including technical and natural cases) is in `step2/test_c_selection/righe_C.json.gz` (published 15 Nov 2026 by the owner's decision). Its natural rows are derived from SQuAD 2.0 and are distributed under CC BY-SA 4.0 with attribution; see [`step2/outputs/README.md`](step2/outputs/README.md#licences-and-attribution).
 
 ## What is not here
 
-This is a substantial partial recovery, not the entire historical research archive. Not committed: complete natural SQuAD-derived rows (third-party content), several original Test U/U2 and Step 1 files, the per-row model-output ZIPs of Tests U2, M and C, environment captures and model weights. The output ZIPs are held by the owner, not published. For the Test C and Test M (notebooks A and B) archives the SHA-256 values are in [`docs/REPRODUCIBILITY_STATUS.md`](../docs/REPRODUCIBILITY_STATUS.md), so any copy can be checked byte for byte with `python -m indetbench.replay --expected-sha256`; no hash or replay is published yet for the Test U/U2 archives. The M-A and M-B original frozen inputs were checked to be identical.
+This is a substantial partial recovery, not the entire historical research archive. Since 15 November 2026 the complete output archives of Tests U2, M (notebooks A and B) and C are in [`step2/outputs/`](step2/outputs/README.md), with SHA-256 values and replay commands; from the notebook A archive only the TriviaQA rows were removed (licence not checked). Still not committed: the Test U output archive, several original Step 1 files, the TriviaQA rows, model and probe weights. The M-A and M-B original frozen inputs were checked to be identical.
 
 ## Rights and provenance
 

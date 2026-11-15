@@ -63,19 +63,12 @@
       "git_blob_sha": "9d52f6dce7d1df51b4d82af09bb35a5fc32ac958"
     }
   ],
-  "additional_frozen_data_awaiting_rights_review": [
-    {
-      "source": "testC_selezione.zip",
-      "member": "dati/righe_C.json",
-      "sha256": "4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42",
-      "reason": "includes synthetic plus natural passages derived from SQuAD; do not distribute without separate rights audit"
-    }
-  ],
+  "additional_frozen_data_awaiting_rights_review": [],
   "not_yet_recovered": [
     "Step 1 original generator/source notebooks and frozen score archives",
-    "Step 2 Test U/U2 complete frozen outputs and original notebooks where library bytes are unavailable",
-    "M-A/M-B complete raw model outputs, environments and probe weights",
-    "Test C full raw model outputs and natural data (third-party rights review)"
+    "Step 2 Test U complete output archive and original notebooks where library bytes are unavailable",
+    "TriviaQA rows of the Test M notebook A archive (licence not checked)",
+    "model and probe weights (third-party, not redistributed)"
   ],
   "separation": "Hugging Face SmolLM2/Qwen/TinyLlama experiments from November 13 live under data/ and docs/, not in research_originals/",
   "numeric_original_reports": [
@@ -260,5 +253,40 @@
       "sha256": "ace6e9a4f91e951d9b1f67bb83001f503a7e6e5e3632089f1c30d75b37fd5787"
     }
   },
-  "hf_revisions": "research_originals/hf_revisions_verified.json"
+  "hf_revisions": "research_originals/hf_revisions_verified.json",
+  "published_2026_11_15": {
+    "decision": "owner, 15 Nov 2026: publish the per-row outputs of Tests U2, M and C, and the SQuAD-derived rows with CC BY-SA 4.0 attribution",
+    "files": [
+      {
+        "path": "research_originals/step2/outputs/testU2_risultati.zip",
+        "source": "testU2_risultati.zip",
+        "sha256": "dbcd61faa7ba0b6bdade866fc8d130eb21d4a6d7c471e9e2c9a7b8537d999433",
+        "note": "identical"
+      },
+      {
+        "path": "research_originals/step2/outputs/testM_A_risultati_completo_senza_triviaqa.zip",
+        "source": "testM_A_risultati_completo.zip (5f2922d73d3f8921600d082c92201975faea97cf3d078ab49e6ec51565661cbc)",
+        "sha256": "fa9577bea44135e06f4583dc80fb9400929dde240063c7a9e5918eb66016e033",
+        "note": "dati/triviaqa.json removed (TriviaQA licence not checked); other 51 members byte-identical"
+      },
+      {
+        "path": "research_originals/step2/outputs/testM_B_risultati_completo.zip",
+        "source": "testM_B_risultati_completo.zip",
+        "sha256": "a78cf5a02566d22de80acf8fff6caff0fa0049c697abbbf27667b807648cea3a",
+        "note": "identical"
+      },
+      {
+        "path": "research_originals/step2/outputs/completo_Drive_20261113.zip",
+        "source": "completo_Drive_20261113.zip",
+        "sha256": "da84d9bfb81df8ef15c39524b9e507ffa13eb1e563ce18715b432a1638b5bbed",
+        "note": "identical"
+      },
+      {
+        "path": "research_originals/step2/test_c_selection/righe_C.json.gz",
+        "source": "testC_selezione.zip member dati/righe_C.json (4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42)",
+        "sha256": "bb01cebd3453693be03bfc5d5efc0f0cab03c2abafbb342ebf748c5c4eba83c8",
+        "note": "gzip of the unchanged bytes; natural rows CC BY-SA 4.0 (SQuAD 2.0)"
+      }
+    ]
+  }
 }
