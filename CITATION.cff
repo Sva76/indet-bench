@@ -1,9 +1,17 @@
 cff-version: 1.2.0
-message: "If you use IndetBench in research, please cite the software and the applicable third-party methods in docs/REFERENCES.bib."
+message: "If you use IndetBench in research, please cite the software and the applicable third-party methods, datasets and models listed in docs/REFERENCES.md and docs/REFERENCES.bib."
 type: software
 title: "IndetBench: A Benchmark for Answer Determinability in Language Models"
+abstract: "A reproducible benchmark and validation protocol for answer determinability in language models: paired variants in which the answer is determined (B) or not determined (C), used to test whether uncertainty estimators and probes rank C above B. All code was generated with AI tools under the author's direction; see docs/AI_USAGE.md."
 authors:
   - family-names: Vargiu
     given-names: Simona
 repository-code: "https://github.com/Sva76/indet-bench"
+license: PolyForm-Noncommercial-1.0.0
 version: "0.0.1-dev"
+keywords:
+  - language models
+  - uncertainty
+  - answerability
+  - abstention
+  - benchmark

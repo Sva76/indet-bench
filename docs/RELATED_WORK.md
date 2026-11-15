@@ -50,7 +50,7 @@ This page places IndetBench among published work. For each area it says what has
 ## 3. Logical reasoning with an *Unknown* answer
 
 - **Datasets with an *Unknown* label:** ProofWriter, in its open-world setting with True/False/Unknown ([Tafjord, Dalvi Mishra & Clark 2021, arXiv 2012.13048](https://arxiv.org/abs/2012.13048)), and FOLIO, also True/False/Unknown ([Han et al., arXiv 2209.00840](https://arxiv.org/abs/2209.00840)).
-- **How models handle *Unknown*:** they get it wrong in both directions, depending on model and dataset ([Ling et al. 2025, WAKENLLM, arXiv 2507.16199](https://arxiv.org/abs/2507.16199)). Merely offering an *Unknown* option can inflate abstention, even when it is replaced by an unrelated word ([Ling et al., EMNLP 2026](https://aclanthology.org/2026.emnlp-main.549/)).
+- **How models handle *Unknown*:** they get it wrong in both directions, depending on model and dataset, and merely offering an *Unknown* option can inflate abstention, even when it is replaced by an unrelated word ([Ling et al., EMNLP 2026](https://aclanthology.org/2026.emnlp-main.549/); arXiv [2507.16199](https://arxiv.org/abs/2507.16199), whose first version, July 2025, was titled *WakenLLM*). Earlier versions of this page cited the arXiv and EMNLP titles as two separate works; they are one work.
 - **Hidden states versus outputs:** on True/False/Unknown tasks, hidden states can decode the correct label while output sequence scores collapse ([Yan, Wang & Pan 2026, arXiv 2608.31068](https://arxiv.org/abs/2608.31068)).
 
 *Relation to IndetBench.*
@@ -94,6 +94,44 @@ This page places IndetBench among published work. For each area it says what has
 ## 6. Negation
 
 Language models are weak on negation ([Truong et al. 2023, arXiv 2306.08189](https://arxiv.org/abs/2306.08189)). RobustLR (§2) finds negation the hardest logical perturbation, and Bürger et al. (§5) show that polarity distorts truth probes. IndetBench's differences between POS and NOT variants are consistent with this literature and are reported as an open question, not as a new phenomenon.
+
+## 7. Further references
+
+*Added on 15 November 2026, after a bibliography check ([REFERENCES.md](REFERENCES.md)). The bibliographic data were checked at the publisher, ACL Anthology or arXiv page. The descriptions below are limited to each paper's stated aim.*
+
+- **Estimators evaluated in Test M (method M1).** Two of the M1 estimators are cited here, besides LM-Polygraph:
+  - Semantic Entropy ([Kuhn, Gal & Farquhar, ICLR 2023](https://arxiv.org/abs/2302.09664); [Farquhar et al., Nature 2024](https://doi.org/10.1038/s41586-024-07421-0)): entropy over clusters of sampled answers that share a meaning.
+  - p(True) ([Kadavath et al. 2022](https://arxiv.org/abs/2207.05221), §4).
+
+  [`Protocollo_testM_metodi_v2.md`](../research_originals/step2/protocols/Protocollo_testM_metodi_v2.md) lists both, as computed through LM-Polygraph 0.7.0.
+- **SelfAware** ([Yin et al., Findings of ACL 2023](https://aclanthology.org/2023.findings-acl.551/)): answerable and unanswerable questions for evaluating self-knowledge. It is the dataset on which Wagner (2026) reports the bag-of-words result cited in §5.
+- **Abstention survey** ([Wen et al., TACL 2025](https://aclanthology.org/2025.tacl-1.26/)): organises abstention research by query, model and human values.
+- **Probing methodology** ([Hewitt & Liang, EMNLP-IJCNLP 2019](https://aclanthology.org/D19-1275/)): control tasks and probe selectivity. This is the standard reference for asking whether a probe reflects the representation or learns the task itself, the question behind the Step 1 probe results.
+- **Truthfulness probes:**
+  - [Azaria & Mitchell, Findings of EMNLP 2023](https://aclanthology.org/2023.findings-emnlp.68/): a classifier on hidden activations that predicts whether a statement is true.
+  - [Marks & Tegmark, COLM 2024](https://arxiv.org/abs/2310.06824): linear structure of truth representations, and transfer across datasets.
+
+  Both precede the polarity result of Bürger et al. (§5).
+
+## 8. Ambiguity, false premises, factuality benchmarks and statistics
+
+*Added on 15 November 2026, with bibliographic data checked as in §7.* Many works use "uncertainty" to mean low confidence about a fact the model may not know. IndetBench isolates a different property: whether the given context logically determines the answer. The works below mark that boundary.
+
+- **Under-determined and situated questions.** These are cases where several answers are defensible or the answer depends on context that is not given:
+  - [AmbigQA (Min et al., EMNLP 2020)](https://aclanthology.org/2020.emnlp-main.466/): ambiguous open-domain questions with all plausible answers;
+  - [SituatedQA (Zhang & Choi, EMNLP 2021)](https://aclanthology.org/2021.emnlp-main.586/): answers that depend on when and where the question is asked.
+
+  IndetBench's C cases differ: the context is closed and fixed, and it does not settle the answer.
+- **False premises.** [FalseQA (Hu et al., ACL 2023)](https://aclanthology.org/2023.acl-long.309/) collects questions whose premise is false. SelfAware (§7) and UnknownBench (§1) cover related cases.
+- **Unsupervised truth probes.** [Contrast-Consistent Search (Burns et al., ICLR 2023)](https://arxiv.org/abs/2212.03827) finds a truth direction without labels, using logical consistency between a statement and its negation. It belongs with the probe literature in §5 and §7.
+- **Factuality and hallucination benchmarks:**
+  - [TruthfulQA (Lin, Hilton & Evans, ACL 2022)](https://aclanthology.org/2022.acl-long.229/);
+  - [HaluEval (Li et al., EMNLP 2023)](https://aclanthology.org/2023.emnlp-main.397/);
+  - [WildHallucinations (Zhao et al. 2024)](https://arxiv.org/abs/2407.17468).
+
+  These measure whether content is true of the world or supported by a source. IndetBench does not test factual knowledge. Its synthetic passages use invented entities and closed rules, so the answer depends only on the given text. The natural Test C cases are drawn from SQuAD 2.0 passages.
+- **Statistics of evaluations.** [Miller (2024)](https://arxiv.org/abs/2411.00640) argues for reporting standard errors and paired differences in LLM evaluations, and gives a cluster-adjusted standard error for questions that share a cluster. IndetBench addresses the same dependence differently: pairs from one story are not independent, so it resamples whole stories in its block bootstrap.
+- **Selective prediction.** [Geifman & El-Yaniv (NIPS 2017)](https://arxiv.org/abs/1705.08500) frame abstention as a trade-off between risk and coverage. IndetBench does not evaluate risk–coverage curves. It evaluates whether a score ranks C above B within a pair (W).
 
 ## What IndetBench contributes, stated cautiously
 
