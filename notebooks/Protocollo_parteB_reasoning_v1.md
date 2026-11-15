@@ -42,7 +42,7 @@ Conseguenza da dichiarare: la misura è **condizionata al ragionamento generato*
 | Ragionamento che non si chiude | il notebook aggiunge `\n</think>\n\n` e misura il token successivo; la riga è marcata `troncata` | la misura resta definita; il troncamento è registrato e analizzato a parte |
 | Risposta dopo il ragionamento | fino a 16 token generati dopo `</think>`, letti con lo stesso `parse_label` | stessa lettura della risposta delle parti precedenti |
 | Precisione | bfloat16 per tutti | come la parte A |
-| Batch e attenzione | **batch 16 con padding a sinistra, attenzione sdpa; Qwen3-32B a batch 4** (con 16 sequenze da circa 4300 token cache e pesi superano gli 80 GB; dettaglio di attuazione, il batch è registrato nel manifest) | con batch 1 ed eager, migliaia di token per riga non stanno nei tempi di una sessione |
+| Batch e attenzione | **ragionamento: batch 16 con padding a sinistra, attenzione sdpa; Qwen3-32B a batch 4** (con 16 sequenze da circa 4300 token cache e pesi superano gli 80 GB), Phi-4-reasoning a batch 8 su GPU da 40 GB. **Misura: batch 1 senza padding, attenzione eager, in tutte e due le condizioni** (modifica del 15 nov, §8) | con batch 1 ed eager, migliaia di token per riga non stanno nei tempi di una sessione; la misura invece costa poco e a batch 1 con eager riproduce il Test U2 |
 | Condizione senza ragionamento | per Qwen3-8B e 32B si rimisura **nella stessa pipeline** (stesso batch e stessa attenzione, `enable_thinking=False`, greedy, 8 token come il Test U2) | il confronto acceso/spento usa le stesse impostazioni tecniche; i valori si confrontano anche con il Test U2 e la parte A |
 | Testi salvati | ragionamento e risposta completi di ogni riga | servono per controllare le anomalie; non entrano nelle misure |
 
@@ -51,7 +51,7 @@ Conseguenza da dichiarare: la misura è **condizionata al ragionamento generato*
 ### 5.1 Controlli tecnici
 
 1. Revisione, template ed etichette controllati come nella parte A. Il template non deve inserire la data.
-2. **Controllo della pipeline a batch.** Con il ragionamento spento, la pipeline batch 16 + sdpa deve riprodurre i 24 valori archiviati di Qwen3-8B del Test U2. Tolleranza proposta: scarto massimo ≤ 0.01 e risposte uguali 24/24. È più larga della tolleranza 1e-3 della parte A, perché batch e attenzione diverse cambiano gli arrotondamenti. Se fallisce, il completo non parte.
+2. **Controllo della pipeline.** Con il ragionamento spento, la misura della pipeline (dal 15 nov: batch 1 con eager, §8) deve riprodurre i 24 valori archiviati di Qwen3-8B del Test U2. Tolleranza proposta: scarto massimo ≤ 0.01 e risposte uguali 24/24. È più larga della tolleranza 1e-3 della parte A, perché batch e attenzione diverse cambiano gli arrotondamenti. Se fallisce, il completo non parte.
 3. Il controllo CPU dei 4 W del Test U2 resta obbligatorio prima del completo.
 
 ### 5.2 Misurabilità
@@ -91,7 +91,7 @@ Non si misura p(UNKNOWN) durante il ragionamento. Non c'è una definizione unica
   - Phi-4-reasoning: 2–3 ore;
   - Qwen3-32B: 4–6 ore.
   Si aggiungono la condizione spenta e la ripetibilità. Con troncamenti frequenti i tempi crescono.
-- **Ambiente:** A100-SXM4-80GB (Qwen3-32B in bf16 la richiede), HF_TOKEN e GH_TOKEN nei Secrets, uscite su MyDrive con ripresa dai checkpoint, come nella parte A.
+- **Ambiente:** A100 (Qwen3-32B in bf16 richiede la A100-SXM4-80GB; gli altri modelli girano anche su 40 GB, §8), HF_TOKEN e GH_TOKEN nei Secrets, uscite su MyDrive con ripresa dai checkpoint, come nella parte A.
 
 ## 7. Decisioni di Simona (15 nov, 14:11: tutte e 5 come raccomandate)
 
@@ -100,3 +100,24 @@ Non si misura p(UNKNOWN) durante il ragionamento. Non c'è una definizione unica
 3. **Budget:** consiglio 4096 token, con chiusura forzata registrata.
 4. **Pipeline:** consiglio batch 16 + sdpa, con il controllo a tolleranza 0.01 e la condizione spenta rimisurata nella stessa pipeline.
 5. **Phi-4-reasoning:** se la regola sulla massa lo dichiara NON MISURABILE perché la «Solution» non inizia con un'etichetta, il risultato resta NON MISURABILE. Consiglio di non definire ora una misura alternativa, per non costruirne una apposta per un modello.
+
+## 8. Modifica della pipeline di misura (15 nov, approvata da Simona alle 18:15)
+
+**Che cosa è successo.** Nella prova (R-notebook-1, A100-SXM4-40GB) il controllo della pipeline (§5.1) non è stato superato: scarto 0.060 sulle 24 righe, 23/24 risposte uguali. Con la regola fissata, il completo non partiva.
+
+**Diagnostica** (scelta di Simona alle 17:20, prima di qualsiasi lettura sulle storie). Le 24 righe sono state misurate con quattro combinazioni di batch e attenzione:
+- batch 1 con eager: 8.3e-17, 24/24;
+- batch 1 con sdpa: 0.060;
+- batch 16 con eager: 0.117;
+- batch 16 con sdpa: 0.060.
+
+La differenza viene dagli arrotondamenti in bfloat16, sia dell'attenzione sdpa sia del padding. Non viene dalla GPU: il Test U2 era stato misurato su una A100 da 40 GB, e la parte A lo riproduceva sulla 80 GB con scarto 8e-17.
+
+**Modifica (R-notebook-2).**
+- Il ragionamento si genera ancora a batch con sdpa e con il campionamento degli autori.
+- La misura, cioè la risposta greedy e la probabilità delle etichette, si fa riga per riga a batch 1 con eager, in tutte e due le condizioni. Nella condizione accesa riparte dai token del ragionamento generato.
+- Il controllo della pipeline resta invariato: 0.01 e 24/24. Nella diagnostica è superato con 8.3e-17 e 24/24.
+- La GPU entra nell'impronta delle cartelle.
+- Il blocco degli 80 GB vale solo per Qwen3-32B.
+
+La regola e la tolleranza non cambiano. Cambia solo come si calcola la misura, che torna quella già validata nel Test U2 e nella parte A. La modifica è stata decisa guardando solo la diagnostica sulle 24 righe di controllo, prima di qualsiasi risultato sulle storie con questa pipeline. Il punto 4 del §7 (batch 16 + sdpa) vale ora solo per la generazione del ragionamento.

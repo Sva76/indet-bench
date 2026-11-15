@@ -121,4 +121,4 @@ The "Basis" column says whether the category is **supported by the data** (the e
 ## 6. Owner's decisions
 1. **Approval** (15 Nov, 13:45), on condition that classifications are honest and supported by the data; v1.1 applies the condition (§3, §4).
 2. **NOT variant** (15 Nov, 13:48): the rule "NOT weaker than POS" is falsified by the larger models and is no longer used. Still open: whether more samples are needed or whether the NOT effect changes with scale, like a step. The current data cannot distinguish the two; the design that would be needed is in §2.1.
-3. **Part B (reasoning models)** (15 Nov, 14:11): protocol approved with the 5 recommended choices; notebook `notebooks/IndetBench_reasoning_v1.ipynb` (R-notebook-1).
+3. **Part B (reasoning models)** (15 Nov, 14:11): protocol approved with the 5 recommended choices; notebook `notebooks/IndetBench_reasoning_v2.ipynb` (R-notebook-2; measurement at batch 1 with eager, amendment approved at 18:15 after the pipeline check failed with R-notebook-1).

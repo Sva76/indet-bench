@@ -1,6 +1,6 @@
 # Part B protocol: p(UNKNOWN) in reasoning models (v1)
 
-English version of `notebooks/Protocollo_parteB_reasoning_v1.md` (Italian). **Approved by Simona Vargiu on 15 Nov 2026, 14:11, with the 5 recommended choices of §7, before any part B data were collected.** Implementation notes: `notebooks/Note_reasoning_v1.md`. Notebook: `notebooks/IndetBench_reasoning_v1.ipynb` (R-notebook-1).
+English version of `notebooks/Protocollo_parteB_reasoning_v1.md` (Italian). **Approved by Simona Vargiu on 15 Nov 2026, 14:11, with the 5 recommended choices of §7, before any part B data were collected.** Implementation notes: `notebooks/Note_reasoning_v1.md` and `notebooks/Note_reasoning_v2.md`. Notebook: `notebooks/IndetBench_reasoning_v2.ipynb` (R-notebook-2, with the measurement amendment of §8; R-notebook-1 is kept for the record).
 
 ## 1. Question and status
 **Question.** When the model reasons before answering, does p(UNKNOWN) still separate the C cases from the B cases on the 800 frozen prose pairs (set PN)? And does reasoning change the separation compared with the same model without reasoning?
@@ -34,14 +34,14 @@ Without reasoning, p(UNKNOWN) is the probability of the first answer token. In a
 | Reasoning that does not close | the notebook appends `\n</think>\n\n` and measures the next token; the row is flagged `troncata` | the measure stays defined; truncation is recorded and analysed separately |
 | Answer after reasoning | up to 16 tokens after `</think>`, read with the same `parse_label` | same answer reading as before |
 | Precision | bfloat16 for all | as in part A |
-| Batch and attention | **batch 16, left padding, sdpa attention; Qwen3-32B at batch 4** (with 16 sequences of about 4300 tokens, cache plus weights exceed 80 GB; implementation detail, the batch is recorded in the manifest) | with batch 1 and eager, thousands of tokens per row do not fit a session |
+| Batch and attention | **reasoning: batch 16, left padding, sdpa attention; Qwen3-32B at batch 4** (with 16 sequences of about 4300 tokens, cache plus weights exceed 80 GB), Phi-4-reasoning at batch 8 on 40 GB GPUs. **Measurement: batch 1, no padding, eager attention, in both conditions** (amendment of 15 Nov, §8) | with batch 1 and eager, thousands of tokens per row do not fit a session; the measurement is cheap and at batch 1 with eager reproduces Test U2 |
 | No-reasoning condition | for Qwen3-8B and 32B, re-measured **in the same pipeline** (same batch and attention, `enable_thinking=False`, greedy, 8 tokens as in Test U2) | the on/off comparison uses the same technical settings |
 | Saved texts | full reasoning and answer for every row | for checking anomalies; not used in the measures |
 
 ## 5. Rules fixed before the data
 ### 5.1 Technical checks
 1. Revision, template and labels checked as in part A; the template must not insert the date.
-2. **Batch pipeline check.** With reasoning off, the batch-16 + sdpa pipeline must reproduce the 24 archived Qwen3-8B values of Test U2: max difference ≤ 0.01 and 24/24 equal answers (looser than part A's 1e-3 because batch and attention change rounding). If it fails, the full run does not start.
+2. **Pipeline check.** With reasoning off, the pipeline's measurement (from 15 Nov: batch 1 with eager, §8) must reproduce the 24 archived Qwen3-8B values of Test U2: max difference ≤ 0.01 and 24/24 equal answers (looser than part A's 1e-3 because batch and attention change rounding). If it fails, the full run does not start.
 3. The CPU check of the 4 Test U2 W values remains mandatory before the full run.
 
 ### 5.2 Measurability
@@ -63,7 +63,7 @@ p(UNKNOWN) during the reasoning is not measured: there is no single definition o
 ## 6. Test run and full run
 - **Test run:** 10 stories (40 pairs, 80 rows) for Qwen3-8B with reasoning on and off; measures real times, mean reasoning length, truncation share and the pipeline check (§5.1).
 - **Estimated times (not measured):** with ~1000 reasoning tokens on average, Qwen3-8B 1–2 h, Phi-4-reasoning 2–3 h, Qwen3-32B 4–6 h, plus the off condition and repeatability.
-- **Environment:** A100-SXM4-80GB, HF_TOKEN and GH_TOKEN as Colab secrets, outputs in Drive with checkpoint resume.
+- **Environment:** A100 (Qwen3-32B in bf16 needs the A100-SXM4-80GB; the other models also run on 40 GB, §8), HF_TOKEN and GH_TOKEN as Colab secrets, outputs in Drive with checkpoint resume.
 
 ## 7. Owner's decisions (15 Nov, 14:11: all 5 as recommended)
 1. **Models:** Qwen3-8B (primary), Qwen3-32B and Phi-4-reasoning; R1-Distill-Llama-8B optional.
@@ -71,3 +71,25 @@ p(UNKNOWN) during the reasoning is not measured: there is no single definition o
 3. **Budget:** 4096 tokens with recorded forced closure.
 4. **Pipeline:** batch 16 + sdpa, with the 0.01 check and the off condition re-measured in the same pipeline.
 5. **Phi-4-reasoning:** if the mass rule makes it NOT MEASURABLE because the Solution does not start with a label, the result stays NOT MEASURABLE; no alternative measure is defined for one model.
+
+## 8. Amendment to the measurement pipeline (15 Nov, approved by Simona at 18:15)
+
+In the test run (R-notebook-1, A100-SXM4-40GB) the pipeline check (§5.1) failed: max difference 0.060 on the 24 rows, 23/24 equal answers. Under the fixed rule, the full run could not start.
+
+A diagnostic was then run on the 24 control rows only, before any reading on the stories (Simona's choice at 17:20). It measured four combinations of batch and attention:
+- batch 1 with eager: 8.3e-17, 24/24;
+- batch 1 with sdpa: 0.060;
+- batch 16 with eager: 0.117;
+- batch 16 with sdpa: 0.060.
+
+The difference comes from bfloat16 rounding, caused both by sdpa attention and by padding. It does not come from the GPU: Test U2 was measured on a 40 GB A100, and part A reproduced it on the 80 GB card at 8e-17.
+
+Amendment (R-notebook-2):
+- Reasoning is still generated in batches with sdpa and the authors' sampling.
+- The measurement (greedy answer and label probabilities) is done row by row at batch 1 with eager attention, in both conditions. With reasoning on, it starts from the generated reasoning tokens.
+- The pipeline check is unchanged: 0.01 and 24/24. In the diagnostic it passed at 8.3e-17 and 24/24.
+- The GPU name is part of the run fingerprint.
+- The 80 GB requirement applies only to Qwen3-32B.
+
+The rule and the tolerance do not change. Only the way the measurement is computed changes, and it goes back to the one already validated in Test U2 and part A.
+
