@@ -40,6 +40,7 @@ MIN_ANSWERS = 30     # MIN_RISPOSTE_HC4 in configurazione_notebook.json
 MIN_PASSAGES = 15    # MIN_PASSAGGI_HC4
 M1_ESTIMATORS = ("MSP", "Perplexity", "MeanTokenEntropy", "SemanticEntropy", "PTrue")
 MODELS = ("qwen", "mistral", "olmo", "llama")
+EXPECTED_RESULTS = 38  # method/model results with HC4 in the frozen run
 
 
 def finite(x):
@@ -202,6 +203,7 @@ def replay_c_hc4(path, seed=SEED, n_boot=BOOT):
     for row in original["risultati"]:
         method, model = row["metodo"], row["modello"]
         if "HC4" not in row:
+            errors.append({"field": f"HC4.{method}/{model}", "note": "archived result has no HC4 block"})
             continue
         if method.startswith("M1-"):
             cat = labels[(model, "M1-LM-Polygraph")][0]
@@ -220,6 +222,8 @@ def replay_c_hc4(path, seed=SEED, n_boot=BOOT):
         checked += compare(row["HC4"], computed, f"HC4.{method}/{model}", errors)
         results.append({"metodo": method, "modello": model,
                         "entro_C": computed["entro_C"]["esito"], "entro_B": computed["entro_B"]["esito"]})
+    if len(results) != EXPECTED_RESULTS:
+        errors.append({"field": "HC4.results", "expected": EXPECTED_RESULTS, "actual": len(results)})
     return {
         "test": "C-HC4", "passed": not errors, "values_checked": checked, "errors": errors[:50],
         "n_errors": len(errors), "labels": label_stats, "hc4": results, "rules": K.VERSIONE_REGOLE,

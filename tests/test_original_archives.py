@@ -117,6 +117,16 @@ class ReplayHelpers(unittest.TestCase):
         self.assertEqual(auroc([1, 1, 0, 0], [3, 2, 2, 1]), 0.875)
         self.assertIsNone(auroc([1, 1], [1, 2]))
 
+    def test_compare_rejects_non_finite_mismatch(self):
+        from indetbench.replay_u2 import compare
+        for expected, actual in ((float("nan"), 0.5), (0.5, float("nan")), (float("inf"), 0.5)):
+            errors = []
+            compare(expected, actual, "x", errors)
+            self.assertEqual(len(errors), 1, (expected, actual))
+        errors = []
+        compare(float("nan"), float("nan"), "x", errors)
+        self.assertEqual(errors, [])
+
     def test_annotation_agreement(self):
         key = [{"n": 1, "categoria": "alternative"}, {"n": 2, "categoria": "corretta"},
                {"n": 3, "categoria": "un valore del contesto"}, {"n": 4, "categoria": "attribuite"}]

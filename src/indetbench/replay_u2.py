@@ -193,7 +193,12 @@ def compare(expected, actual, path, errors, tolerance=1e-10):
     numeric = (isinstance(actual, (int, float)) and not isinstance(actual, bool)
                and isinstance(expected, (int, float)) and not isinstance(expected, bool))
     if numeric:
-        if abs(expected - actual) > tolerance:
+        if not (isfinite(expected) and isfinite(actual)):
+            # NaN or inf on either side: only an identical non-finite value matches
+            same = (expected != expected and actual != actual) or expected == actual
+            if not same:
+                errors.append({"field": path, "expected": expected, "actual": actual})
+        elif abs(expected - actual) > tolerance:
             errors.append({"field": path, "expected": expected, "actual": actual})
     elif expected != actual:
         errors.append({"field": path, "expected": expected, "actual": actual})
