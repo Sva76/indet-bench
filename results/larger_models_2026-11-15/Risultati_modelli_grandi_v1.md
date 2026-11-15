@@ -62,7 +62,7 @@ Differenza W(NOT) − W(POS), appaiata per storia (ogni storia ha 2 coppie NOT e
 **Che cosa dicono questi dati.**
 - La generalizzazione del 14 novembre («NOT più debole di POS in tutti i modelli») **non regge**: in Qwen3-32B e Llama-3.3-70B la differenza è positiva, con IC95 che esclude 0.
 - Fra modelli della stessa famiglia il segno si inverte con IC95 che escludono 0 da parti opposte (Qwen 8B/32B, Llama 8B/70B). Quindi il cambio di segno **non si spiega con il caso nel ricampionamento delle 200 storie**. Questo non dice niente su altre storie o altre formulazioni.
-- Con la dimensione l'effetto si riduce in tre famiglie su quattro, ma non in Gemma (−0.090 e −0.085). In Qwen3-32B il segno positivo viene in parti uguali da NOT che sale (0.955 → 1.000, +0.045) e da POS che scende (0.995 → 0.950, −0.045). (Correzione del 15 nov dopo la revisione: la versione precedente attribuiva il segno soprattutto a POS.)
+- Con la dimensione NOT − POS sale in tre famiglie su quattro: in Qwen3 e Llama fino a cambiare segno, in OLMo-2 da −0.358 a −0.052. In Gemma-2 resta quasi uguale (−0.090 e −0.085). In Qwen3-32B il segno positivo viene in parti uguali da NOT che sale (0.955 → 1.000, +0.045) e da POS che scende (0.995 → 0.950, −0.045). (Correzione del 15 nov dopo la revisione: la versione precedente attribuiva il segno soprattutto a POS.)
 
 **Che cosa non dicono.**
 - Non permettono di distinguere uno «scalino» (un cambio brusco oltre una certa dimensione) da un cambio graduale. Abbiamo **due punti per famiglia**, e due punti sono compatibili con entrambi.

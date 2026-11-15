@@ -66,7 +66,7 @@ Difference W(NOT) − W(POS), paired by story (each story has 2 NOT and 2 POS pa
 **What these data say.**
 - The 14 November generalisation ("NOT weaker than POS in every model") **does not hold**: in Qwen3-32B and Llama-3.3-70B the difference is positive, with a 95% interval excluding 0. Owner's decision (15 Nov, 13:48): the rule is falsified and is no longer used.
 - Within a family the sign reverses with intervals excluding 0 on opposite sides (Qwen 8B/32B, Llama 8B/70B), so the change of sign **is not explained by chance in resampling the 200 stories**. This says nothing about other stories or wordings.
-- With size the effect shrinks in three families out of four, but not in Gemma (−0.090 and −0.085). In Qwen3-32B the positive sign comes in equal parts from NOT rising (0.955 → 1.000, +0.045) and POS dropping (0.995 → 0.950, −0.045). (Corrected on 15 Nov after review: the earlier version attributed the sign mostly to POS.)
+- With size NOT − POS rises in three families out of four: in Qwen3 and Llama up to a change of sign, in OLMo-2 from −0.358 to −0.052. In Gemma-2 it stays almost the same (−0.090 and −0.085). In Qwen3-32B the positive sign comes in equal parts from NOT rising (0.955 → 1.000, +0.045) and POS dropping (0.995 → 0.950, −0.045). (Corrected on 15 Nov after review: the earlier version attributed the sign mostly to POS.)
 
 **What they do not say.**
 - They cannot distinguish a "step" (an abrupt change above some size) from a gradual change: there are **two points per family**, compatible with both.
