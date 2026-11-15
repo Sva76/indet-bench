@@ -37,8 +37,8 @@ The benchmark is not limited to p(UNKNOWN). Any method that gives a score per pr
 
 Applied by `indet-bench-original report` (`python -m indetbench.original_benchmark report`), in this order:
 
-1. **Input checks** (added 15 November 2026). The score file is refused if a `row_id` is not a B or C row of the frozen benchmark, appears twice, or has `pair_id`, `block_id` or `side` different from the frozen row; if it mixes subsets; or if it mixes models (`model_id` and `model_revision`). Before this date a swapped B/C column inverted W without an error.
-2. **Coverage.** At least **760 complete pairs of 800** (95%); below it the outcome is DESCRIPTIVE. *New models* (notebooks since 14 November 2026); applied by `report` since 15 November 2026.
+1. **Input checks** (added 15 November 2026). The score file is refused if a `row_id` is not a B or C row of the frozen benchmark, appears twice, or has `pair_id`, `block_id` or `side` different from the frozen row; if it mixes subsets; or if it mixes models (`model_id` and `model_revision`, when those columns are present; `hf_runner` always writes them, a hand-built file without them cannot be checked). Before this date a swapped B/C column inverted W without an error.
+2. **Coverage.** At least **760 complete pairs of 800** (95%); below it the outcome is DESCRIPTIVE. All statistics use complete pairs only; an orphan B or C row is counted as an incomplete pair. *New models* (notebooks since 14 November 2026); applied by `report` since 15 November 2026.
 3. **Competence gate (binding).** Accuracy of the generated answer on B ≥ 0.50 overall **and** separately on gold YES (532) and gold NO (268); otherwise NOT EVALUABLE. *New models.* Details: [VERIFY_ON_NEW_MODELS.md](VERIFY_ON_NEW_MODELS.md#competence-gate-on-the-determined-cases).
 4. **Primary result.** CONFIRMED if W ≥ 0.60 and the lower bound of the 95% interval > 0.5; NOT CONFIRMED if the upper bound ≤ 0.5; otherwise NOT CONCLUSIVE. *Original* (HU1/HI1).
 
@@ -52,7 +52,7 @@ Descriptive only, never deciding: W by family, variant, position; accuracy on B 
 ## 6. What W does not measure
 
 - **W measures ranking, not abstention.** A model can rank almost every C above its B and still answer YES or NO to most C cases. Qwen3-32B: W 0.975, but the generated answer is UNKNOWN on 24.4% of the C cases (195 of 800) and on 0% of the B cases. Across the evaluable new and larger models the generated UNKNOWN rate on C is 19–55%. This is partly a design choice: the primary format has no explanatory sentence, because in Test U2 that sentence mainly changed the generated answer (Llama: UNKNOWN on 79% of the B cases with it, 5% without), while W changed little.
-- **W is not specificity.** A high W does not show that the score reacts to indeterminacy rather than to generic answer uncertainty. With 95% intervals, p(UNKNOWN) is above the best generic baseline in four of the new and larger models, below it in three and equal in one ([baseline intervals](../results/baseline_intervals_2026-11-15/README.md), post hoc).
+- **W is not specificity.** A high W does not show that the score reacts to indeterminacy rather than to generic answer uncertainty. With 95% intervals, p(UNKNOWN) is above the best generic baseline in four of the new and larger models, below it in three, and in one (Phi-4) the interval of the difference includes 0, which is inconclusive, not equality ([baseline intervals](../results/baseline_intervals_2026-11-15/README.md), post hoc).
 - **W is not hallucination detection,** and not answer accuracy.
 
 ## 7. Preregistration and its limits

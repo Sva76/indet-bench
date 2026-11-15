@@ -215,6 +215,21 @@ class OriginalBenchmarkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not B or C rows"):
             ob.report(scores, self.rows, n_bootstrap=0)
 
+    def test_orphan_rows_are_counted_but_not_scored(self):
+        # One C row missing: 799 complete pairs pass coverage; the orphan B row is left out
+        # of W and of the competence gate instead of stopping the report.
+        scores = self._full_scores()
+        orphan_pair = scores[0]["pair_id"]
+        sub = [s for s in scores if not (s["pair_id"] == orphan_pair and s["side"] == "C")]
+        rep = ob.report(sub, self.rows, n_bootstrap=0)
+        self.assertEqual(rep["coverage"]["complete_pairs"], 799)
+        self.assertEqual(rep["coverage"]["incomplete_pairs"], 1)
+        self.assertTrue(rep["coverage"]["passed"])
+        self.assertNotIn("complete_pair_ids", rep["coverage"])
+        self.assertEqual(rep["W_p_unknown"]["n_pairs"], 799)
+        self.assertEqual(rep["competence_gate"]["n_B"], 799)
+        self.assertEqual(rep["n_rows"], 1598)
+
     def test_coverage_rule(self):
         scores = self._full_scores()
         rep = ob.report(scores, self.rows, n_bootstrap=0)

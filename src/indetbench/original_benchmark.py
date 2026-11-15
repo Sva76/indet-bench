@@ -184,11 +184,12 @@ def _coverage(score_rows: list[dict]) -> dict:
     sides = defaultdict(set)
     for s in score_rows:
         sides[s["pair_id"]].add(s["side"])
-    complete = sum(1 for v in sides.values() if v == {"B", "C"})
+    complete_ids = sorted(p for p, v in sides.items() if v == {"B", "C"})
+    complete = len(complete_ids)
     return {"rule": f">= {MIN_COMPLETE_PAIRS} complete B/C pairs of {N_PAIRS} (95%); "
-                    "below it the outcome is DESCRIPTIVE",
+                    "below it the outcome is DESCRIPTIVE; statistics use complete pairs only",
             "complete_pairs": complete, "incomplete_pairs": len(sides) - complete,
-            "passed": complete >= MIN_COMPLETE_PAIRS}
+            "passed": complete >= MIN_COMPLETE_PAIRS, "complete_pair_ids": complete_ids}
 
 
 def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
@@ -198,13 +199,20 @@ def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
     validate_score_rows(score_rows, gold)
     subsets = {gold[s["row_id"]]["set"] for s in score_rows}
     models = {(s.get("model_id"), s.get("model_revision")) for s in score_rows}
-    pairs = [PairScore(s["pair_id"], s["block_id"], s["side"], float(s["score"])) for s in score_rows]
     coverage = _coverage(score_rows)
+    # Coverage counts every row; the statistics (W, families, behaviour, competence gate) use
+    # complete B/C pairs only, as in the notebooks ("the gate is computed on the B cases of the
+    # pairs kept"). An orphan B or C row is counted in coverage["incomplete_pairs"].
+    complete = set(coverage["complete_pair_ids"])
+    score_rows = [s for s in score_rows if s["pair_id"] in complete]
+    if not score_rows:
+        raise ValueError("No complete B/C pairs")
+    pairs = [PairScore(s["pair_id"], s["block_id"], s["side"], float(s["score"])) for s in score_rows]
     result = {
         "subset": subsets.pop(),
         "models": sorted(f"{m}@{r}" for m, r in models),
         "n_rows": len(score_rows),
-        "coverage": coverage,
+        "coverage": {k: v for k, v in coverage.items() if k != "complete_pair_ids"},
         "W_p_unknown": asdict(w_score(pairs, n_bootstrap=n_bootstrap, seed=seed)),
         "W_by_family_descriptive": {},
         "behaviour": {},

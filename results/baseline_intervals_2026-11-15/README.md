@@ -20,9 +20,9 @@ Difference from the best of entropy and −p max, with its 95% interval:
 | Gemma-2-27B-it | +0.051 [+0.026, +0.077] | above 0 |
 | Falcon3-7B-Instruct | +0.031 [+0.005, +0.058] | above 0 |
 | Qwen3-8B (control) | +0.026 [+0.011, +0.041] | above 0 |
-| Phi-4 | −0.000 [−0.018, +0.019] | includes 0 |
+| Phi-4 | −0.000 [−0.018, +0.019] | includes 0 (inconclusive) |
 | OLMo-2-0325-32B-Instruct | −0.034 [−0.051, −0.018] | below 0 |
 | Gemma-2-9B-it | −0.074 [−0.100, −0.049] | below 0 |
 | Llama-3.3-70B-Instruct (nf4) | −0.080 [−0.099, −0.061] | below 0 |
 
-The split already described in the reports holds with intervals: p(UNKNOWN) ranks C above B better than generic answer uncertainty in four models, worse in three, and equally in one. These data therefore do not show that p(UNKNOWN) carries information specific to indeterminacy. Against the generated answer (`unknown01`), p(UNKNOWN) is higher in every model, because many C cases get a YES or NO answer: the generated answer is UNKNOWN on 19–55% of the C cases in the evaluable models (see [`docs/PROTOCOL.md`](../../docs/PROTOCOL.md#6-what-w-does-not-measure)).
+The split already described in the reports holds with intervals: p(UNKNOWN) ranks C above B better than generic answer uncertainty in four models, worse in three, and with an inconclusive difference in one (Phi-4: the interval includes 0, which does not show equality). These data therefore do not show that p(UNKNOWN) carries information specific to indeterminacy. Against the generated answer (`unknown01`), p(UNKNOWN) is higher in every model, because many C cases get a YES or NO answer: the generated answer is UNKNOWN on 19–55% of the C cases in the evaluable models (see [`docs/PROTOCOL.md`](../../docs/PROTOCOL.md#6-what-w-does-not-measure)).
