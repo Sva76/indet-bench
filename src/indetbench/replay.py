@@ -1,7 +1,10 @@
 """CPU replay of frozen Test C and Test M notebooks A/B, from per-row scores.
 
+The command line also dispatches to the Test U, Test U2 and Test C HC4 replays
+(``replay_u``, ``replay_u2``, ``replay_c_hc4``).
+
 This module recalculates W, paired ΔW, confidence intervals, domain controls,
-and family breakdowns. It deliberately does NOT validate HC4 class labels.
+and family breakdowns. HC4 is replayed separately (``--kind C-HC4``).
 Requires optional extra: pip install 'indetbench[replay]'.
 """
 from __future__ import annotations
@@ -249,7 +252,7 @@ def replay_c(path, seed=SEED, n_boot=BOOT):
             "method_model_combinations": len(original["risultati"]),
             "synthetic_pairs": len(synthetic), "natural_pairs": len(natural),
             "statistics_checked": checked, "differences": errors, "passed": not errors,
-            "scope": "W, paired delta-W and controls only; HC4 classification NOT revalidated"}
+            "scope": "W, paired delta-W and controls only; HC4 is replayed with --kind C-HC4"}
 
 
 def replay_m_b(path, seed=SEED, n_boot=BOOT):
@@ -301,18 +304,33 @@ def replay_m_b(path, seed=SEED, n_boot=BOOT):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="CPU replay of Test C or Test M A/B archived statistics")
+    p = argparse.ArgumentParser(description="CPU replay of archived Step 2 statistics (Tests U, U2, M A/B, C, C HC4)")
     p.add_argument("archive")
-    p.add_argument("--kind", choices=("C", "M-A", "M-B"), default="C")
+    p.add_argument("--kind", choices=("C", "C-HC4", "M-A", "M-B", "U", "U2"), default="C")
     p.add_argument("--expected-sha256")
+    p.add_argument("--annotations", help="C-HC4 only: CSV with n and categoria_Simona for the 100-answer sample")
     p.add_argument("--json-out")
     args = p.parse_args(argv)
     actual = sha256(args.archive)
     if args.expected_sha256 and actual != args.expected_sha256.lower():
         p.error(f"Archive SHA-256 mismatch: {actual} vs {args.expected_sha256}")
+    if args.annotations and args.kind != "C-HC4":
+        p.error("--annotations is only used with --kind C-HC4")
     if args.kind == "M-A":
         from .replay_m_a import replay_m_a
         report = replay_m_a(args.archive)
+    elif args.kind == "U":
+        from .replay_u import replay_u
+        report = replay_u(args.archive)
+    elif args.kind == "U2":
+        from .replay_u2 import replay_u2
+        report = replay_u2(args.archive)
+    elif args.kind == "C-HC4":
+        from .replay_c_hc4 import annotation_agreement, key_from_archive, read_human_labels, replay_c_hc4
+        report = replay_c_hc4(args.archive)
+        if args.annotations:
+            report["annotation_agreement"] = annotation_agreement(read_human_labels(args.annotations),
+                                                                  key_from_archive(args.archive))
     else:
         report = (replay_c if args.kind == "C" else replay_m_b)(args.archive)
     report["sha256"] = actual

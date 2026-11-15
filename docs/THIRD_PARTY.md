@@ -11,7 +11,7 @@ This page records the terms declared by each provider. It is not legal advice.
 **Not distributed:**
 
 - model weights, tokenizers, adapters or probe weights;
-- TriviaQA, LongFact or other third-party dataset rows (the TriviaQA rows were removed from the Test M notebook A archive; their licence is not checked here). The model answers and uncertainty scores on those TriviaQA questions remain in that archive (`uscite/M1_*.json`, identified by `row_id`; some answers repeat words of the question).
+- TriviaQA, LongFact or other third-party dataset rows (the TriviaQA rows were removed from the Test M notebook A archive: on 15 November 2026 neither the official page nor the Hugging Face card declares a licence, and the University of Washington states that it does not own the copyright of the questions and documents). The model answers and uncertainty scores on those TriviaQA questions remain in that archive (`uscite/M1_*.json`, identified by `row_id`; some answers repeat words of the question).
 
 SQuAD 2.0 passages and questions **are** distributed since 15 November 2026, under CC BY-SA 4.0 (see below).
 
@@ -21,7 +21,7 @@ All models are downloaded at run time, by whoever runs the code, from the provid
 
 - Numeric scores computed from model outputs (probabilities, W, intervals) in `results/` and `research_originals/`.
 - Short generated answers, at most 8 generated tokens (for example "YES", "NO" or "UNKNOWN", sometimes followed by the start of an explanation), in the `generated` column of the `punteggi.csv` files under `results/`. These are model outputs, not original IndetBench material. See [Model outputs](#model-outputs) below.
-- The original output archives of Tests U2, M and C in [`research_originals/step2/outputs/`](../research_originals/step2/outputs/README.md) (owner's decision, 15 November 2026): per-row scores, generated answers (including LM-Polygraph samples and natural-passage answers, longer than 8 tokens), logs, environment listings and the SIRIN probes trained in this project.
+- The original output archives of Tests U, U2, M and C in [`research_originals/step2/outputs/`](../research_originals/step2/outputs/README.md) (owner's decision, 15 November 2026): per-row scores, generated answers (including LM-Polygraph samples and natural-passage answers, longer than 8 tokens), logs, environment listings and the SIRIN probes trained in this project.
 - Text derived from SQuAD 2.0, under **CC BY-SA 4.0** with attribution and a description of the changes: in those archives and in [`research_originals/step2/test_c_selection/righe_C.json.gz`](../research_originals/step2/test_c_selection/righe_C.json.gz). Exact list of files: [`research_originals/step2/outputs/README.md`](../research_originals/step2/outputs/README.md#licences-and-attribution).
 - SQuAD 2.0 question IDs and Wikipedia article titles, also in one selection record, [`research_originals/step2/test_c_selection/Chiusura_selezione_DUE-nat_199_C-sel-8.md`](../research_originals/step2/test_c_selection/Chiusura_selezione_DUE-nat_199_C-sel-8.md). Attribution is given in the dataset table below.
 
@@ -78,7 +78,7 @@ If any of these is ever vendored, its LICENSE and NOTICE files must be copied wi
 | Dataset | Use | Licence | Redistributed |
 |---|---|---|---|
 | SQuAD 2.0 (`rajpurkar/squad_v2`, revision `3ffb306f725f`) | probe training/positive control (Test M B); natural cases of Test C | CC BY-SA 4.0 | **Yes, since 15 Nov 2026**, adapted rows under CC BY-SA 4.0: the natural Test C cases (including the full selection `righe_C.json`) and the Test M SQuAD rows, inside `research_originals/step2/`. Source: Rajpurkar, Jia & Liang (2018), [SQuAD 2.0](https://rajpurkar.github.io/SQuAD-explorer/), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); changes and file list in [`research_originals/step2/outputs/README.md`](../research_originals/step2/outputs/README.md#licences-and-attribution) |
-| TriviaQA, loaded through LM-Polygraph | M1 positive control | not checked here | no |
+| TriviaQA (`mandarjoshi/trivia_qa`, `rc.nocontext`, validation) | M1 positive control | none declared (checked 15 Nov 2026; card field: unknown) | no |
 | `obalcells/longfact-annotations` (revision `949fd2f71b3e`) | M4 positive control | not declared in the dataset card | no |
 | `obalcells/triviaqa-balanced` (revision `620117a4967f`) | M4 reserve control | not declared in the dataset card | no |
 

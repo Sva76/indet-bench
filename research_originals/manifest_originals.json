@@ -66,8 +66,7 @@
   "additional_frozen_data_awaiting_rights_review": [],
   "not_yet_recovered": [
     "Step 1 original generator/source notebooks and frozen score archives",
-    "Step 2 Test U complete output archive and original notebooks where library bytes are unavailable",
-    "TriviaQA rows of the Test M notebook A archive (licence not checked)",
+    "TriviaQA rows of the Test M notebook A archive (no licence declared by the source; not redistributable)",
     "model and probe weights (third-party, not redistributed)"
   ],
   "separation": "Hugging Face SmolLM2/Qwen/TinyLlama experiments from November 13 live under data/ and docs/, not in research_originals/",
@@ -287,7 +286,32 @@
         "note": "gzip of the unchanged bytes; natural rows CC BY-SA 4.0 (SQuAD 2.0)",
         "sha256_gzip": "bb01cebd3453693be03bfc5d5efc0f0cab03c2abafbb342ebf748c5c4eba83c8",
         "sha256_decompressed_original": "4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42"
+      },
+      {
+        "path": "research_originals/step2/outputs/testU_risultati.zip",
+        "source": "PHI/Step2_uscite/testU_risultati/testU_risultati.zip",
+        "sha256": "f47231eb89d129b1488d1c23e421c3b4a4492ad122fbbbe5057ef457d9230b39",
+        "note": "identical; synthetic stories, per-row scores of the 4 models (including the SQuAD-detector score of the lexical rows), per-cell tables; no SQuAD text"
+      },
+      {
+        "path": "research_originals/step2/notebooks/TestU_astensione_4_modelli_v3.ipynb",
+        "source": "PHI/Step2_uscite/TestU_astensione_4_modelli_v3.ipynb",
+        "sha256": "15ba5a5aa56d97543f4ed86b056c245eff5113fa924549ce8f289b0a8d69c18c",
+        "note": "notebook of the complete run (version U-v1-notebook-2), byte copy, no outputs; its analysis is re-implemented in src/indetbench/replay_u.py"
+      },
+      {
+        "path": "research_originals/step2/notebooks/TestU2_istruzione_4_modelli_v2.ipynb",
+        "source": "PHI/Step2_uscite/TestU2_istruzione_4_modelli_v2.ipynb",
+        "sha256": "2249060da0ed4a42879158e94767fc2831b6868b0b124870f335342c2b85ef39",
+        "note": "notebook of the complete run (version U2-v1-notebook-2), byte copy, no outputs; its analysis is re-implemented in src/indetbench/replay_u2.py"
+      },
+      {
+        "path": "research_originals/step2/test_c_controls/etichette_Simona_campione_C.csv",
+        "source": "PHI/Step2_uscite/testC_completo_risultati/campione_classificazione_Simona_compilato_definitivo.xlsx (columns n, row_id, modello, origine, categoria_Simona)",
+        "note": "owner's blind classification of the 100-answer Test C sample, categories only, notes left out (owner's decision, 15 Nov 2026)"
       }
-    ]
+    ],
+    "decision_testU": "owner, 15 Nov 2026: publish the Test U archive if it exists and nothing prevents it",
+    "triviaqa_licence_check": "15 Nov 2026: the official TriviaQA page (nlp.cs.washington.edu/triviaqa) and the Hugging Face card of mandarjoshi/trivia_qa declare no licence (card licence field: unknown); the page states that the University of Washington does not own the copyright of the questions and documents. The 400 rows stay unpublished."
   }
 }
