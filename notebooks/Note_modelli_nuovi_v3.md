@@ -22,7 +22,7 @@ Il notebook usa solo le 800 coppie originali. Le 240 coppie (`data/smol_stat_v01
 | qwen_controllo | Qwen/Qwen3-8B | b968826d9c46dd6066d109eabc6255188de91218 | Apache-2.0 | controllo positivo, è il modello originale |
 | gemma2_9b | google/gemma-2-9b-it | 11c9b309abf73637e4b6f9a3fa1e92e615547819 | Gemma Terms of Use | gated: bisogna accettare la licenza su HF |
 | yi15_9b | 01-ai/Yi-1.5-9B-Chat | 1a0fc698cf883c4f5c325f026ca79f0ebd9955a5 | Apache-2.0 | |
-| falcon3_7b | tiiuae/Falcon3-7B-Instruct | 1e57a0ecd176c7c139f289c60a74e57f887c3dfb | TII Falcon License 2.0 | |
+| falcon3_7b | tiiuae/Falcon3-7B-Instruct | 1e57a0ecd176c7c139f289c60a74e57f887c3dfb | TII Falcon-LLM License 2.0 | |
 | phi4 | microsoft/phi-4 | 2db69c1c3e91a05d2c64a3185acfbaf36f744e25 | MIT | 14B, come Mistral-Nemo 12B negli originali |
 
 Gli SHA sono stati letti dall'API di Hugging Face il 14 novembre. Il notebook li ricontrolla con `HfApi.model_info` prima di scaricare i pesi. Le licenze vanno ricontrollate prima di citarle nel README.
