@@ -22,5 +22,12 @@ classifiers = [
 replay = ["numpy>=1.26"]
 hf = ["torch>=2.2", "transformers>=4.56,<6", "accelerate>=1.0"]
 
+[project.scripts]
+indet-bench = "indetbench.__main__:main"
+indet-bench-original = "indetbench.original_benchmark:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+indetbench = ["data/*.json.gz"]

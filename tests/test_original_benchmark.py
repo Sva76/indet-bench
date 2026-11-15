@@ -16,6 +16,11 @@ class OriginalBenchmarkTests(unittest.TestCase):
         self.assertEqual({r["set"] for r in self.rows}, {"PN", "SN"})
         self.assertEqual(len({r["story_id"] for r in self.rows}), 200)
 
+    def test_packaged_copy_is_identical_to_archived_original(self):
+        if not ob.ARCHIVED_FROZEN.exists():
+            self.skipTest("research_originals/ not available (installed package only)")
+        self.assertEqual(ob.DEFAULT_FROZEN.read_bytes(), ob.ARCHIVED_FROZEN.read_bytes())
+
     def test_tampered_file_is_rejected(self):
         raw = gzip.decompress(ob.DEFAULT_FROZEN.read_bytes()).replace(b"approval", b"approvaI", 1)
         with tempfile.TemporaryDirectory() as tmp:
@@ -164,6 +169,95 @@ class OriginalBenchmarkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not in the frozen benchmark"):
             ob.report([{"row_id": "x", "pair_id": "p", "block_id": "b", "side": "B", "score": "0"}],
                       self.rows, n_bootstrap=0)
+
+
+    def _full_scores(self):
+        out = ob.export_rows(self.rows, "PN")
+        return [{"row_id": o["row_id"], "pair_id": o["pair_id"], "block_id": o["block_id"],
+                 "side": o["side"], "score": "0.9" if o["side"] == "C" else "0.1",
+                 "parsed": "UNKNOWN" if o["side"] == "C" else o["gold"],
+                 "model_id": "fake", "model_revision": "0" * 40} for o in out]
+
+    def test_report_rejects_swapped_sides(self):
+        # Before 15 Nov 2026 a swapped side column inverted W (0.975 -> 0.025) without error.
+        scores = [dict(s, side={"B": "C", "C": "B"}[s["side"]]) for s in self._full_scores()]
+        with self.assertRaisesRegex(ValueError, "identifier mismatches.*side="):
+            ob.report(scores, self.rows, n_bootstrap=0)
+
+    def test_report_rejects_wrong_pair_or_block(self):
+        scores = self._full_scores()
+        scores[0] = dict(scores[0], block_id="V9999")
+        with self.assertRaisesRegex(ValueError, "identifier mismatches.*block_id="):
+            ob.report(scores, self.rows, n_bootstrap=0)
+        scores = self._full_scores()
+        scores[0] = dict(scores[0], pair_id=scores[-1]["pair_id"])
+        with self.assertRaisesRegex(ValueError, "identifier mismatches.*pair_id="):
+            ob.report(scores, self.rows, n_bootstrap=0)
+
+    def test_report_rejects_duplicate_rows(self):
+        scores = self._full_scores()
+        with self.assertRaisesRegex(ValueError, "more than once"):
+            ob.report(scores + scores[:1], self.rows, n_bootstrap=0)
+
+    def test_report_rejects_mixed_models(self):
+        scores = self._full_scores()
+        mixed = scores[:800] + [dict(s, model_id="other") for s in scores[800:]]
+        with self.assertRaisesRegex(ValueError, "mix 2 models"):
+            ob.report(mixed, self.rows, n_bootstrap=0)
+        mixed = scores[:800] + [dict(s, model_revision="1" * 40) for s in scores[800:]]
+        with self.assertRaisesRegex(ValueError, "mix 2 models"):
+            ob.report(mixed, self.rows, n_bootstrap=0)
+
+    def test_report_rejects_a_rows(self):
+        a_row = next(r for r in self.rows if r["set"] == "PN" and r["kind"] == "A")
+        scores = self._full_scores() + [{"row_id": a_row["row_id"], "pair_id": "x", "block_id": "y",
+                                         "side": "B", "score": "0"}]
+        with self.assertRaisesRegex(ValueError, "not B or C rows"):
+            ob.report(scores, self.rows, n_bootstrap=0)
+
+    def test_orphan_rows_are_counted_but_not_scored(self):
+        # One C row missing: 799 complete pairs pass coverage; the orphan B row is left out
+        # of W and of the competence gate instead of stopping the report.
+        scores = self._full_scores()
+        orphan_pair = scores[0]["pair_id"]
+        sub = [s for s in scores if not (s["pair_id"] == orphan_pair and s["side"] == "C")]
+        rep = ob.report(sub, self.rows, n_bootstrap=0)
+        self.assertEqual(rep["coverage"]["complete_pairs"], 799)
+        self.assertEqual(rep["coverage"]["incomplete_pairs"], 1)
+        self.assertTrue(rep["coverage"]["passed"])
+        self.assertNotIn("complete_pair_ids", rep["coverage"])
+        self.assertEqual(rep["W_p_unknown"]["n_pairs"], 799)
+        self.assertEqual(rep["competence_gate"]["n_B"], 799)
+        self.assertEqual(rep["n_rows"], 1598)
+
+    def test_family_without_pairs_has_no_estimate(self):
+        scores = self._full_scores()
+        gold = {r["row_id"]: r for r in self.rows}
+        only_and = [s for s in scores if gold[s["row_id"]]["family"] == "AND"]
+        rep = ob.report(only_and, self.rows, n_bootstrap=0)
+        self.assertEqual(rep["W_by_family_descriptive"]["AND"], 1.0)
+        self.assertIsNone(rep["W_by_family_descriptive"]["OR"])
+        self.assertIsNone(rep["W_by_family_descriptive"]["IMPLIES"])
+        self.assertTrue(rep["verdict"].startswith("DESCRIPTIVE (coverage"))
+
+    def test_coverage_rule(self):
+        scores = self._full_scores()
+        rep = ob.report(scores, self.rows, n_bootstrap=0)
+        self.assertEqual(rep["coverage"]["complete_pairs"], 800)
+        self.assertTrue(rep["coverage"]["passed"])
+        # 760 complete pairs pass (inclusive), 759 give a DESCRIPTIVE outcome.
+        pair_ids = sorted({s["pair_id"] for s in scores})
+        for keep, passed in ((760, True), (759, False)):
+            kept = set(pair_ids[:keep])
+            sub = [s for s in scores if s["pair_id"] in kept]
+            rep = ob.report(sub, self.rows, n_bootstrap=200)
+            with self.subTest(keep=keep):
+                self.assertEqual(rep["coverage"]["complete_pairs"], keep)
+                self.assertEqual(rep["coverage"]["passed"], passed)
+                if passed:
+                    self.assertEqual(rep["verdict"], "CONFIRMED")
+                else:
+                    self.assertTrue(rep["verdict"].startswith("DESCRIPTIVE (coverage"))
 
 
 if __name__ == "__main__":

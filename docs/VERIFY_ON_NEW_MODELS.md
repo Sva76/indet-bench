@@ -24,9 +24,10 @@ Use `--model-key qwen` for Qwen3 models, which turns thinking off as in the orig
 
 | Check | Where | Rule |
 |---|---|---|
+| Score file | `report` | Refused if a row is not a B/C row of the frozen benchmark, appears twice, has `pair_id`, `block_id` or `side` different from the frozen row, or if the file mixes subsets or, when `model_id` and `model_revision` are present, models. Fewer than 760 complete pairs give a DESCRIPTIVE outcome (`coverage`); coverage is checked before the competence gate, so such a file is DESCRIPTIVE even if the gate also fails. Statistics use complete pairs only. See [Protocol §5](PROTOCOL.md#5-decision-rules-set-pn). |
 | Tokenizer labels | `hf_runner` | The runner stops if YES, NO and UNKNOWN share a first token (TinyLlama does). Then p(UNKNOWN) is not defined for that model: report it as *not measurable*, not as a negative result. |
 | All three labels generated | `report.json` → `warnings` | A model that never generates one of the labels (SmolLM2 never said NO) is flagged. |
-| **Competence gate (binding)** | `report.json` → `competence_gate`, `verdict` | Accuracy of the generated answer on the 800 B cases must be **≥ 0.50 overall and separately on the 532 B cases with gold YES and on the 268 with gold NO**. If any part fails, the result is **NOT EVALUABLE** (`failed_parts` says which). See the section below. |
+| **Competence gate (binding)** | `report.json` → `competence_gate`, `verdict` | Accuracy of the generated answer on the 800 B cases must be **≥ 0.50 overall and separately on the 532 B cases with gold YES and on the 268 with gold NO**. If any part fails, the result is **NOT EVALUABLE** (`failed_parts` says which), unless coverage already failed, in which case it is DESCRIPTIVE. See the section below. |
 | Accuracy on B by family | `report.json` → `behaviour` | Descriptive only. (Accuracy by gold label is part of the gate.) |
 | Primary result | `W_p_unknown` | As in Test U/U2 (HU1, HI1): **confirmed** if W ≥ 0.60 and the lower bound of the 95% interval is above 0.5; **not confirmed** if the upper bound is at or below 0.5; otherwise **not conclusive**. |
 | Families | `W_by_family_descriptive` | Descriptive only. In the original models W varied strongly by family. |
@@ -39,7 +40,7 @@ Use `--model-key qwen` for Qwen3 models, which turns thinking off as in the orig
 2. on at least **50% of the B cases with gold answer YES** (532 cases: OR and IMPLIES families), and
 3. on at least **50% of the B cases with gold answer NO** (268 cases: AND family).
 
-All thresholds are inclusive. If any part fails, `report` returns `NOT EVALUABLE` whatever the value of W, and `competence_gate.failed_parts` lists the failed parts (`overall`, `YES`, `NO`). A gold label with no B rows in the scores counts as failed, because the gate cannot be checked on it. Accuracy per family is reported but does not decide.
+All thresholds are inclusive. If any part fails, `report` returns `NOT EVALUABLE` whatever the value of W (provided coverage is met; below 760 complete pairs the outcome is DESCRIPTIVE first), and `competence_gate.failed_parts` lists the failed parts (`overall`, `YES`, `NO`). A gold label with no B rows in the scores counts as failed, because the gate cannot be checked on it. Accuracy per family is reported but does not decide.
 
 Parts 2 and 3 imply part 1, since the overall accuracy is a weighted mean of the two per-label accuracies. Part 1 is kept and reported because it was fixed first and is the figure readers expect.
 
@@ -74,7 +75,7 @@ Running one of these four models again at its pinned revision should give a clos
 
 ## Results so far
 
-First exploratory run with this procedure (14 November 2026): [`NEW_MODELS_RESULTS_2026-11-14.md`](NEW_MODELS_RESULTS_2026-11-14.md). It also shows a case the rule above does not catch: a model can pass the gate and get CONFIRMED while its YES/NO/UNKNOWN probability mass at the first token is near zero (Yi-1.5-9B-Chat); the owner classified it as NOT EVALUABLE for a technical reason. The notebook flags low label mass only as a caution; it does not change the verdict, so read that flag before reading W.
+First exploratory run with this procedure (14 November 2026): [`NEW_MODELS_RESULTS_2026-11-14.md`](NEW_MODELS_RESULTS_2026-11-14.md). It also shows a case the rule above does not catch: a model can pass the gate and get CONFIRMED while its YES/NO/UNKNOWN probability mass at the first token is near zero (Yi-1.5-9B-Chat); the owner classified it as NOT EVALUABLE for a technical reason. In that notebook (N-notebook-3) low label mass was only a caution flag. Since the larger-model notebook (N-notebook-4, 15 November 2026) a median label mass below 0.5 makes the model NOT MEASURABLE, and rows below 0.9 are flagged. `report` does not apply the mass rule, so read `mass_total` before reading W ([Protocol §5](PROTOCOL.md#5-decision-rules-set-pn)).
 
 ## What a result on a new model can and cannot show
 

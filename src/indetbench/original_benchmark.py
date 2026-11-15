@@ -23,13 +23,21 @@ import hashlib
 import json
 from collections import Counter, defaultdict
 from dataclasses import asdict
+from importlib import resources
 from pathlib import Path
 
 from .metrics import PairScore, w_score
 
 FROZEN_SHA256 = "906c01bf2988607247b4b06f92b15d189bcb49278a6964ae2479b2236f96d459"
-DEFAULT_FROZEN = (Path(__file__).resolve().parents[2]
-                  / "research_originals/step2/frozen/M_Original_4800_righe.json.gz")
+FROZEN_NAME = "M_Original_4800_righe.json.gz"
+# The frozen file ships inside the package (indetbench/data/), so that a normal install
+# (`pip install .` or from GitHub, not only `pip install -e`) can run the benchmark. It is a
+# byte-identical copy of research_originals/step2/frozen/M_Original_4800_righe.json.gz, the
+# archived original; a unit test checks that the two copies are identical, and
+# `load_frozen` checks the SHA-256 of the content whichever copy is read.
+DEFAULT_FROZEN = Path(str(resources.files("indetbench").joinpath("data", FROZEN_NAME)))
+ARCHIVED_FROZEN = (Path(__file__).resolve().parents[2]
+                   / "research_originals/step2/frozen" / FROZEN_NAME)
 FAMILIES = ("AND", "OR", "IMPLIES")
 SETS = {"PN": "prose without explanatory sentence (P-S, primary in Tests U2/M)",
         "SN": "symbolic without explanatory sentence (S-S, descriptive)"}
@@ -121,29 +129,99 @@ def _read_scores(path: str | Path) -> list[dict]:
         return list(csv.DictReader(handle))
 
 
-def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
-           seed: int = 20261108) -> dict:
-    """W overall and per family, plus generated-answer behaviour, from runner output."""
-    gold = {r["row_id"]: r for r in rows}
-    missing = [s["row_id"] for s in score_rows if s["row_id"] not in gold]
+# Coverage rule of the new-model notebooks (owner decision of 14 November 2026, before
+# new-model data): at least 760 complete B/C pairs of 800 (95%); below it the outcome is
+# DESCRIPTIVE. Added to `report()` on 15 November 2026 so that the command applies it too.
+N_PAIRS = 800
+MIN_COMPLETE_PAIRS = 760
+
+
+def _expected_ids(row: dict) -> dict:
+    """pair_id, block_id and side of a frozen row, exactly as `export_rows` writes them."""
+    return {"pair_id": f"{row['set']}|{row['pair_key']}", "block_id": row["story_id"],
+            "side": row["kind"]}
+
+
+def validate_score_rows(score_rows: list[dict], gold: dict) -> None:
+    """Refuse score files that could give wrong statistics without an error.
+
+    Checks, in order: every row_id is in the frozen benchmark and is a B or C row; no
+    row_id appears twice; pair_id, block_id and side equal those of the frozen row with
+    the same row_id (a swapped B/C column would otherwise invert W); one subset only; one
+    model only (model_id and model_revision, when the columns are present).
+    """
+    if not score_rows:
+        raise ValueError("No score rows")
+    missing = [s.get("row_id") for s in score_rows if s.get("row_id") not in gold]
     if missing:
         raise ValueError(f"{len(missing)} rows are not in the frozen benchmark, e.g. {missing[0]}")
+    not_bc = [s["row_id"] for s in score_rows if gold[s["row_id"]]["kind"] not in ("B", "C")]
+    if not_bc:
+        raise ValueError(f"{len(not_bc)} rows are not B or C rows, e.g. {not_bc[0]}")
+    counts = Counter(s["row_id"] for s in score_rows)
+    duplicates = sorted(r for r, n in counts.items() if n > 1)
+    if duplicates:
+        raise ValueError(f"{len(duplicates)} row_id values appear more than once, e.g. {duplicates[0]}")
+    mismatches = []
+    for s in score_rows:
+        expected = _expected_ids(gold[s["row_id"]])
+        for key, value in expected.items():
+            if s.get(key) != value:
+                mismatches.append(f"{s['row_id']}: {key}={s.get(key)!r}, frozen {value!r}")
+    if mismatches:
+        raise ValueError(f"{len(mismatches)} identifier mismatches with the frozen benchmark, "
+                         f"e.g. {mismatches[0]}")
     subsets = {gold[s["row_id"]]["set"] for s in score_rows}
     if len(subsets) != 1:
         raise ValueError(f"Scores mix subsets {sorted(subsets)}; report one subset at a time")
     models = {(s.get("model_id"), s.get("model_revision")) for s in score_rows}
+    if len(models) > 1:
+        shown = sorted(f"{m}@{r}" for m, r in models)
+        raise ValueError(f"Scores mix {len(models)} models {shown[:3]}; report one model at a time")
+
+
+def _coverage(score_rows: list[dict]) -> dict:
+    sides = defaultdict(set)
+    for s in score_rows:
+        sides[s["pair_id"]].add(s["side"])
+    complete_ids = sorted(p for p, v in sides.items() if v == {"B", "C"})
+    complete = len(complete_ids)
+    return {"rule": f">= {MIN_COMPLETE_PAIRS} complete B/C pairs of {N_PAIRS} (95%); "
+                    "below it the outcome is DESCRIPTIVE; statistics use complete pairs only",
+            "complete_pairs": complete, "incomplete_pairs": len(sides) - complete,
+            "passed": complete >= MIN_COMPLETE_PAIRS, "complete_pair_ids": complete_ids}
+
+
+def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
+           seed: int = 20261108) -> dict:
+    """W overall and per family, plus generated-answer behaviour, from runner output."""
+    gold = {r["row_id"]: r for r in rows}
+    validate_score_rows(score_rows, gold)
+    subsets = {gold[s["row_id"]]["set"] for s in score_rows}
+    models = {(s.get("model_id"), s.get("model_revision")) for s in score_rows}
+    coverage = _coverage(score_rows)
+    # Coverage counts every row; the statistics (W, families, behaviour, competence gate) use
+    # complete B/C pairs only, as in the notebooks ("the gate is computed on the B cases of the
+    # pairs kept"). An orphan B or C row is counted in coverage["incomplete_pairs"].
+    complete = set(coverage["complete_pair_ids"])
+    score_rows = [s for s in score_rows if s["pair_id"] in complete]
+    if not score_rows:
+        raise ValueError("No complete B/C pairs")
     pairs = [PairScore(s["pair_id"], s["block_id"], s["side"], float(s["score"])) for s in score_rows]
     result = {
         "subset": subsets.pop(),
         "models": sorted(f"{m}@{r}" for m, r in models),
         "n_rows": len(score_rows),
+        "coverage": {k: v for k, v in coverage.items() if k != "complete_pair_ids"},
         "W_p_unknown": asdict(w_score(pairs, n_bootstrap=n_bootstrap, seed=seed)),
         "W_by_family_descriptive": {},
         "behaviour": {},
     }
     for family in FAMILIES:
         subset = [p for p, s in zip(pairs, score_rows) if gold[s["row_id"]]["family"] == family]
-        result["W_by_family_descriptive"][family] = w_score(subset, n_bootstrap=0).value
+        # A family with no complete pair in the scores has no estimate (None), not an error.
+        result["W_by_family_descriptive"][family] = (w_score(subset, n_bootstrap=0).value
+                                                     if subset else None)
     counts = defaultdict(Counter)
     for s in score_rows:
         g = gold[s["row_id"]]
@@ -163,7 +241,8 @@ def report(score_rows: list[dict], rows: list[dict], *, n_bootstrap: int = 2000,
     b_rows = [s for s in score_rows if gold[s["row_id"]]["kind"] == "B"]
     result["competence_gate"] = competence_gate(b_rows, gold)
     passed = result["competence_gate"]["passed"]
-    result["verdict"] = verdict(result["W_p_unknown"], passed, result["subset"])
+    result["verdict"] = verdict(result["W_p_unknown"], passed, result["subset"],
+                                coverage_ok=coverage["passed"])
     result["published_reference_P-S"] = {k: dict(zip(("W", "ci_lower", "ci_upper"), v))
                                          for k, v in REFERENCE_W_PS.items()}
     return result
@@ -204,10 +283,13 @@ def competence_gate(b_rows: list[dict], gold: dict) -> dict:
     }
 
 
-def verdict(w: dict, gate_passed: bool, subset: str) -> str:
-    """Decision rule of HU1/HI1 (Tests U/U2), preceded by the competence gate."""
+def verdict(w: dict, gate_passed: bool, subset: str, coverage_ok: bool = True) -> str:
+    """Decision rule of HU1/HI1 (Tests U/U2), preceded by coverage and competence gate."""
     if subset != GATE_SUBSET:
         return "DESCRIPTIVE (only the prose set PN has a decision rule)"
+    if not coverage_ok:
+        return (f"DESCRIPTIVE (coverage below {MIN_COMPLETE_PAIRS} complete pairs of "
+                f"{N_PAIRS}; see coverage)")
     if not gate_passed:
         return "NOT EVALUABLE (competence gate on B not passed; see competence_gate.failed_parts)"
     if w["ci_lower"] is None or w["ci_upper"] is None:

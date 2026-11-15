@@ -20,3 +20,23 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e '.[replay]'
       - run: python -m unittest discover -s tests -v
+
+  # A normal (non-editable) install, run from outside the repository: before
+  # 15 Nov 2026 the frozen benchmark was looked up next to the source tree and
+  # `pip install .` could not run it. Editable installs above do not catch this.
+  install-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m venv "$RUNNER_TEMP/venv"
+      - run: '"$RUNNER_TEMP/venv/bin/python" -m pip install .'
+      - name: Export the frozen benchmark from a directory outside the checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/indet-bench-original" export --set PN --output pn.jsonl
+          test "$(wc -l < pn.jsonl)" -eq 1600
+          "$RUNNER_TEMP/venv/bin/indet-bench" --help > /dev/null
+          ls "$RUNNER_TEMP"/venv/lib/python3.12/site-packages/indetbench-*.dist-info/licenses/NOTICE
