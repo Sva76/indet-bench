@@ -42,7 +42,7 @@ The complete Test C selection `dati/righe_C.json` (2,478 rows including technica
 
 ## What is not here
 
-This is a substantial partial recovery, not the entire historical research archive. Not committed: complete natural SQuAD-derived rows (third-party content), several original Test U/U2 and Step 1 files, the per-row model-output ZIPs of Tests U2, M and C, environment captures and model weights. The output ZIPs are held by the owner, not published; their SHA-256 values are in [`docs/REPRODUCIBILITY_STATUS.md`](../docs/REPRODUCIBILITY_STATUS.md), so any copy can be checked byte for byte with `python -m indetbench.replay --expected-sha256`. The M-A and M-B original frozen inputs were checked to be identical.
+This is a substantial partial recovery, not the entire historical research archive. Not committed: complete natural SQuAD-derived rows (third-party content), several original Test U/U2 and Step 1 files, the per-row model-output ZIPs of Tests U2, M and C, environment captures and model weights. The output ZIPs are held by the owner, not published. For the Test C and Test M (notebooks A and B) archives the SHA-256 values are in [`docs/REPRODUCIBILITY_STATUS.md`](../docs/REPRODUCIBILITY_STATUS.md), so any copy can be checked byte for byte with `python -m indetbench.replay --expected-sha256`; no hash or replay is published yet for the Test U/U2 archives. The M-A and M-B original frozen inputs were checked to be identical.
 
 ## Rights and provenance
 
