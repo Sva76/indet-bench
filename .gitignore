@@ -12,3 +12,6 @@ __pycache__/
 .env.*
 build/
 dist/
+
+# Original Step 2 output archives, published on purpose (owner decision 2026-11-15)
+!research_originals/step2/outputs/*.zip
