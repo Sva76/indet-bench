@@ -11,7 +11,7 @@ This page records the terms declared by each provider. It is not legal advice.
 **Not distributed:**
 
 - model weights, tokenizers, adapters or probe weights;
-- TriviaQA, LongFact or other third-party dataset rows (the TriviaQA rows were removed from the Test M notebook A archive; their licence is not checked here).
+- TriviaQA, LongFact or other third-party dataset rows (the TriviaQA rows were removed from the Test M notebook A archive; their licence is not checked here). The model answers and uncertainty scores on those TriviaQA questions remain in that archive (`uscite/M1_*.json`, identified by `row_id`; some answers repeat words of the question).
 
 SQuAD 2.0 passages and questions **are** distributed since 15 November 2026, under CC BY-SA 4.0 (see below).
 

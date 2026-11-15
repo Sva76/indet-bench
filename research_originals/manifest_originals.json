@@ -284,8 +284,9 @@
       {
         "path": "research_originals/step2/test_c_selection/righe_C.json.gz",
         "source": "testC_selezione.zip member dati/righe_C.json (4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42)",
-        "sha256": "bb01cebd3453693be03bfc5d5efc0f0cab03c2abafbb342ebf748c5c4eba83c8",
-        "note": "gzip of the unchanged bytes; natural rows CC BY-SA 4.0 (SQuAD 2.0)"
+        "note": "gzip of the unchanged bytes; natural rows CC BY-SA 4.0 (SQuAD 2.0)",
+        "sha256_gzip": "bb01cebd3453693be03bfc5d5efc0f0cab03c2abafbb342ebf748c5c4eba83c8",
+        "sha256_decompressed_original": "4586e18f4e589505b63699ac91117a927d8bdfc965506a4e3d73920e2e6b0b42"
       }
     ]
   }

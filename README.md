@@ -57,7 +57,7 @@ Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model 
 - [Use of AI tools](docs/AI_USAGE.md): research conceived and directed by the author; all Python code generated to her specifications by AI tools (ChatGPT; Claude Opus 5.5 via Claude Code) and validated by execution. Limits of the checks are stated.
 - [Third-party terms](docs/THIRD_PARTY.md) · [Security](SECURITY.md) · [Citation](CITATION.cff)
 
-**No third-party model weights, training data or proprietary probe files are distributed.** SQuAD 2.0-derived rows in `research_originals/step2/` are distributed under CC BY-SA 4.0 with attribution ([details](research_originals/step2/outputs/README.md#licences-and-attribution)).
+**No third-party model weights or proprietary probe files are distributed.** SQuAD 2.0-derived rows (including the Test M probe-training rows) in `research_originals/step2/` are distributed under CC BY-SA 4.0 with attribution ([details](research_originals/step2/outputs/README.md#licences-and-attribution)).
 
 ## License
 

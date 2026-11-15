@@ -56,4 +56,4 @@ The replay command returns nonzero when a statistic differs from its archived ta
 - Frozen archive provenance must be checked by SHA-256.
 - Different reference environments are not silently interchanged: M1 uses its own reference, M2/M3 use env_sirin, M4 uses its recorded reference.
 - Missing B/C scores are never silently replaced by zero.
-- No model weights, raw SQuAD passages, original per-row research outputs, or third-party implementations are committed.
+- No model weights or third-party implementations are committed. Since 15 November 2026 the original per-row outputs of Tests U2, M and C, including SQuAD 2.0-derived passages under CC BY-SA 4.0, are committed in `research_originals/step2/outputs/`; see [`THIRD_PARTY.md`](THIRD_PARTY.md).

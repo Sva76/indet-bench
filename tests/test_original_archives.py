@@ -66,10 +66,11 @@ class OriginalArchives(unittest.TestCase):
 
 try:
     import numpy  # noqa: F401
-    from indetbench.replay import replay_c, replay_m_b
-    from indetbench.replay_m_a import replay_m_a
 except ImportError:  # replay extra not installed
     replay_c = None
+else:
+    from indetbench.replay import replay_c, replay_m_b
+    from indetbench.replay_m_a import replay_m_a
 
 
 @unittest.skipIf(replay_c is None, "needs the [replay] extra (NumPy)")
