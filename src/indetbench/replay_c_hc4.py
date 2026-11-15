@@ -203,12 +203,15 @@ def replay_c_hc4(path, seed=SEED, n_boot=BOOT):
                            sum(poly[k] == cat[k] for k in common), f"comportamento.{m}.categoria_uguale", errors)
 
     # 2. HC4 statistics
-    results = []
+    results, keys = [], []
     for row in original["risultati"]:
         method, model = row["metodo"], row["modello"]
         if "HC4" not in row:
             errors.append({"field": f"HC4.{method}/{model}", "note": "archived result has no HC4 block"})
             continue
+        keys.append((method, model))
+        if (method, model) not in EXPECTED_KEYS or (method, model) not in sources:
+            continue  # reported below as unexpected coverage, without looking up scores
         if method.startswith("M1-"):
             cat = labels[(model, "M1-LM-Polygraph")][0]
         elif method in ("M4-lin", "M4-LoRA"):
@@ -226,9 +229,8 @@ def replay_c_hc4(path, seed=SEED, n_boot=BOOT):
         checked += compare(row["HC4"], computed, f"HC4.{method}/{model}", errors)
         results.append({"metodo": method, "modello": model,
                         "entro_C": computed["entro_C"]["esito"], "entro_B": computed["entro_B"]["esito"]})
-    if len(results) != EXPECTED_RESULTS:
-        errors.append({"field": "HC4.results", "expected": EXPECTED_RESULTS, "actual": len(results)})
-    keys = [(r["metodo"], r["modello"]) for r in results]
+    if len(keys) != EXPECTED_RESULTS:
+        errors.append({"field": "HC4.results", "expected": EXPECTED_RESULTS, "actual": len(keys)})
     duplicates = sorted({k for k in keys if keys.count(k) > 1})
     if duplicates or set(keys) != EXPECTED_KEYS:
         errors.append({"field": "HC4.coverage", "duplicates": duplicates,
