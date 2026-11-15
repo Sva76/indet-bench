@@ -34,7 +34,7 @@ Without reasoning, p(UNKNOWN) is the probability of the first answer token. In a
 | Reasoning that does not close | the notebook appends `\n</think>\n\n` and measures the next token; the row is flagged `troncata` | the measure stays defined; truncation is recorded and analysed separately |
 | Answer after reasoning | up to 16 tokens after `</think>`, read with the same `parse_label` | same answer reading as before |
 | Precision | bfloat16 for all | as in part A |
-| Batch and attention | **batch 16, left padding, sdpa attention** | with batch 1 and eager, thousands of tokens per row do not fit a session |
+| Batch and attention | **batch 16, left padding, sdpa attention; Qwen3-32B at batch 4** (with 16 sequences of about 4300 tokens, cache plus weights exceed 80 GB; implementation detail, the batch is recorded in the manifest) | with batch 1 and eager, thousands of tokens per row do not fit a session |
 | No-reasoning condition | for Qwen3-8B and 32B, re-measured **in the same pipeline** (same batch and attention, `enable_thinking=False`, greedy, 8 tokens as in Test U2) | the on/off comparison uses the same technical settings |
 | Saved texts | full reasoning and answer for every row | for checking anomalies; not used in the measures |
 

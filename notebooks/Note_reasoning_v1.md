@@ -21,6 +21,12 @@
 8. **Parametri di generazione.** I parametri vengono passati esplicitamente alla generazione, così prevalgono sulla `generation_config` del modello. Questa resta comunque registrata nell'esito.
 9. **Ripetibilità nella prova.** Nella prova si ripetono solo 2 storie, per provare il codice. Nel completo si ripetono 20 storie, come da protocollo.
 10. **Uscite.** I ragionamenti completi sono in `ragionamenti.csv`, i punteggi in `punteggi.csv` (con `chiusura`, `ragionamento_token`, `posizione_risposta`, `seme`, `batch`). HR2 e la ripetibilità sono in `esito.json` e in `rapporto.txt`.
+11. **Correzioni dopo la revisione del codice (15 novembre, stessa versione R-notebook-1).**
+    - La mediana è quella standard (media dei due valori centrali con un numero pari di righe). Prima si prendeva il valore centrale superiore.
+    - La regola sulla massa si applica alle righe tenute, come nelle parti precedenti. La mediana su tutte le righe grezze è registrata solo come diagnostica.
+    - I ragionamenti non chiusi da soli sono contati per famiglia, variante, posizione e condizione, separati per B e C (baseline descrittiva).
+    - HR2 porta il campo `lettura`: «VALUTABILE (esplorativa)» solo se acceso e spento sono misurabili e la copertura è raggiunta; altrimenti «SOLO DESCRITTIVA» con il motivo.
+    - Nel completo, qualsiasi errore di Qwen3-8B, o un controllo della pipeline mancante o non superato, ferma tutto prima degli altri modelli.
 
 ## 3. Controlli fatti (CPU, modello finto)
 

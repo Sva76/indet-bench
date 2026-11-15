@@ -42,7 +42,7 @@ Conseguenza da dichiarare: la misura è **condizionata al ragionamento generato*
 | Ragionamento che non si chiude | il notebook aggiunge `\n</think>\n\n` e misura il token successivo; la riga è marcata `troncata` | la misura resta definita; il troncamento è registrato e analizzato a parte |
 | Risposta dopo il ragionamento | fino a 16 token generati dopo `</think>`, letti con lo stesso `parse_label` | stessa lettura della risposta delle parti precedenti |
 | Precisione | bfloat16 per tutti | come la parte A |
-| Batch e attenzione | **batch 16 con padding a sinistra, attenzione sdpa** | con batch 1 ed eager, migliaia di token per riga non stanno nei tempi di una sessione |
+| Batch e attenzione | **batch 16 con padding a sinistra, attenzione sdpa; Qwen3-32B a batch 4** (con 16 sequenze da circa 4300 token cache e pesi superano gli 80 GB; dettaglio di attuazione, il batch è registrato nel manifest) | con batch 1 ed eager, migliaia di token per riga non stanno nei tempi di una sessione |
 | Condizione senza ragionamento | per Qwen3-8B e 32B si rimisura **nella stessa pipeline** (stesso batch e stessa attenzione, `enable_thinking=False`, greedy, 8 token come il Test U2) | il confronto acceso/spento usa le stesse impostazioni tecniche; i valori si confrontano anche con il Test U2 e la parte A |
 | Testi salvati | ragionamento e risposta completi di ogni riga | servono per controllare le anomalie; non entrano nelle misure |
 

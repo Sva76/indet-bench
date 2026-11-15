@@ -30,7 +30,7 @@ B and C are **minimal pairs**: the same story, in which one variable is stated w
 ## What has not been shown
 
 - That any method detects hallucinations with context. In Test C, HC4 within B could not be evaluated (0 errors on B), and HC4 within C is confounded with the passage family.
-- That the results hold outside 4 open-weights models of 7–12B, English and template texts.
+- That the results hold beyond the models tested so far (exploratory evidence on open-weights models from 7B up to 70B), or outside English, template texts and the tested formats.
 - That p(UNKNOWN) works in symbolic formats: there it is weak or reversed (Test U, Test U2).
 - Anything general about the small models on the 240-pair set. Under the binding competence rule (B accuracy ≥ 0.50 overall and on gold YES and NO) only Qwen2.5-1.5B is evaluable (W 0.613 [0.550, 0.671], exploratory, corpus not human-validated). Qwen2.5-0.5B, OLMo-2-0425-1B, SmolLM2-1.7B and SmolLM2-360M are NOT EVALUABLE; SmolLM2-1.7B and OLMo-1B fail even at the theoretical chance threshold of 1/3. TinyLlama is NOT MEASURED: its tokenizer shares the first token between labels, a limit of the measurement, not a result about the model. Details: [`COMPETENCE_240_PAIRS.md`](COMPETENCE_240_PAIRS.md), [`QWEN05_TINYLLAMA_REPORT_2026-11-14.md`](QWEN05_TINYLLAMA_REPORT_2026-11-14.md).
 - Anything new about hidden states: the prospective hidden-state experiment was not run (owner's decision, 14 Nov), because Step 1 already showed that probes do not transfer ([`HIDDEN_UNCERTAINTY_EXPERIMENT_PROTOCOL.md`](HIDDEN_UNCERTAINTY_EXPERIMENT_PROTOCOL.md)).
