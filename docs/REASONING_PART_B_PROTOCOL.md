@@ -45,7 +45,7 @@ Without reasoning, p(UNKNOWN) is the probability of the first answer token. In a
 3. The CPU check of the 4 Test U2 W values remains mandatory before the full run.
 
 ### 5.2 Measurability
-- **Mass rule (from v4):** if the median YES+NO+UNKNOWN mass at the first answer token is < 0.5, the model is **NOT MEASURABLE (technical reason)**; checked first on the 24 control rows, then on the full set.
+- **Mass rule (from v4):** if the median YES+NO+UNKNOWN mass at the first answer token is < 0.5, the model is **NOT MEASURABLE (technical reason)**; checked first on the 24 control rows, then on the full set. As in v4, the full set means the rows kept after the length filter; the median over all measured rows is recorded only as a diagnostic (clarified on 15 Nov, the rule is unchanged).
 - **Truncations:** a pair is "closed" if both B and C closed their reasoning by themselves within the budget. With at least 760 closed pairs, the main analysis uses all 800 pairs and the sensitivity analysis only closed pairs. With fewer than 760, the model's result is **descriptive only**, with the distribution of truncations by family, variant and position.
 
 ### 5.3 Hypotheses and criteria

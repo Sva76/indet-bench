@@ -56,7 +56,7 @@ Conseguenza da dichiarare: la misura è **condizionata al ragionamento generato*
 
 ### 5.2 Misurabilità
 
-- **Regola sulla massa (dalla v4):** se la massa mediana di YES+NO+UNKNOWN al primo token della risposta è < 0.5, il modello è **NON MISURABILE (motivo tecnico)**. Si controlla prima sulle 24 righe di prova e poi sull'insieme completo.
+- **Regola sulla massa (dalla v4):** se la massa mediana di YES+NO+UNKNOWN al primo token della risposta è < 0.5, il modello è **NON MISURABILE (motivo tecnico)**. Si controlla prima sulle 24 righe di prova e poi sull'insieme completo. Come nella v4, «insieme completo» vuol dire le righe tenute dopo il filtro di lunghezza; la mediana su tutte le righe misurate è registrata solo come diagnostica (precisazione del 15 novembre, la regola non cambia).
 - **Troncamenti:** la coppia è «chiusa» se B e C hanno chiuso il ragionamento da soli entro il budget. Se le coppie chiuse sono almeno 760, l'analisi principale usa tutte le 800 coppie, e la sensibilità usa solo le chiuse. Se sono meno di 760, il risultato del modello è **solo descrittivo**, con la distribuzione dei troncamenti per famiglia, variante e posizione. È la stessa soglia di copertura delle parti precedenti.
 
 ### 5.3 Ipotesi e criteri
