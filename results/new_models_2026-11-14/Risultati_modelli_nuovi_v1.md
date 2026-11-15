@@ -95,5 +95,6 @@ La baseline «p(UNKNOWN) normalizzata» resta nel rapporto per trasparenza, seco
 
 1. **Yi: deciso (Simona, 14 nov 18:51).** NON VALUTABILE per motivo tecnico. Resta facoltativa la cella diagnostica dei token (§1), utile solo se si vuole chiarire la causa o preparare una variante separata.
 2. **Variante NOT: decisa (Simona, 14 nov 18:52).** La variante NOT dà un W più basso di POS in 5 modelli su 5. È registrata come **questione aperta emersa dai dati**, da studiare in futuro con un test dedicato e protocollo fissato prima. Non cambia nessun risultato di questo resoconto. Domanda da chiarire: l'effetto dipende dalla negazione nella regola (formulazione delle coppie, limite del protocollo) o dal modo in cui i modelli elaborano la negazione (comportamento del modello)?
+   **Aggiornamento 15 nov (Simona, 13:48):** nei modelli più grandi (Qwen3-32B, Llama-3.3-70B) NOT è più forte di POS, con IC95 che esclude 0. La generalizzazione «NOT < POS in tutti i modelli» è falsificata e non si usa più. Dati e disegno proposto in `Risultati_modelli_grandi_v1.md` §2.1.
 
 File: dati `PHI/Step3_modelli_nuovi/completo_risultati/` (ZIP originale), ricalcolo `PHI/Step3_modelli_nuovi/ricalcolo_completo.py`.

@@ -1,0 +1,11 @@
+# Larger-model run, 15 November 2026 (exploratory)
+
+Archived output of `notebooks/IndetBench_modelli_grandi_v4.ipynb` (N-notebook-4), mode *completo*, on the frozen prose benchmark (set PN, 800 B/C pairs). Report: [`docs/LARGER_MODELS_RESULTS_2026-11-15.md`](../../docs/LARGER_MODELS_RESULTS_2026-11-15.md); owner-approved Italian original (v1.1): [`Risultati_modelli_grandi_v1.md`](Risultati_modelli_grandi_v1.md).
+
+- One folder per model (`<key>-<fingerprint>/`): `punteggi.csv` (per-row scores), `esito.json` (full report, including `report_indetbench` and the label-coverage check), `manifest.json` (model, revision, weights dtype, GPU, package versions, commit), `anomalie.csv`, `scarti_lunghezza.csv`.
+- `riepilogo.csv/json`, `rapporto.txt`: summary as produced by the notebook in the second session (Italian). `controllo_cpu_testU2.json`: CPU check of the four Test U2 values.
+- `ricalcolo_grandi_originale.py`: the independent pandas recomputation used for the approved report, kept as run (paths refer to the project workspace, not to this repository).
+- Two sessions: the first ended with HTTP 403 for Llama-3.3-70B (gated access not yet granted); the second skipped the four completed models and computed only Llama. The four models' `punteggi.csv` are byte-identical in the two archives. Archived here: the second session's archive `indetbench_modelli_grandi_completo.zip`, SHA-256 `137024c37cfb41c59c5cb85eb2eb17b3952c7236b76fd06c1f0625fcd8094a94` (held by the owner). Not included: per-shard checkpoints and nested ZIPs (same content).
+- Llama-3.3-70B was run **quantised to 4-bit nf4** (bitsandbytes), declared before the data; its result is "70B quantised", not full precision.
+- Integrity: `SHA256SUMS`; `tests/test_larger_models_results.py` recomputes W, intervals, gate and verdict from `punteggi.csv`.
+- Model licences: Apache 2.0 (Qwen3-8B, Qwen3-32B, OLMo-2-0325-32B-Instruct), Gemma Terms of Use (gemma-2-27b-it), Llama 3.3 Community License (Llama-3.3-70B-Instruct; Built with Llama). Only scores and short generated answers are stored here, no weights; the generated text is not covered by the repository licence (see [`docs/THIRD_PARTY.md`](../../docs/THIRD_PARTY.md#model-outputs)).
