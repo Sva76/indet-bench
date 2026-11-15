@@ -59,8 +59,8 @@ Il controllo della pipeline nella misura nuova (batch 1, eager) è superato: sca
 
 Che cosa dice:
 - La causa è confermata: la misura del Test U2 si riproduce solo a batch 1 con eager.
-- Sia sdpa da sola (a batch 1) sia il padding da solo (batch 16 con eager) bastano a spostare i valori.
+- Bastano sdpa da sola (a batch 1) o il passaggio a batch 16 con eager, che porta con sé il padding, per spostare i valori. La diagnostica non separa il batch dal padding.
 - La GPU da 40 GB non è la causa.
-- Il ragionamento generato a batch con sdpa non entra nella misura, perché la misura riparte dai token del ragionamento, riga per riga.
+- La configurazione con cui si genera il ragionamento (batch e sdpa) non entra nei calcoli della misura, perché la misura riparte riga per riga a batch 1 con eager. Il testo del ragionamento invece entra, come prefisso: un ragionamento diverso, per esempio con un altro seme o con altri arrotondamenti nella generazione, può dare probabilità diverse. Questa è la dipendenza dal ragionamento campionato che la ripetibilità misura, ed è distinta dall'effetto numerico della configurazione di misura.
 
 Archivio: `diagnostica_parte_B/indetbench_reasoning_diagnostica_20261115.zip`. Lo ZIP contiene anche la cartella della prova R-notebook-1. In attesa dell'approvazione di Simona della misura a batch 1 con eager.
