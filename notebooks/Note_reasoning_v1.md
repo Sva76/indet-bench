@@ -25,7 +25,7 @@
     - La mediana è quella standard (media dei due valori centrali con un numero pari di righe). Prima si prendeva il valore centrale superiore.
     - La regola sulla massa si applica alle righe tenute, come nelle parti precedenti. La mediana su tutte le righe grezze è registrata solo come diagnostica.
     - I ragionamenti non chiusi da soli sono contati per famiglia, variante, posizione e condizione, separati per B e C (baseline descrittiva).
-    - HR2 porta il campo `lettura`: «VALUTABILE (esplorativa)» solo se acceso e spento sono misurabili e la copertura è raggiunta; altrimenti «SOLO DESCRITTIVA» con il motivo.
+    - HR2 porta il campo `valutabilita`: «VALUTABILE (esplorativa)» solo se acceso e spento sono misurabili e la copertura è raggiunta; altrimenti «SOLO DESCRITTIVA» con il motivo, e la lettura automatica dell'intervallo è tolta (conservata come `lettura_del_calcolo_non_valida`).
     - Nel completo, qualsiasi errore di Qwen3-8B, o un controllo della pipeline mancante o non superato, ferma tutto prima degli altri modelli.
 
 ## 3. Controlli fatti (CPU, modello finto)
