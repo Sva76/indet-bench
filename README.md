@@ -40,14 +40,18 @@ W = share of pairs in which C scores above B, averaged within stories (ties coun
 | | Llama-3.3-70B-Instruct (4-bit nf4) | 0.908 [0.889, 0.928] | exploratory |
 | | OLMo-2-0325-32B-Instruct | 0.886 [0.861, 0.910] | exploratory |
 | | Gemma-2-27B-it | 0.870 [0.839, 0.900] | exploratory |
+| Same benchmark, reasoning on (16 Nov 2026) | Qwen3-8B, reasoning on (off: 0.975) | 1.000 [1.000, 1.000] | exploratory; ceiling: the generated answer alone gives 0.997 |
+| | Phi-4-reasoning | 0.995 [0.990, 0.999] | exploratory; the generated answer alone gives 0.996 (equal) |
+| | DeepSeek-R1-Distill-Llama-8B | 0.9225 [0.900, 0.944] | exploratory; label mass 0.84, 89 unreadable answers, low answer repeatability |
 
 - **Published methods (Tests M and C, preregistered):** no tested method (LM-Polygraph estimators, SIRIN probe and judge, Obeso et al. probes) showed a *replicated* improvement over `p(UNKNOWN)`. The one positive case, an Obeso LoRA probe on Llama in Test M, did not replicate in Test C. This does **not** mean that `p(UNKNOWN)` is universally better.
 - **Ranking is not abstention:** W counts how often C scores above B, not how often the model answers UNKNOWN. Qwen3-32B has W 0.975 but answers UNKNOWN on only 24.4% of the C cases (0% of the B cases); across the evaluable new and larger models the rate on C is 19–55% ([Protocol §6](docs/PROTOCOL.md#6-what-w-does-not-measure)).
 - **Not specific, so far:** on the new models, generic uncertainty from the same outputs (entropy, maximum probability) does about as well as `p(UNKNOWN)` and better on Gemma-2-9B (descriptive). On the larger models the sign is split: `p(UNKNOWN)` is above the best baseline on Qwen3-32B and Gemma-2-27B, below it on OLMo-2-32B and Llama-3.3-70B (descriptive; 95% intervals added post hoc in [baseline intervals](results/baseline_intervals_2026-11-15/README.md)). It is not shown that `p(UNKNOWN)` carries information specific to indeterminacy.
+- **Reasoning models (part B, exploratory):** with reasoning on, Qwen3-8B and Phi-4-reasoning answer UNKNOWN on almost every C case and on no B case, so `p(UNKNOWN)` coincides with the explicit answer and adds nothing measurable (ceiling). Only R1-Distill keeps some separation beyond the answer, on very small probabilities and with low repeatability ([part B report](docs/REASONING_PART_B_RESULTS_2026-11-16.md), draft).
 - **Limits:** prose format only (weak or reversed in symbolic formats); strong dependence on logical family and wording; the NOT variant was weaker in all 14 November models, but stronger than POS in Qwen3-32B and Llama-3.3-70B, so "NOT is always weaker" is falsified (open question, [§2.1](docs/LARGER_MODELS_RESULTS_2026-11-15.md)).
 - **Small models (240-pair set, CPU, exploratory):** only Qwen2.5-1.5B passes the competence gate; SmolLM2-360M, SmolLM2-1.7B, Qwen2.5-0.5B and OLMo-2-1B fail it and are not evaluable; TinyLlama is not measurable ([verdicts](docs/COMPETENCE_240_PAIRS.md), [SmolLM2-360M study](docs/SMOLLM2_STAT_STUDY_RESULTS.md)).
 
-Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model report](docs/NEW_MODELS_RESULTS_2026-11-14.md), [larger-model report](docs/LARGER_MODELS_RESULTS_2026-11-15.md), [part B protocol (reasoning models)](docs/REASONING_PART_B_PROTOCOL.md), [Related work](docs/RELATED_WORK.md).
+Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model report](docs/NEW_MODELS_RESULTS_2026-11-14.md), [larger-model report](docs/LARGER_MODELS_RESULTS_2026-11-15.md), [part B protocol (reasoning models)](docs/REASONING_PART_B_PROTOCOL.md), [part B report](docs/REASONING_PART_B_RESULTS_2026-11-16.md), [Related work](docs/RELATED_WORK.md).
 
 ## Reproducibility
 

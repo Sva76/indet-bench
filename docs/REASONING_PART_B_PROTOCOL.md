@@ -1,6 +1,6 @@
 # Part B protocol: p(UNKNOWN) in reasoning models (v1)
 
-English version of `notebooks/Protocollo_parteB_reasoning_v1.md` (Italian). **Approved by Simona Vargiu on 15 Nov 2026, 14:11, with the 5 recommended choices of §7, before any part B data were collected.** Implementation notes: `notebooks/Note_reasoning_v1.md` and `notebooks/Note_reasoning_v2.md`. Notebook: `notebooks/IndetBench_reasoning_v2.ipynb` (R-notebook-2, with the measurement amendment of §8; R-notebook-1 is kept for the record).
+English version of `notebooks/Protocollo_parteB_reasoning_v1.md` (Italian). **Approved by Simona Vargiu on 15 Nov 2026, 14:11, with the 5 recommended choices of §7, before any part B data were collected.** Implementation notes: `notebooks/Note_reasoning_v1.md` and `notebooks/Note_reasoning_v2.md`. Notebook: `notebooks/IndetBench_reasoning_v2.ipynb` (R-notebook-2, with the measurement amendment of §8; R-notebook-1 is kept for the record). `notebooks/IndetBench_reasoning_v2_1.ipynb` is the same notebook with memory handling only, used to resume Phi-4-reasoning (notes §7). Results: [`REASONING_PART_B_RESULTS_2026-11-16.md`](REASONING_PART_B_RESULTS_2026-11-16.md).
 
 ## 1. Question and status
 **Question.** When the model reasons before answering, does p(UNKNOWN) still separate the C cases from the B cases on the 800 frozen prose pairs (set PN)? And does reasoning change the separation compared with the same model without reasoning?

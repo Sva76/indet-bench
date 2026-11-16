@@ -64,3 +64,14 @@ Che cosa dice:
 - La configurazione con cui si genera il ragionamento (batch e sdpa) non entra nei calcoli della misura, perché la misura riparte riga per riga a batch 1 con eager. Il testo del ragionamento invece entra, come prefisso: un ragionamento diverso, per esempio con un altro seme o con altri arrotondamenti nella generazione, può dare probabilità diverse. Questa è la dipendenza dal ragionamento campionato che la ripetibilità misura, ed è distinta dall'effetto numerico della configurazione di misura.
 
 Archivio: `diagnostica_parte_B/indetbench_reasoning_diagnostica_20261115.zip`. Lo ZIP contiene anche la cartella della prova R-notebook-1. In attesa dell'approvazione di Simona della misura a batch 1 con eager.
+
+## 7. Correzione di memoria per Phi-4-reasoning (16 nov, notebook v2_1, VERSIONE invariata R-notebook-2)
+
+Nel completo del 16 novembre (A100-SXM4-40GB) Phi-4-reasoning si è fermato a 1152 righe su 1600 per un CUDA out of memory: «Tried to allocate 2.92 GiB … 32.15 GiB allocated by PyTorch, 4.49 GiB reserved but unallocated». La richiesta di 2.92 GiB corrisponde alla matrice di attenzione eager in float32 di una riga lunga circa 4400 token (40 teste). Non è un limite di capienza: le 3 righe arrivate al budget, lunghe fino a 4418 token, erano già state misurate senza errori. La causa è la memoria della generazione a batch 8 che resta riservata e frammentata quando parte la misura eager.
+
+Correzioni, solo di memoria (nessun calcolo cambia):
+1. Cella 1: `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` prima che torch sia importato; se torch è già importato la cella si ferma e chiede di riavviare la sessione.
+2. Prima della misura riga per riga si liberano le uscite della generazione e la cache CUDA (`del out1`, `torch.cuda.empty_cache()`).
+3. Se una misura incontra comunque un OOM, la cache si libera e la stessa misura si ripete una volta (greedy, batch 1, eager: il risultato non dipende dal tentativo). Un secondo OOM ferma il modello come prima. Il numero di ripetizioni e le lunghezze delle righe ripetute vanno in `esito.json` (`memoria_cuda`).
+
+VERSIONE resta R-notebook-2 e il manifest non cambia, quindi l'impronta della cartella è la stessa e la ripresa riusa i 36 blocchi già salvati (le righe già misurate non si ripetono). Prova a secco con un modello finto: con OOM simulati (5 su Phi-4, 27 su Qwen3-8B) `punteggi.csv` è identico byte per byte a quello della v2, e le cartelle hanno la stessa impronta. Attenzione: l'impronta contiene anche le versioni di Python, torch e transformers; se Colab le ha aggiornate da ieri, Phi-4 ripartirebbe da zero (resta corretto, costa solo tempo).
