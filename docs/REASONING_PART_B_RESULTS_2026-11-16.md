@@ -54,7 +54,7 @@ English version of `results/reasoning_part_B_2026-11-16/Risultati_parteB_reasoni
 
 From off to on: on B nothing changes (800/800 stay correct: 268 NO, 532 YES). On C, 593 answers become UNKNOWN (466 from YES, 127 from NO), the 202 already UNKNOWN stay so, and only 5 stay YES.
 
-**Reading.** Reasoning leads Qwen to declare indeterminacy almost always, and only on C. W = 1.000 is what one expects when the answer itself separates C and B. The check "at equal answer" has only 5 pairs: **not evaluable**. So with reasoning on one cannot say whether p(UNKNOWN) carries information beyond the answer.
+**Reading.** Reasoning leads Qwen to declare indeterminacy almost always, and only on C. W = 1.000 is what one expects when the answer itself separates C and B. The check on the pairs where C is not answered UNKNOWN has only 5 pairs: **not evaluable**. So with reasoning on one cannot say whether p(UNKNOWN) carries information beyond the answer.
 
 ### Phi-4-reasoning
 
@@ -69,7 +69,7 @@ From off to on: on B nothing changes (800/800 stay correct: 268 NO, 532 YES). On
 | Answers on B | 0 UNKNOWN, 527 YES, 266 NO, 7 OTHER |
 | W with C not answered UNKNOWN | 0.43 (**7 pairs**, 7 stories) |
 
-**Reading.** Same picture as Qwen3-8B with reasoning: the explicit answer separates C and B almost perfectly; the equal-answer check (7 pairs) is **not evaluable**. The 4 pairs of 800 where C does not rank above B all have the C answer in OTHER (a disclaimer instead of the label, mass near 0). Compared with Phi-4 without reasoning (14 November: W 0.944, IMPLIES 0.83), W rises and the IMPLIES weakness disappears. This is descriptive only: the weights differ (Phi-4-reasoning is Phi-4 with further training), so it does not measure the effect of reasoning at fixed weights.
+**Reading.** Same picture as Qwen3-8B with reasoning: the explicit answer separates C and B almost perfectly; the check on the pairs where C is not answered UNKNOWN (7 pairs) is **not evaluable**. The 4 pairs of 800 where C does not rank above B all have the C answer in OTHER (a disclaimer instead of the label, mass near 0). Compared with Phi-4 without reasoning (14 November: W 0.944, IMPLIES 0.83), W rises and the IMPLIES weakness disappears. This is descriptive only: the weights differ (Phi-4-reasoning is Phi-4 with further training), so it does not measure the effect of reasoning at fixed weights.
 
 ### R1-Distill-Llama-8B
 
@@ -85,7 +85,7 @@ From off to on: on B nothing changes (800/800 stay correct: 268 NO, 532 YES). On
 | W with C not answered UNKNOWN | 0.844 [0.800, 0.887] (332 pairs, 172 stories) |
 | W with neither answer UNKNOWN | 0.854 [0.810, 0.897] (327 pairs) |
 
-**Reading.** R1 answers UNKNOWN on 468 of 800 C cases (59%) and on 9 B cases, so the C/B separation is not all in the answer. The equal-answer check is evaluable here: even when C is not answered UNKNOWN, p(UNKNOWN) is higher on C than on B in 84% of comparisons. The values involved are small, though: on YES answers the median p(UNKNOWN) is 3.8·10⁻⁵ on C vs 1.9·10⁻⁶ on B; on NO answers 1.2·10⁻⁴ vs 4.3·10⁻⁵. It is an ordering among very low probabilities, and these data do not establish whether it has practical meaning. AND is the weakest family (0.847), descriptively.
+**Reading.** R1 answers UNKNOWN on 468 of 800 C cases (59%) and on 9 B cases, so the C/B separation is not all in the answer. The check on the pairs where C is not answered UNKNOWN is evaluable here (332 pairs; the B answer and the C answer need not be the same, e.g. C may be OTHER): even then p(UNKNOWN) is higher on C than on B in 84% of comparisons. The values involved are small, though: on YES answers the median p(UNKNOWN) is 3.8·10⁻⁵ on C vs 1.9·10⁻⁶ on B; on NO answers 1.2·10⁻⁴ vs 4.3·10⁻⁵. It is an ordering among very low probabilities, and these data do not establish whether it has practical meaning. AND is the weakest family (0.847), descriptively.
 
 ## 3. Does it add over the baselines? (descriptive)
 
@@ -101,7 +101,7 @@ From off to on: on B nothing changes (800/800 stay correct: 268 NO, 532 YES). On
 | normalised p(UNKNOWN) (not independent) | 0.975 | 1.000 | 1.000 | 0.916 |
 
 - Qwen3-8B on: the generated answer alone reaches 0.997; the gap (+0.003) is inside the ceiling, with no room to show an advantage.
-- Phi-4-reasoning: the generated answer **equals** p(UNKNOWN) (0.996 vs 0.995), flagged by the code as an anomaly (A4). The 0.0006 gap is half a pair out of 800 and comes from the 7 C answers in OTHER: there the 0/1 answer ties with B in 4 pairs where p(UNKNOWN) loses, and loses in 3 where p(UNKNOWN) wins. Normalised p(UNKNOWN), which removes the mass effect, reaches 1.000.
+- Phi-4-reasoning: the generated answer **equals** p(UNKNOWN) (0.996 vs 0.995), flagged by the code as an anomaly (A4). The 0.0006 gap is half a pair out of 800 and comes from the 7 C answers in OTHER: Phi-4 never answers UNKNOWN on B, so on those 7 pairs the 0/1 answer scores 0 on both sides and ties (0.5) in all of them. p(UNKNOWN) instead loses 4 of them and wins 3. Net: (4 − 3) × 0.5 / 800 = 0.000625 in favour of the answer. Normalised p(UNKNOWN), which removes the mass effect, reaches 1.000.
 - Phi-4-reasoning: entropy and minus max probability are **reversed** (0.029): the model is more confident on C (UNKNOWN with probability ≈ 1) than on B. The same phenomenon was seen for Mistral in Test M; generic uncertainty here points opposite to indeterminacy.
 - R1: p(UNKNOWN) is above the best independent baseline by +0.136 (vs generated UNKNOWN 0/1).
 - Reasoning length separates C and B a little in all models (0.61–0.70): reasoning is longer on C. It stays well below p(UNKNOWN).
@@ -140,7 +140,7 @@ Fix in `IndetBench_reasoning_v2_1.ipynb`, memory only, no computation changed: `
 ## 6. Conclusions (exploratory)
 
 1. **Works technically:** yes, for Qwen3-8B, Phi-4-reasoning and R1. The pipeline reproduces Test U2 exactly; reasoning closes by itself except for 4 of 1600 Phi-4 rows (796 closed pairs, above the 760 threshold). The resume of Phi-4 changed no value.
-2. **Measures what we intend:** with reasoning the C/B separation stays high in all three models. In Qwen3-8B and Phi-4-reasoning it moves almost entirely into the explicit answer, so the contribution of p(UNKNOWN) cannot be separated from that of the answer. In R1 part of the separation remains at equal answer, but on very small probabilities.
+2. **Measures what we intend:** with reasoning the C/B separation stays high in all three models. In Qwen3-8B and Phi-4-reasoning it moves almost entirely into the explicit answer, so the contribution of p(UNKNOWN) cannot be separated from that of the answer. In R1 part of the separation remains on the pairs where C is not answered UNKNOWN, but on very small probabilities.
 3. **Adds over baselines:** not in Qwen3-8B on or Phi-4-reasoning (generated answer 0.997 and 0.996, at the level of p(UNKNOWN)); in Phi-4-reasoning the generic uncertainty baselines are reversed. In R1 yes, descriptively (+0.136 over the generated answer), with the mass, format and repeatability limits of §4.
 4. HR2 (Qwen3-8B): reasoning changes W (+0.025, 95% CI excludes 0). The increase equals the maximum possible, so the data do not say how much reasoning would help without a ceiling.
 5. Overall reading (exploratory): in the two models that, after reasoning, almost always declare indeterminacy, p(UNKNOWN) coincides with the answer. Only in R1, which answers UNKNOWN on 59% of C cases, does some separation remain beyond the answer, on very small probabilities and with low repeatability. Qwen3-32B is still to be run (needs the 80 GB A100); without it the secondary HR2 has no data.

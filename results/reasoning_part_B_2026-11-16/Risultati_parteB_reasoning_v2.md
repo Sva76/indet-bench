@@ -54,7 +54,7 @@ Come cambiano le risposte dallo spento all'acceso:
 - Sui B non cambia nulla: 800 su 800 restano corrette (268 NO, 532 YES).
 - Sui C, 593 risposte diventano UNKNOWN (466 da YES, 127 da NO). Le 202 che erano già UNKNOWN restano tali. Solo 5 restano YES (3 erano YES e 2 erano NO).
 
-**Lettura.** Il ragionamento porta Qwen a dichiarare l'indeterminatezza quasi sempre, e solo sui C. Il W = 1.000 è quindi quello che ci si aspetta quando la risposta stessa separa C e B. Il controllo «a parità di risposta», cioè W sulle coppie in cui il C non riceve UNKNOWN, ha solo 5 coppie: **non è valutabile**. Per questo con il ragionamento acceso non si può dire se p(UNKNOWN) contenga informazione oltre alla risposta.
+**Lettura.** Il ragionamento porta Qwen a dichiarare l'indeterminatezza quasi sempre, e solo sui C. Il W = 1.000 è quindi quello che ci si aspetta quando la risposta stessa separa C e B. Il controllo sulle coppie in cui il C non riceve la risposta UNKNOWN ha solo 5 coppie: **non è valutabile**. Per questo con il ragionamento acceso non si può dire se p(UNKNOWN) contenga informazione oltre alla risposta.
 
 ### Phi-4-reasoning
 
@@ -70,7 +70,7 @@ Come cambiano le risposte dallo spento all'acceso:
 | W con C senza risposta UNKNOWN | 0.43 (**7 coppie**, 7 storie) |
 
 **Lettura.**
-- Il quadro è lo stesso di Qwen3-8B acceso: dopo il ragionamento la risposta esplicita separa C e B quasi perfettamente. Il controllo a parità di risposta ha solo 7 coppie: **non è valutabile**.
+- Il quadro è lo stesso di Qwen3-8B acceso: dopo il ragionamento la risposta esplicita separa C e B quasi perfettamente. Il controllo sulle coppie in cui il C non riceve la risposta UNKNOWN ha solo 7 coppie: **non è valutabile**.
 - Le 4 coppie su 800 in cui il C non supera il B sono tutte coppie con il C in ALTRO, cioè con un avviso al posto dell'etichetta e massa vicina a 0 (§4, A3). Le altre 796 coppie sono ordinate correttamente.
 - Rispetto a Phi-4 senza ragionamento (14 novembre: W 0.944, IMPLIES 0.83) il W sale e la debolezza su IMPLIES sparisce. Il confronto è solo descrittivo: i pesi sono diversi (Phi-4-reasoning è Phi-4 addestrato in più), quindi non misura l'effetto del ragionamento a pesi fissi.
 
@@ -90,7 +90,7 @@ Come cambiano le risposte dallo spento all'acceso:
 
 **Lettura.**
 - R1 risponde UNKNOWN a 468 C su 800 (59%) e a 9 B su 800. La separazione C/B quindi non è tutta nella risposta.
-- Il controllo a parità di risposta è valutabile qui (332 coppie). Anche quando il C non riceve UNKNOWN, p(UNKNOWN) è più alta sul C che sul B nell'84% dei confronti. I valori in gioco però sono piccoli. Sulle risposte YES la mediana di p(UNKNOWN) è 3.8·10⁻⁵ sui C contro 1.9·10⁻⁶ sui B. Sulle risposte NO è 1.2·10⁻⁴ contro 4.3·10⁻⁵. È un ordinamento fra probabilità molto basse. Che questo ordinamento abbia un significato pratico non è stabilito da questi dati.
+- Il controllo sulle coppie in cui il C non riceve la risposta UNKNOWN è valutabile qui (332 coppie). Le risposte di B e C non sono necessariamente uguali: per esempio il C può essere ALTRO. Anche in queste coppie p(UNKNOWN) è più alta sul C che sul B nell'84% dei confronti. I valori in gioco però sono piccoli. Sulle risposte YES la mediana di p(UNKNOWN) è 3.8·10⁻⁵ sui C contro 1.9·10⁻⁶ sui B. Sulle risposte NO è 1.2·10⁻⁴ contro 4.3·10⁻⁵. È un ordinamento fra probabilità molto basse. Che questo ordinamento abbia un significato pratico non è stabilito da questi dati.
 - AND è la famiglia più debole (0.847). Il pattern somiglia a quello del Test M, dove molti metodi dipendevano fortemente dalla famiglia, ma qui è solo descrittivo.
 
 ## 3. Aggiunge rispetto alle baseline? (descrittivo)
@@ -107,7 +107,7 @@ Come cambiano le risposte dallo spento all'acceso:
 | p(UNKNOWN) normalizzata (non indipendente) | 0.975 | 1.000 | 1.000 | 0.916 |
 
 - In Qwen3-8B acceso la risposta generata da sola arriva a 0.997, e la differenza da p(UNKNOWN) (+0.003) è dentro il tetto. Non c'è margine per mostrare un vantaggio.
-- In Phi-4-reasoning la risposta generata **eguaglia** p(UNKNOWN) (0.996 contro 0.995): il codice lo segnala come anomalia (§4, A4). La differenza di 0.0006 equivale a mezza coppia su 800 e viene dai 7 C in ALTRO: lì la risposta 0/1 pareggia con il B (0 contro 0) in 4 coppie dove p(UNKNOWN) perde, e perde in 3 dove p(UNKNOWN) vince. p(UNKNOWN) normalizzata, che toglie l'effetto della massa, arriva a 1.000.
+- In Phi-4-reasoning la risposta generata **eguaglia** p(UNKNOWN) (0.996 contro 0.995): il codice lo segnala come anomalia (§4, A4). La differenza di 0.0006 equivale a mezza coppia su 800 e viene dai 7 C in ALTRO: Phi-4 non risponde mai UNKNOWN sui B, quindi in queste 7 coppie la risposta 0/1 vale 0 da tutte e due le parti e pareggia (0.5) in tutte. p(UNKNOWN) invece ne perde 4 e ne vince 3. Saldo: (4 − 3) × 0.5 / 800 = 0.000625 a favore della risposta. p(UNKNOWN) normalizzata, che toglie l'effetto della massa, arriva a 1.000.
 - In Phi-4-reasoning entropia e «meno p massima» sono **rovesciate** (0.029): il modello è più sicuro sui C (UNKNOWN con probabilità ≈ 1) che sui B. È lo stesso fenomeno visto per Mistral nel Test M. Un'incertezza generica qui va nella direzione opposta all'indeterminatezza.
 - In R1 p(UNKNOWN) è sopra la migliore baseline indipendente di +0.136 (contro la risposta UNKNOWN 0/1).
 - La lunghezza del ragionamento separa un poco C e B in tutti e due i modelli (0.66–0.70): sui C si ragiona più a lungo. Resta però molto sotto p(UNKNOWN).
@@ -171,7 +171,7 @@ VERSIONE e manifest non cambiano, quindi la ripresa riusa i 36 blocchi salvati. 
 ## 6. Conclusioni (esplorative)
 
 1. **Funziona tecnicamente:** sì, per Qwen3-8B, Phi-4-reasoning e R1. La pipeline riproduce il Test U2 esattamente; i ragionamenti si chiudono da soli tranne 4 su 1600 di Phi-4-reasoning (coppie chiuse 796, sopra la soglia di 760). La ripresa di Phi-4 dopo l'errore di memoria non ha cambiato nessun valore.
-2. **Misura ciò che intendiamo:** con il ragionamento la separazione C/B resta alta in tutti e tre i modelli. In Qwen3-8B e in Phi-4-reasoning però passa quasi tutta alla risposta esplicita, quindi non si può separare il contributo di p(UNKNOWN) da quello della risposta. In R1 una parte della separazione resta anche a parità di risposta, ma su probabilità molto piccole.
+2. **Misura ciò che intendiamo:** con il ragionamento la separazione C/B resta alta in tutti e tre i modelli. In Qwen3-8B e in Phi-4-reasoning però passa quasi tutta alla risposta esplicita, quindi non si può separare il contributo di p(UNKNOWN) da quello della risposta. In R1 una parte della separazione resta anche sulle coppie in cui il C non riceve la risposta UNKNOWN, ma su probabilità molto piccole.
 3. **Aggiunge rispetto alle baseline:** in Qwen3-8B acceso e in Phi-4-reasoning no: la risposta generata arriva a 0.997 e 0.996, al livello di p(UNKNOWN). In Phi-4-reasoning le baseline di incertezza generica sono rovesciate. In R1 sì in modo descrittivo (+0.136 sulla risposta UNKNOWN), con i limiti di massa, di formato e di ripetibilità del §4.
 4. HR2 (Qwen3-8B): il ragionamento cambia W (+0.025, IC95 esclude 0). L'aumento coincide con il massimo possibile, quindi il dato non dice quanto il ragionamento migliorerebbe senza tetto.
 5. Lettura d'insieme (esplorativa): nei due modelli che, dopo il ragionamento, dichiarano quasi sempre l'indeterminatezza, p(UNKNOWN) coincide con la risposta. Solo in R1, che risponde UNKNOWN al 59% dei C, resta una separazione oltre la risposta, ma su probabilità molto piccole e con ripetibilità bassa. Qwen3-32B resta da fare (serve la A100 da 80 GB); senza di esso HR2 secondaria non ha dati.
