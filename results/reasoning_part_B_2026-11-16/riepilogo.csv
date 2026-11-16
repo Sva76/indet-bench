@@ -1,0 +1,5 @@
+modello,condizione,esito,W,IC95_basso,IC95_alto,coppie,acc_B,acc_B_gold_NO,acc_B_gold_YES,soglia_superata,massa_mediana,W_entropia,W_meno_p_max,W_risposta_UNKNOWN,W_lunghezza_ragionamento,UNK_B,UNK_C,coppie_chiuse_da_sole,token_mediana_B,token_mediana_C,HR2_delta_W,HR2_valutabilita
+qwen3_8b,acceso,CONFIRMED,1.0,1.0,1.0,800,1.0,1.0,1.0,True,0.9999998202004239,0.99,0.99,0.996875,0.69625,0.0,0.99375,800,251.0,303.0,0.025,VALUTABILE (esplorativa)
+qwen3_8b,spento,CONFIRMED,0.975,0.96375,0.985,800,1.0,1.0,1.0,True,0.9999999955751041,0.94875,0.9475,0.62625,0.5,0.0,0.2525,,,,,
+phi4_reasoning,acceso,CONFIRMED,0.995,0.99,0.99875,800,0.99125,0.9925373134328358,0.9906015037593985,True,0.9999550176139564,0.02875,0.02875,0.995625,0.60875,0.0,0.99125,796,445.0,534.5,,
+r1_llama_8b,acceso,CONFIRMED,0.9225,0.9,0.94375,800,0.955,0.9067164179104478,0.9793233082706767,True,0.8372381208600927,0.69375,0.69375,0.786875,0.66,0.01125,0.585,800,303.0,354.5,,
