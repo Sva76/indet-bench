@@ -1,6 +1,6 @@
 # p(UNKNOWN) with reasoning switched on (part B, 16 November 2026)
 
-English version of `results/reasoning_part_B_2026-11-16/Risultati_parteB_reasoning_v2.md` (Italian, v2). **Status of the report: draft, not yet approved by the owner.** Numbers and wording follow the Italian version; nothing was re-analysed for the translation.
+English version of `results/reasoning_part_B_2026-11-16/Risultati_parteB_reasoning_v2.md` (Italian, v2). **Simona Vargiu approved the report (v2) on 16 Nov 2026 at 11:52.** Numbers and wording follow the Italian version; nothing was re-analysed for the translation.
 
 **Status of the results: EXPLORATORY.** They are not an independent validation of the method. "CONFIRMED" means only that the HR1 rule applied by the code is satisfied (W ≥ 0.60 and lower bound of the 95% interval > 0.5). A higher W with reasoning does not show that the method works better, and a lower one would not refute it. Method, thresholds, prompts and the label-mass rule were fixed before the data ([part B protocol](REASONING_PART_B_PROTOCOL.md), with the measurement amendment of §8).
 
