@@ -13,7 +13,7 @@ Audits of the **v2 generator text only**. No model was run. Reading of the resul
 
 - The prompt-generating code was committed in `b605ac2` before seed 20261119 was generated for the first time.
 - After CodeRabbit's review of PR #25, story ids were made dataset-specific, metadata fields were added and the audit gained the single-rule readers and a location-scoped feasibility table. The **prompts and gold labels of seed 20261119 did not change**: they were compared row by row, both settings, B/C and D files.
-- The audits above were then **re-run on both seeds with the revised audit code**. Later revisions in the same pull request changed only ids, validation and the added `exact` (unrounded) fields; the rounded numbers were checked to be identical. The single-rule readers were therefore first computed on the confirmation seed after the generator had been fixed, but the audit code itself was revised after the first confirmation run. Neither seed is the final data set.
+- The audits above were then **re-run on both seeds with the revised audit code**. Later revisions in the same pull request changed only ids, validation, the added `exact` (unrounded) fields and the marking of single-rule readers for rules that do not exist at a level as "not applicable" (previously reported as constant W 0.50); every other value was checked to be identical. The single-rule readers were therefore first computed on the confirmation seed after the generator had been fixed, but the audit code itself was revised after the first confirmation run. Neither seed is the final data set.
 
 ## How to reproduce
 
@@ -35,10 +35,10 @@ The generated files are not committed: they are rebuilt from the seed. Their SHA
 Audit files (`sha256sum *.json`):
 
 ```
-5e70c40c05d3a56c38247020de34fed1e0804c1a490307ab2dc06a18cf88c361  audit_confirm_seed20261119_any.json
-a344afb3d65990aa9cf23c1bd24a506969d2785a31ceecb5c30ea6299fcb43af  audit_confirm_seed20261119_intermediate.json
-3b2c20d366e8b47b6bd60ca865a0fb19ca804279834ff871ea97fd43ffad1fd0  audit_dev_seed20261118_any.json
-012f6a44ed49ec7c9188dd4dbbd12d30c50339833ceb2cf6429fdbdbc9fac733  audit_dev_seed20261118_intermediate.json
+b0a556b1d42620b4c2707fac01689e2b075b27aeea35a6c88e9ed034cafa42a1  audit_confirm_seed20261119_any.json
+20c4222fe6cd88e80c92cc0f7048d34b70c9fa7b0a10557408aa3da83d66e208  audit_confirm_seed20261119_intermediate.json
+5db9c1db599e85604e9e3075fa23422555ef1401955c2cef5f6e2c57b2c9860e  audit_dev_seed20261118_any.json
+77ed4925a2b614cb2c62485ed50c5dbed49f2358e6c2d6ca92b25fb692dcab25  audit_dev_seed20261118_intermediate.json
 ```
 
 Original IndetBench material, © 2026 Simona Vargiu, PolyForm Noncommercial License 1.0.0.

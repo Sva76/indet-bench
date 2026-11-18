@@ -281,48 +281,56 @@
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.5,
       "W_true_count": 0.475,
+      "W_true_count_exact": 0.475,
       "n_pairs": 200
     },
     "L2|root": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.5,
       "W_true_count": 0.53,
+      "W_true_count_exact": 0.53,
       "n_pairs": 400
     },
     "L3|intermediate": {
       "B_share_YES": 0.4722,
       "C_share_flipped_satisfied": 0.4611,
       "W_true_count": 0.5489,
+      "W_true_count_exact": 0.5488721804511278,
       "n_pairs": 180
     },
     "L3|root": {
       "B_share_YES": 0.5446,
       "C_share_flipped_satisfied": 0.5357,
       "W_true_count": 0.5783,
+      "W_true_count_exact": 0.5783132530120482,
       "n_pairs": 112
     },
     "L4|intermediate": {
       "B_share_YES": 0.5287,
       "C_share_flipped_satisfied": 0.5223,
       "W_true_count": 0.5,
+      "W_true_count_exact": 0.5,
       "n_pairs": 157
     },
     "L4|root": {
       "B_share_YES": 0.4857,
       "C_share_flipped_satisfied": 0.4857,
       "W_true_count": 0.5,
+      "W_true_count_exact": 0.5,
       "n_pairs": 175
     },
     "L5|intermediate": {
       "B_share_YES": 0.4892,
       "C_share_flipped_satisfied": 0.4848,
       "W_true_count": 0.5254,
+      "W_true_count_exact": 0.5253623188405797,
       "n_pairs": 231
     },
     "L5|root": {
       "B_share_YES": 0.5076,
       "C_share_flipped_satisfied": 0.5076,
       "W_true_count": 0.4873,
+      "W_true_count_exact": 0.4873417721518987,
       "n_pairs": 132
     }
   },
@@ -331,132 +339,154 @@
       "B_share_YES": 0.383,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.4043,
+      "W_true_count_exact": 0.40425531914893614,
       "n_pairs": 47
     },
     "L1|NOT_ALL": {
       "B_share_YES": 0.6038,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.566,
+      "W_true_count_exact": 0.5660377358490566,
       "n_pairs": 53
     },
     "L1|OR": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.46,
+      "W_true_count_exact": 0.46,
       "n_pairs": 100
     },
     "L2|AND": {
       "B_share_YES": 0.5556,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.5093,
+      "W_true_count_exact": 0.5092592592592593,
       "n_pairs": 108
     },
     "L2|EXACTLY_ONE": {
       "B_share_YES": 0.55,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.45,
+      "W_true_count_exact": 0.45,
       "n_pairs": 80
     },
     "L2|NOT_ALL": {
       "B_share_YES": 0.4348,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.5978,
+      "W_true_count_exact": 0.5978260869565217,
       "n_pairs": 92
     },
     "L2|OR": {
       "B_share_YES": 0.4667,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.55,
+      "W_true_count_exact": 0.55,
       "n_pairs": 120
     },
     "L3|AND": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.8889,
       "W_true_count": 0.5851,
+      "W_true_count_exact": 0.5851063829787234,
       "n_pairs": 72
     },
     "L3|BOTH_OR_NEITHER": {
       "B_share_YES": 0.4667,
       "C_share_flipped_satisfied": 0.2667,
       "W_true_count": 0.7,
+      "W_true_count_exact": 0.7,
       "n_pairs": 30
     },
     "L3|EXACTLY_ONE": {
       "B_share_YES": 0.4444,
       "C_share_flipped_satisfied": 0.3333,
       "W_true_count": 0.5556,
+      "W_true_count_exact": 0.5555555555555556,
       "n_pairs": 18
     },
     "L3|NOT_ALL": {
       "B_share_YES": 0.5077,
       "C_share_flipped_satisfied": 0.8462,
       "W_true_count": 0.5588,
+      "W_true_count_exact": 0.5588235294117647,
       "n_pairs": 65
     },
     "L3|OR": {
       "B_share_YES": 0.514,
       "C_share_flipped_satisfied": 0.0935,
       "W_true_count": 0.5316,
+      "W_true_count_exact": 0.5316455696202531,
       "n_pairs": 107
     },
     "L4|AND": {
       "B_share_YES": 0.5319,
       "C_share_flipped_satisfied": 0.9787,
       "W_true_count": 0.4907,
+      "W_true_count_exact": 0.49074074074074076,
       "n_pairs": 94
     },
     "L4|BOTH_OR_NEITHER": {
       "B_share_YES": 0.6667,
       "C_share_flipped_satisfied": 0.6667,
       "W_true_count": 0.4167,
+      "W_true_count_exact": 0.4166666666666667,
       "n_pairs": 12
     },
     "L4|EXACTLY_ONE": {
       "B_share_YES": 0.4255,
       "C_share_flipped_satisfied": 0.0426,
       "W_true_count": 0.3846,
+      "W_true_count_exact": 0.38461538461538464,
       "n_pairs": 47
     },
     "L4|NOT_ALL": {
       "B_share_YES": 0.5692,
       "C_share_flipped_satisfied": 0.9385,
       "W_true_count": 0.5208,
+      "W_true_count_exact": 0.5208333333333334,
       "n_pairs": 65
     },
     "L4|OR": {
       "B_share_YES": 0.4649,
       "C_share_flipped_satisfied": 0.0351,
       "W_true_count": 0.527,
+      "W_true_count_exact": 0.527027027027027,
       "n_pairs": 114
     },
     "L5|AND": {
       "B_share_YES": 0.51,
       "C_share_flipped_satisfied": 0.98,
       "W_true_count": 0.5278,
+      "W_true_count_exact": 0.5277777777777778,
       "n_pairs": 100
     },
     "L5|BOTH_OR_NEITHER": {
       "B_share_YES": 0.6923,
       "C_share_flipped_satisfied": 0.1538,
       "W_true_count": 0.6111,
+      "W_true_count_exact": 0.6111111111111112,
       "n_pairs": 13
     },
     "L5|EXACTLY_ONE": {
       "B_share_YES": 0.5179,
       "C_share_flipped_satisfied": 0.1607,
       "W_true_count": 0.4429,
+      "W_true_count_exact": 0.44285714285714284,
       "n_pairs": 56
     },
     "L5|NOT_ALL": {
       "B_share_YES": 0.4487,
       "C_share_flipped_satisfied": 0.8333,
       "W_true_count": 0.54,
+      "W_true_count_exact": 0.54,
       "n_pairs": 78
     },
     "L5|OR": {
       "B_share_YES": 0.4828,
       "C_share_flipped_satisfied": 0.0431,
       "W_true_count": 0.5,
+      "W_true_count_exact": 0.5,
       "n_pairs": 116
     }
   },
@@ -465,132 +495,154 @@
       "B_share_YES": 0.383,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.4043,
+      "W_true_count_exact": 0.40425531914893614,
       "n_pairs": 47
     },
     "L1|NOT_ALL": {
       "B_share_YES": 0.6038,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.566,
+      "W_true_count_exact": 0.5660377358490566,
       "n_pairs": 53
     },
     "L1|OR": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.46,
+      "W_true_count_exact": 0.46,
       "n_pairs": 100
     },
     "L2|AND": {
       "B_share_YES": 0.5556,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.5093,
+      "W_true_count_exact": 0.5092592592592593,
       "n_pairs": 108
     },
     "L2|EXACTLY_ONE": {
       "B_share_YES": 0.55,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.45,
+      "W_true_count_exact": 0.45,
       "n_pairs": 80
     },
     "L2|NOT_ALL": {
       "B_share_YES": 0.4348,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.5978,
+      "W_true_count_exact": 0.5978260869565217,
       "n_pairs": 92
     },
     "L2|OR": {
       "B_share_YES": 0.4667,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.55,
+      "W_true_count_exact": 0.55,
       "n_pairs": 120
     },
     "L3|AND": {
       "B_share_YES": 0.5125,
       "C_share_flipped_satisfied": 0.7125,
       "W_true_count": 0.6146,
+      "W_true_count_exact": 0.6145833333333334,
       "n_pairs": 80
     },
     "L3|BOTH_OR_NEITHER": {
       "B_share_YES": 0.4615,
       "C_share_flipped_satisfied": 0.4231,
       "W_true_count": 0.3846,
+      "W_true_count_exact": 0.38461538461538464,
       "n_pairs": 26
     },
     "L3|EXACTLY_ONE": {
       "B_share_YES": 0.4737,
       "C_share_flipped_satisfied": 0.6842,
       "W_true_count": 0.5263,
+      "W_true_count_exact": 0.5263157894736842,
       "n_pairs": 19
     },
     "L3|NOT_ALL": {
       "B_share_YES": 0.4634,
       "C_share_flipped_satisfied": 0.6829,
       "W_true_count": 0.6132,
+      "W_true_count_exact": 0.6132075471698113,
       "n_pairs": 82
     },
     "L3|OR": {
       "B_share_YES": 0.5412,
       "C_share_flipped_satisfied": 0.0706,
       "W_true_count": 0.5741,
+      "W_true_count_exact": 0.5740740740740741,
       "n_pairs": 85
     },
     "L4|AND": {
       "B_share_YES": 0.4545,
       "C_share_flipped_satisfied": 0.8384,
       "W_true_count": 0.4904,
+      "W_true_count_exact": 0.49038461538461536,
       "n_pairs": 99
     },
     "L4|BOTH_OR_NEITHER": {
       "B_share_YES": 0.4,
       "C_share_flipped_satisfied": 0.3,
       "W_true_count": 0.7,
+      "W_true_count_exact": 0.7,
       "n_pairs": 10
     },
     "L4|EXACTLY_ONE": {
       "B_share_YES": 0.4792,
       "C_share_flipped_satisfied": 0.3125,
       "W_true_count": 0.4342,
+      "W_true_count_exact": 0.4342105263157895,
       "n_pairs": 48
     },
     "L4|NOT_ALL": {
       "B_share_YES": 0.6154,
       "C_share_flipped_satisfied": 0.7538,
       "W_true_count": 0.473,
+      "W_true_count_exact": 0.47297297297297297,
       "n_pairs": 65
     },
     "L4|OR": {
       "B_share_YES": 0.5091,
       "C_share_flipped_satisfied": 0.1545,
       "W_true_count": 0.5238,
+      "W_true_count_exact": 0.5238095238095238,
       "n_pairs": 110
     },
     "L5|AND": {
       "B_share_YES": 0.4096,
       "C_share_flipped_satisfied": 0.6867,
       "W_true_count": 0.5795,
+      "W_true_count_exact": 0.5795454545454546,
       "n_pairs": 83
     },
     "L5|BOTH_OR_NEITHER": {
       "B_share_YES": 0.4186,
       "C_share_flipped_satisfied": 0.5814,
       "W_true_count": 0.5417,
+      "W_true_count_exact": 0.5416666666666666,
       "n_pairs": 43
     },
     "L5|EXACTLY_ONE": {
       "B_share_YES": 0.625,
       "C_share_flipped_satisfied": 0.4821,
       "W_true_count": 0.2812,
+      "W_true_count_exact": 0.28125,
       "n_pairs": 56
     },
     "L5|NOT_ALL": {
       "B_share_YES": 0.5789,
       "C_share_flipped_satisfied": 0.6184,
       "W_true_count": 0.5349,
+      "W_true_count_exact": 0.5348837209302325,
       "n_pairs": 76
     },
     "L5|OR": {
       "B_share_YES": 0.4667,
       "C_share_flipped_satisfied": 0.219,
       "W_true_count": 0.5439,
+      "W_true_count_exact": 0.543859649122807,
       "n_pairs": 105
     }
   },
@@ -1604,150 +1656,8 @@
       }
     },
     "single_rule_2|story_folds": {
-      "L1": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 200,
-        "n_stories": 200
-      },
-      "L1|AND": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 47,
-        "n_stories": 47
-      },
-      "L1|NOT_ALL": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 53,
-        "n_stories": 53
-      },
-      "L1|OR": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 100,
-        "n_stories": 100
-      },
-      "L2": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 400,
-        "n_stories": 200
-      },
-      "L2|AND": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 108,
-        "n_stories": 54
-      },
-      "L2|EXACTLY_ONE": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 80,
-        "n_stories": 40
-      },
-      "L2|NOT_ALL": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 92,
-        "n_stories": 46
-      },
-      "L2|OR": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 120,
-        "n_stories": 60
-      },
+      "L1": "not applicable: no such rule at this level",
+      "L2": "not applicable: no such rule at this level",
       "L3": {
         "W": 0.6875,
         "ci95": [
@@ -2038,342 +1948,10 @@
       }
     },
     "single_rule_3|story_folds": {
-      "L1": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 200,
-        "n_stories": 200
-      },
-      "L1|AND": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 47,
-        "n_stories": 47
-      },
-      "L1|NOT_ALL": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 53,
-        "n_stories": 53
-      },
-      "L1|OR": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 100,
-        "n_stories": 100
-      },
-      "L2": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 400,
-        "n_stories": 200
-      },
-      "L2|AND": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 108,
-        "n_stories": 54
-      },
-      "L2|EXACTLY_ONE": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 80,
-        "n_stories": 40
-      },
-      "L2|NOT_ALL": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 92,
-        "n_stories": 46
-      },
-      "L2|OR": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 120,
-        "n_stories": 60
-      },
-      "L3": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 292,
-        "n_stories": 200
-      },
-      "L3|AND": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 80,
-        "n_stories": 48
-      },
-      "L3|BOTH_OR_NEITHER": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 26,
-        "n_stories": 26
-      },
-      "L3|EXACTLY_ONE": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 19,
-        "n_stories": 19
-      },
-      "L3|NOT_ALL": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 82,
-        "n_stories": 53
-      },
-      "L3|OR": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 85,
-        "n_stories": 54
-      },
-      "L4": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 332,
-        "n_stories": 200
-      },
-      "L4|AND": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 99,
-        "n_stories": 52
-      },
-      "L4|BOTH_OR_NEITHER": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 10,
-        "n_stories": 10
-      },
-      "L4|EXACTLY_ONE": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 48,
-        "n_stories": 38
-      },
-      "L4|NOT_ALL": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 65,
-        "n_stories": 37
-      },
-      "L4|OR": {
-        "W": 0.5,
-        "ci95": [
-          0.5,
-          0.5
-        ],
-        "exact": {
-          "W": 0.5,
-          "ci95": [
-            0.5,
-            0.5
-          ]
-        },
-        "n_pairs": 110,
-        "n_stories": 63
-      },
+      "L1": "not applicable: no such rule at this level",
+      "L2": "not applicable: no such rule at this level",
+      "L3": "not applicable: no such rule at this level",
+      "L4": "not applicable: no such rule at this level",
       "L5": {
         "W": 0.6488,
         "ci95": [
@@ -2481,762 +2059,889 @@
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 9
     },
     "L1|AND|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 9
     },
     "L1|AND|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 19
     },
     "L1|AND|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 10
     },
     "L1|NOT_ALL|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 7
     },
     "L1|NOT_ALL|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 14
     },
     "L1|NOT_ALL|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 16
     },
     "L1|NOT_ALL|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 16
     },
     "L1|OR|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 24
     },
     "L1|OR|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 26
     },
     "L1|OR|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 22
     },
     "L1|OR|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 28
     },
     "L2|AND|negative|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 31
     },
     "L2|AND|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 29
     },
     "L2|AND|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 22
     },
     "L2|AND|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 26
     },
     "L2|EXACTLY_ONE|negative|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 16
     },
     "L2|EXACTLY_ONE|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 28
     },
     "L2|EXACTLY_ONE|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 20
     },
     "L2|EXACTLY_ONE|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 16
     },
     "L2|NOT_ALL|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 22
     },
     "L2|NOT_ALL|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 30
     },
     "L2|NOT_ALL|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 15
     },
     "L2|NOT_ALL|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 25
     },
     "L2|OR|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 36
     },
     "L2|OR|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 28
     },
     "L2|OR|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 30
     },
     "L2|OR|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 26
     },
     "L3|AND|negative|negative|intermediate": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.7143,
       "W_true_count": 0.2857,
+      "W_true_count_exact": 0.2857142857142857,
       "n_pairs": 7
     },
     "L3|AND|negative|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 9
     },
     "L3|AND|negative|positive|intermediate": {
       "B_share_YES": 0.3333,
       "C_share_flipped_satisfied": 0.8333,
       "W_true_count": 0.8333,
+      "W_true_count_exact": 0.8333333333333334,
       "n_pairs": 12
     },
     "L3|AND|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 9
     },
     "L3|AND|positive|negative|intermediate": {
       "B_share_YES": 0.8333,
       "C_share_flipped_satisfied": 0.75,
       "W_true_count": 0.2,
+      "W_true_count_exact": 0.2,
       "n_pairs": 12
     },
     "L3|AND|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 6
     },
     "L3|AND|positive|positive|intermediate": {
       "B_share_YES": 0.4,
       "C_share_flipped_satisfied": 0.9,
       "W_true_count": 0.9,
+      "W_true_count_exact": 0.9,
       "n_pairs": 10
     },
     "L3|AND|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 7
     },
     "L3|BOTH_OR_NEITHER|negative|negative|intermediate": {
       "B_share_YES": 0.4667,
       "C_share_flipped_satisfied": 0.1333,
       "W_true_count": 0.8,
+      "W_true_count_exact": 0.8,
       "n_pairs": 15
     },
     "L3|BOTH_OR_NEITHER|negative|positive|intermediate": {
       "B_share_YES": 0.7143,
       "C_share_flipped_satisfied": 0.5714,
       "W_true_count": 0.5,
+      "W_true_count_exact": 0.5,
       "n_pairs": 7
     },
     "L3|BOTH_OR_NEITHER|positive|negative|intermediate": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.25,
       "W_true_count": 0.6667,
+      "W_true_count_exact": 0.6666666666666666,
       "n_pairs": 4
     },
     "L3|BOTH_OR_NEITHER|positive|positive|intermediate": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.25,
       "W_true_count": 0.3333,
+      "W_true_count_exact": 0.3333333333333333,
       "n_pairs": 4
     },
     "L3|EXACTLY_ONE|negative|negative|intermediate": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 1
     },
     "L3|EXACTLY_ONE|negative|positive|intermediate": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 3
     },
     "L3|EXACTLY_ONE|positive|negative|intermediate": {
       "B_share_YES": 0.4444,
       "C_share_flipped_satisfied": 0.2222,
       "W_true_count": 0.8333,
+      "W_true_count_exact": 0.8333333333333334,
       "n_pairs": 9
     },
     "L3|EXACTLY_ONE|positive|positive|intermediate": {
       "B_share_YES": 0.8,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 5
     },
     "L3|NOT_ALL|negative|negative|intermediate": {
       "B_share_YES": 0.2857,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 7
     },
     "L3|NOT_ALL|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 6
     },
     "L3|NOT_ALL|negative|positive|intermediate": {
       "B_share_YES": 0.5714,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 7
     },
     "L3|NOT_ALL|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 12
     },
     "L3|NOT_ALL|positive|negative|intermediate": {
       "B_share_YES": 0.7692,
       "C_share_flipped_satisfied": 0.5385,
       "W_true_count": 0.3636,
+      "W_true_count_exact": 0.36363636363636365,
       "n_pairs": 13
     },
     "L3|NOT_ALL|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 5
     },
     "L3|NOT_ALL|positive|positive|intermediate": {
       "B_share_YES": 0.6667,
       "C_share_flipped_satisfied": 0.5556,
       "W_true_count": 0.625,
+      "W_true_count_exact": 0.625,
       "n_pairs": 9
     },
     "L3|NOT_ALL|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 6
     },
     "L3|OR|negative|negative|intermediate": {
       "B_share_YES": 0.3571,
       "C_share_flipped_satisfied": 0.1429,
       "W_true_count": 0.8571,
+      "W_true_count_exact": 0.8571428571428571,
       "n_pairs": 14
     },
     "L3|OR|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 10
     },
     "L3|OR|negative|positive|intermediate": {
       "B_share_YES": 0.3636,
       "C_share_flipped_satisfied": 0.2727,
       "W_true_count": 0.2105,
+      "W_true_count_exact": 0.21052631578947367,
       "n_pairs": 22
     },
     "L3|OR|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 10
     },
     "L3|OR|positive|negative|intermediate": {
       "B_share_YES": 0.7,
       "C_share_flipped_satisfied": 0.1,
       "W_true_count": 0.9,
+      "W_true_count_exact": 0.9,
       "n_pairs": 10
     },
     "L3|OR|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 18
     },
     "L3|OR|positive|positive|intermediate": {
       "B_share_YES": 0.3333,
       "C_share_flipped_satisfied": 0.1111,
       "W_true_count": 0.1111,
+      "W_true_count_exact": 0.1111111111111111,
       "n_pairs": 9
     },
     "L3|OR|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 14
     },
     "L4|AND|negative|negative|intermediate": {
       "B_share_YES": 0.75,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 4
     },
     "L4|AND|negative|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 17
     },
     "L4|AND|negative|positive|intermediate": {
       "B_share_YES": 0.9,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 10
     },
     "L4|AND|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 8
     },
     "L4|AND|positive|negative|intermediate": {
       "B_share_YES": 0.5263,
       "C_share_flipped_satisfied": 0.8947,
       "W_true_count": 0.0667,
+      "W_true_count_exact": 0.06666666666666667,
       "n_pairs": 19
     },
     "L4|AND|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 10
     },
     "L4|AND|positive|positive|intermediate": {
       "B_share_YES": 0.3333,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 9
     },
     "L4|AND|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 17
     },
     "L4|BOTH_OR_NEITHER|positive|negative|intermediate": {
       "B_share_YES": 0.7143,
       "C_share_flipped_satisfied": 0.7143,
       "W_true_count": 0.4,
+      "W_true_count_exact": 0.4,
       "n_pairs": 7
     },
     "L4|BOTH_OR_NEITHER|positive|positive|intermediate": {
       "B_share_YES": 0.6,
       "C_share_flipped_satisfied": 0.6,
       "W_true_count": 0.5,
+      "W_true_count_exact": 0.5,
       "n_pairs": 5
     },
     "L4|EXACTLY_ONE|negative|negative|intermediate": {
       "B_share_YES": 0.6667,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 3
     },
     "L4|EXACTLY_ONE|negative|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 3
     },
     "L4|EXACTLY_ONE|negative|positive|intermediate": {
       "B_share_YES": 0.2857,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 7
     },
     "L4|EXACTLY_ONE|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 5
     },
     "L4|EXACTLY_ONE|positive|negative|intermediate": {
       "B_share_YES": 0.25,
       "C_share_flipped_satisfied": 0.25,
       "W_true_count": 0.8333,
+      "W_true_count_exact": 0.8333333333333334,
       "n_pairs": 8
     },
     "L4|EXACTLY_ONE|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 6
     },
     "L4|EXACTLY_ONE|positive|positive|intermediate": {
       "B_share_YES": 0.75,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 8
     },
     "L4|EXACTLY_ONE|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 7
     },
     "L4|NOT_ALL|negative|negative|intermediate": {
       "B_share_YES": 0.4286,
       "C_share_flipped_satisfied": 0.8571,
       "W_true_count": 0.1429,
+      "W_true_count_exact": 0.14285714285714285,
       "n_pairs": 7
     },
     "L4|NOT_ALL|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 10
     },
     "L4|NOT_ALL|negative|positive|intermediate": {
       "B_share_YES": 0.6364,
       "C_share_flipped_satisfied": 0.7273,
       "W_true_count": 0.8,
+      "W_true_count_exact": 0.8,
       "n_pairs": 11
     },
     "L4|NOT_ALL|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 4
     },
     "L4|NOT_ALL|positive|negative|intermediate": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 6
     },
     "L4|NOT_ALL|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 7
     },
     "L4|NOT_ALL|positive|positive|intermediate": {
       "B_share_YES": 0.625,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 8
     },
     "L4|NOT_ALL|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 12
     },
     "L4|OR|negative|negative|intermediate": {
       "B_share_YES": 0.2667,
       "C_share_flipped_satisfied": 0.0667,
       "W_true_count": 0.9286,
+      "W_true_count_exact": 0.9285714285714286,
       "n_pairs": 15
     },
     "L4|OR|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 17
     },
     "L4|OR|negative|positive|intermediate": {
       "B_share_YES": 0.4444,
       "C_share_flipped_satisfied": 0.1111,
       "W_true_count": 0.125,
+      "W_true_count_exact": 0.125,
       "n_pairs": 9
     },
     "L4|OR|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 19
     },
     "L4|OR|positive|negative|intermediate": {
       "B_share_YES": 0.75,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 8
     },
     "L4|OR|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 20
     },
     "L4|OR|positive|positive|intermediate": {
       "B_share_YES": 0.4615,
       "C_share_flipped_satisfied": 0.1538,
       "W_true_count": 0.0833,
+      "W_true_count_exact": 0.08333333333333333,
       "n_pairs": 13
     },
     "L4|OR|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 13
     },
     "L5|AND|negative|negative|intermediate": {
       "B_share_YES": 0.4667,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 15
     },
     "L5|AND|negative|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 10
     },
     "L5|AND|negative|positive|intermediate": {
       "B_share_YES": 0.7692,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 13
     },
     "L5|AND|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 5
     },
     "L5|AND|positive|negative|intermediate": {
       "B_share_YES": 0.6154,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 13
     },
     "L5|AND|positive|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 7
     },
     "L5|AND|positive|positive|intermediate": {
       "B_share_YES": 0.6471,
       "C_share_flipped_satisfied": 0.8824,
       "W_true_count": 0.9091,
+      "W_true_count_exact": 0.9090909090909091,
       "n_pairs": 17
     },
     "L5|AND|positive|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 20
     },
     "L5|BOTH_OR_NEITHER|negative|negative|intermediate": {
       "B_share_YES": 0.3333,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 3
     },
     "L5|BOTH_OR_NEITHER|negative|positive|intermediate": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 2
     },
     "L5|BOTH_OR_NEITHER|positive|negative|intermediate": {
       "B_share_YES": 0.8,
       "C_share_flipped_satisfied": 0.2,
       "W_true_count": 0.75,
+      "W_true_count_exact": 0.75,
       "n_pairs": 5
     },
     "L5|BOTH_OR_NEITHER|positive|positive|intermediate": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.3333,
       "W_true_count": 0.3333,
+      "W_true_count_exact": 0.3333333333333333,
       "n_pairs": 3
     },
     "L5|EXACTLY_ONE|negative|negative|intermediate": {
       "B_share_YES": 0.1818,
       "C_share_flipped_satisfied": 0.1818,
       "W_true_count": 0.7778,
+      "W_true_count_exact": 0.7777777777777778,
       "n_pairs": 11
     },
     "L5|EXACTLY_ONE|negative|positive|intermediate": {
       "B_share_YES": 0.5,
       "C_share_flipped_satisfied": 0.3333,
       "W_true_count": 0.3,
+      "W_true_count_exact": 0.3,
       "n_pairs": 12
     },
     "L5|EXACTLY_ONE|negative|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 9
     },
     "L5|EXACTLY_ONE|positive|negative|intermediate": {
       "B_share_YES": 0.6,
       "C_share_flipped_satisfied": 0.2,
       "W_true_count": 0.8182,
+      "W_true_count_exact": 0.8181818181818182,
       "n_pairs": 15
     },
     "L5|EXACTLY_ONE|positive|positive|intermediate": {
       "B_share_YES": 0.3333,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 9
     },
     "L5|NOT_ALL|negative|negative|intermediate": {
       "B_share_YES": 0.5294,
       "C_share_flipped_satisfied": 0.7059,
       "W_true_count": 0.3636,
+      "W_true_count_exact": 0.36363636363636365,
       "n_pairs": 17
     },
     "L5|NOT_ALL|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 5
     },
     "L5|NOT_ALL|negative|positive|intermediate": {
       "B_share_YES": 0.3077,
       "C_share_flipped_satisfied": 0.6923,
       "W_true_count": 0.7,
+      "W_true_count_exact": 0.7,
       "n_pairs": 13
     },
     "L5|NOT_ALL|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 5
     },
     "L5|NOT_ALL|positive|negative|intermediate": {
       "B_share_YES": 0.2727,
       "C_share_flipped_satisfied": 0.8182,
       "W_true_count": 0.25,
+      "W_true_count_exact": 0.25,
       "n_pairs": 11
     },
     "L5|NOT_ALL|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 5
     },
     "L5|NOT_ALL|positive|positive|intermediate": {
       "B_share_YES": 0.3333,
       "C_share_flipped_satisfied": 0.8333,
       "W_true_count": 0.7778,
+      "W_true_count_exact": 0.7777777777777778,
       "n_pairs": 12
     },
     "L5|NOT_ALL|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 1.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 10
     },
     "L5|OR|negative|negative|intermediate": {
       "B_share_YES": 0.3571,
       "C_share_flipped_satisfied": 0.0714,
       "W_true_count": 0.9091,
+      "W_true_count_exact": 0.9090909090909091,
       "n_pairs": 14
     },
     "L5|OR|negative|negative|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 12
     },
     "L5|OR|negative|positive|intermediate": {
       "B_share_YES": 0.25,
       "C_share_flipped_satisfied": 0.1667,
       "W_true_count": 0.2,
+      "W_true_count_exact": 0.2,
       "n_pairs": 12
     },
     "L5|OR|negative|positive|root": {
       "B_share_YES": 0.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 16
     },
     "L5|OR|positive|negative|intermediate": {
       "B_share_YES": 0.6471,
       "C_share_flipped_satisfied": 0.0588,
       "W_true_count": 0.9286,
+      "W_true_count_exact": 0.9285714285714286,
       "n_pairs": 17
     },
     "L5|OR|positive|negative|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 1.0,
+      "W_true_count_exact": 1.0,
       "n_pairs": 13
     },
     "L5|OR|positive|positive|intermediate": {
       "B_share_YES": 0.5294,
       "C_share_flipped_satisfied": 0.0588,
       "W_true_count": 0.0833,
+      "W_true_count_exact": 0.08333333333333333,
       "n_pairs": 17
     },
     "L5|OR|positive|positive|root": {
       "B_share_YES": 1.0,
       "C_share_flipped_satisfied": 0.0,
       "W_true_count": 0.0,
+      "W_true_count_exact": 0.0,
       "n_pairs": 15
     }
   }

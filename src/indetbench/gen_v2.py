@@ -482,6 +482,31 @@ def require_fields(pairs: dict, fields: dict, *, shallow: bool = False) -> None:
                     raise ValueError(f"Pair {pid} side {side}: invalid shallow field(s) {', '.join(bad)}")
 
 
+def check_stories(pairs: dict, *, strict_minimal: bool) -> None:
+    """B and C of a pair share their Rules block; pairs of one story share rules
+    and level; ops are lists of strings. strict_minimal also requires every pair
+    to be a single fact flip (the report; the audit counts violations instead)."""
+    rules_of, level_of = {}, {}
+    for pid, p in pairs.items():
+        for side in ("B", "C"):
+            ops = p[side].get("ops")
+            if ops is not None and (not isinstance(ops, list) or not all(isinstance(o, str) for o in ops)):
+                raise ValueError(f"Pair {pid} side {side}: ops must be a list of strings")
+        story, rules = p["B"]["block_id"], _rules_block(p["B"]["prompt"])
+        if _rules_block(p["C"]["prompt"]) != rules:
+            raise ValueError(f"Pair {pid}: B and C have different rules")
+        if rules_of.setdefault(story, rules) != rules:
+            raise ValueError(f"Story {story}: its pairs have different rules")
+        if level_of.setdefault(story, p["B"].get("level")) != p["B"].get("level"):
+            raise ValueError(f"Story {story}: its pairs have different levels")
+        if strict_minimal and not minimal_pair_ok(p["B"]["prompt"], p["C"]["prompt"]):
+            raise ValueError(f"Pair {pid}: not a single fact flip")
+
+
+def _rules_block(prompt: str) -> str:
+    return prompt.split("\nFacts:\n", 1)[0]
+
+
 def _is_count(value) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 0
 
@@ -690,8 +715,15 @@ def heldout_baselines(rows, *, k: int = 5, seed: int = 20261118, n_bootstrap: in
     out = {}
     for name, (folds, fit, apply) in plans.items():
         scores = _crossfit(pairs, folds, fit, apply)
-        out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed,
-                              by_root_op=name.startswith("single_rule_"))
+        if name.startswith("single_rule_"):
+            k = int(name.split("_")[2].split("|")[0])  # rule number, 1-based
+            sub = {pid: p for pid, p in pairs.items() if p["B"]["depth"] >= k}
+            out[name] = _by_level(sub, scores, n_bootstrap=n_bootstrap, seed=seed, by_root_op=True)
+            for level in sorted({p["B"]["level"] for p in pairs.values()} -
+                                {p["B"]["level"] for p in sub.values()}):
+                out[name][f"L{level}"] = "not applicable: no such rule at this level"
+        else:
+            out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed)
         if name == "shallow_with_operator|story_folds":
             for loc in ("root", "intermediate"):
                 sub = {k: p for k, p in pairs.items() if p["B"]["flipped_location"] == loc}
@@ -706,6 +738,7 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
     Ideal: heuristic W near 0.5 and B gold near 50% YES in every cell."""
     pairs = pairs_by_id(rows)
     require_fields(pairs, AUDIT_FIELDS, shallow=True)
+    check_stories(pairs, strict_minimal=False)
     rows = [r for p in pairs.values() for r in (p["B"], p["C"])]  # an iterator is read only once
     true_count = lambda row: row["prompt"].count("It is true")
     report = {"n_pairs": len(pairs), "n_stories": len({p["B"]["block_id"] for p in pairs.values()}),
@@ -722,6 +755,7 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
             groups[keyfunc(pair["B"])][pid] = pair
         return {key: {"n_pairs": len(cell),
                       "W_true_count": round(_story_w(cell, true_count), 4),
+                      "W_true_count_exact": _story_w(cell, true_count),
                       "B_share_YES": round(sum(p["B"]["gold"] == "YES" for p in cell.values())
                                            / len(cell), 4),
                       "C_share_flipped_satisfied": round(
@@ -744,7 +778,7 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
         cells = {k: v for k, v in fine.items() if k.startswith(f"L{level}|")}
         total = sum(v["n_pairs"] for v in cells.values())
         det_big = sum(v["n_pairs"] for v in cells.values()
-                      if v["n_pairs"] >= min_n and v["W_true_count"] in (0.0, 1.0))
+                      if v["n_pairs"] >= min_n and v["W_true_count_exact"] in (0.0, 1.0))
         small = sum(v["n_pairs"] for v in cells.values() if v["n_pairs"] < min_n)
         summary[f"L{level}"] = {"n_pairs": total, "n_subcells": len(cells),
                                 "share_in_deterministic_subcells_n_ge_min": round(det_big / total, 4),
@@ -867,10 +901,6 @@ def _share_ci(items: list[tuple[str, bool]], *, n_bootstrap: int, seed: int) -> 
     return {"share": round(share, 4), "ci95": ci, "n": len(items), "share_exact": share}
 
 
-def _rules_block(prompt: str) -> str:
-    return prompt.split("\nFacts:\n", 1)[0]
-
-
 def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
            n_bootstrap: int = 2000, seed: int = 20261108) -> dict:
     """Per-level report of one model (spec section 6).
@@ -889,21 +919,14 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
     rule applied provisionally."""
     generated = pairs_by_id(pair_rows)
     require_fields(generated, REPORT_FIELDS)
+    check_stories(generated, strict_minimal=True)
     all_rows = [r for p in generated.values() for r in (p["B"], p["C"])]
     scores, models, columns = _check_scores(score_rows, all_rows, required=PAIR_SCORE_REQUIRED)
     has_prob = "score" in columns
     has_mass = "mass_total" in columns
     has_len = "prompt_tokens" in columns
-    rules_of, level_of = {}, {}
-    for p in generated.values():
-        story = p["B"]["block_id"]
-        rules = _rules_block(p["B"]["prompt"])
-        if _rules_block(p["C"]["prompt"]) != rules:
-            raise ValueError(f"Pair {p['B']['pair_id']}: B and C have different rules")
-        if rules_of.setdefault(story, rules) != rules:
-            raise ValueError(f"Story {story}: its B/C pairs have different rules")
-        if level_of.setdefault(story, p["B"]["level"]) != p["B"]["level"]:
-            raise ValueError(f"Story {story}: its B/C pairs have different levels")
+    rules_of = {p["B"]["block_id"]: _rules_block(p["B"]["prompt"]) for p in generated.values()}
+    level_of = {p["B"]["block_id"]: p["B"]["level"] for p in generated.values()}
     controls, ctl_by_id = {}, {}
     if control_answers is not None:
         if control_rows is None:
@@ -963,8 +986,9 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
         c_rows = [p["C"] for p in cell.values() if p["C"]["row_id"] in scores]
         complete = {k: p for k, p in cell.items()
                     if p["B"]["row_id"] in scores and p["C"]["row_id"] in scores}
+        # The length filter belongs to the probability track; answer-only files use complete pairs.
         primary = {k: p for k, p in complete.items()
-                   if not has_len or int(scores[p["B"]["row_id"]]["prompt_tokens"])
+                   if not has_prob or not has_len or int(scores[p["B"]["row_id"]]["prompt_tokens"])
                    == int(scores[p["C"]["row_id"]]["prompt_tokens"])}
         entry = {"n_pairs_generated": len(cell), "n_pairs_complete": len(complete),
                  "n_pairs_primary": len(primary), "n_B_scored": len(b_rows), "n_C_scored": len(c_rows),

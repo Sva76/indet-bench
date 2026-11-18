@@ -199,7 +199,8 @@ class GeneratorV2Test(unittest.TestCase):
         broken = b["prompt"].replace(rule_line, rule_line[: -len(word)] + "x" + word, 1)
         self.assertFalse(gen_v2.minimal_pair_ok(b["prompt"], broken))
         rows = [b, {**c, "prompt": broken}]
-        self.assertGreater(gen_v2.audit(rows, baselines=False)["minimal_pair_violations"], 0)
+        with self.assertRaises(ValueError):  # a changed rule is rejected outright
+            gen_v2.audit(rows, baselines=False)
 
     def test_ids_bind_to_dataset(self):
         other, _ = gen_v2.generate(seed=20261117, stories_per_cell=40)
@@ -238,6 +239,9 @@ class GeneratorV2Test(unittest.TestCase):
     def test_heldout_baselines_shape(self):
         small, _ = gen_v2.generate(seed=11, stories_per_cell=8)
         result = gen_v2.heldout_baselines(small, n_bootstrap=50)
+        self.assertEqual(result["single_rule_2|story_folds"]["L1"], "not applicable: no such rule at this level")
+        self.assertEqual(result["single_rule_3|story_folds"]["L4"], "not applicable: no such rule at this level")
+        self.assertIsInstance(result["single_rule_3|story_folds"]["L5"], dict)
         for name in ("bow_nb|story_folds", "bow_nb|domain_held_out",
                      "shallow_with_operator|story_folds", "shallow_without_operator|story_folds",
                      "shallow_without_operator|structure_folds"):
@@ -507,6 +511,39 @@ class ReportV2Test(unittest.TestCase):
         answers = [{"row_id": r["row_id"], "parsed": r["gold"]} for r in controls]
         with self.assertRaises(ValueError):
             self.run_report(rows, control_rows=controls, control_answers=answers)
+
+    def test_report_rejects_two_fact_flips_and_audit_mixed_stories(self):
+        good = [dict(r) for r in self.pairs]
+        c = next(i for i, r in enumerate(good) if r["side"] == "C")
+        lines = good[c]["prompt"].splitlines()
+        facts = [i for i, l in enumerate(lines) if l.startswith("It is true") or l.startswith("It is false")]
+        b_lines = next(r for r in good if r["pair_id"] == good[c]["pair_id"] and r["side"] == "B")["prompt"].splitlines()
+        same = [i for i in facts if lines[i] == b_lines[i]]
+        k = same[0]
+        lines[k] = lines[k].replace("It is true", "It is false") if "It is true" in lines[k] else lines[k].replace("It is false", "It is true")
+        good[c]["prompt"] = "\n".join(lines)
+        scores = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
+        with self.assertRaises(ValueError):
+            gen_v2.report(good, scores, n_bootstrap=10)
+        mixed = [dict(r) for r in self.pairs]
+        story = mixed[0]["block_id"]
+        others = [r for r in mixed if r["block_id"] != story and r["level"] == mixed[0]["level"]]
+        moved = {r["pair_id"] for r in others[:2]}
+        for r in mixed:
+            if r["pair_id"] in moved:
+                r["block_id"] = story
+        with self.assertRaises(ValueError):
+            gen_v2.audit(mixed, baselines=False)
+        bad_ops = [dict(r, ops=[["AND"]]) for r in self.pairs]
+        with self.assertRaises(ValueError):
+            gen_v2.audit(bad_ops, baselines=False)
+
+    def test_answers_only_coverage_ignores_token_counts(self):
+        rows = [{"row_id": r["row_id"], "pair_id": r["pair_id"], "block_id": r["block_id"], "side": r["side"],
+                 "parsed": r["gold"], "prompt_tokens": "100" if r["side"] == "B" else "101"} for r in self.pairs]
+        for entry in self.run_report(rows)["levels"].values():
+            self.assertEqual(entry["coverage_primary"], 1.0)
+            self.assertEqual(entry["status"], "ANSWERS ONLY")
 
     def test_controls_from_another_dataset(self):
         rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
