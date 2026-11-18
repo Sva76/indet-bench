@@ -543,6 +543,15 @@ class ReportV2Test(unittest.TestCase):
             gen_v2.audit(wrong_ops, baselines=False)
         for row in self.pairs[:200]:
             self.assertEqual(gen_v2.ops_from_text(row["prompt"]), row["ops"])
+        wrong_split = [dict(r, flipped_rule_op="OR" if r["flipped_rule_op"] != "OR" else "AND") for r in self.pairs]
+        with self.assertRaises(ValueError):
+            gen_v2.audit(wrong_split, baselines=False)
+        row = self.pairs[0]
+        preamble = row["prompt"].replace("Rules:\n", "Rule 0: X if and only if at least one of these holds: a; b.\nRules:\n", 1)
+        self.assertEqual(gen_v2.ops_from_text(preamble), row["ops"])  # the preamble is not read
+        unknown = row["prompt"].replace(" if and only if ", " if and only if maybe ", 1)
+        with self.assertRaises(ValueError):
+            gen_v2.ops_from_text(unknown)
 
     def test_change_after_question_is_not_minimal(self):
         b = next(r for r in self.pairs if r["side"] == "B")

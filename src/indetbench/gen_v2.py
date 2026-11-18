@@ -493,9 +493,18 @@ def check_stories(pairs: dict, *, strict_minimal: bool) -> None:
             if ops is not None and (not isinstance(ops, list) or not all(isinstance(o, str) for o in ops)):
                 raise ValueError(f"Pair {pid} side {side}: ops must be a list of strings")
         for side in ("B", "C"):
-            ops = p[side].get("ops")
-            if ops is not None and ops != ops_from_text(p[side]["prompt"]):
+            row = p[side]
+            try:
+                text_ops = ops_from_text(row["prompt"])
+            except ValueError as error:
+                raise ValueError(f"Pair {pid} side {side}: {error}") from None
+            if row.get("ops") is not None and row["ops"] != text_ops:
                 raise ValueError(f"Pair {pid} side {side}: ops disagree with the Rules block")
+            if "flipped_rule_op" in row or "flipped_rule" in row:
+                index = row.get("flipped_rule")
+                if (not isinstance(index, int) or isinstance(index, bool) or not 0 <= index < len(text_ops)
+                        or row.get("flipped_rule_op") != text_ops[index]):
+                    raise ValueError(f"Pair {pid} side {side}: flipped_rule/flipped_rule_op disagree with the rules")
         story, rules = p["B"]["block_id"], _rules_block(p["B"]["prompt"])
         if _rules_block(p["C"]["prompt"]) != rules:
             raise ValueError(f"Pair {pid}: B and C have different rules")
@@ -517,13 +526,20 @@ _OP_PHRASES = (("both ", "AND"), ("all of these hold: ", "AND"), ("at least one 
 
 
 def ops_from_text(prompt: str) -> list[str]:
-    """Operators of the rules, read from the Rules block of the prompt."""
+    """Operators of the rules, read only between "Rules:" and "Facts:".
+    Raises ValueError on a rule line whose operator phrase is not recognised."""
+    lines = prompt.splitlines()
+    if "Rules:" not in lines or "Facts:" not in lines:
+        raise ValueError("Prompt has no Rules or Facts section")
     ops = []
-    for line in _rules_block(prompt).splitlines():
+    for line in lines[lines.index("Rules:") + 1: lines.index("Facts:")]:
         match = re.fullmatch(r"Rule \d+: .+? if and only if (.+)\.", line)
         if match:
             body = match.group(1)
-            ops.append(next((op for phrase, op in _OP_PHRASES if body.startswith(phrase)), "?"))
+            op = next((op for phrase, op in _OP_PHRASES if body.startswith(phrase)), None)
+            if op is None:
+                raise ValueError(f"Unrecognised operator phrase: {line}")
+            ops.append(op)
     return ops
 
 
