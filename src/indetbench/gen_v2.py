@@ -456,14 +456,34 @@ REPORT_FIELDS = {"level": int, "gold": str, "flipped_rule_op": str, "flipped_loc
                  "prompt": str}
 
 
-def require_fields(pairs: dict, fields: dict) -> None:
-    """Every B and C row must carry each field, non-null and of the given type."""
+def require_fields(pairs: dict, fields: dict, *, shallow: bool = False) -> None:
+    """Every B and C row must carry each field, non-null and of the given type;
+    gold must be YES/NO on B and UNKNOWN on C. With shallow=True the counts the
+    baselines read are checked too."""
+    counts = ("root_sat", "root_unsat", "root_unc", "root_refs", "all_sat", "all_unsat", "all_unc")
     for pid, pair in pairs.items():
         for side, row in pair.items():
             for key, kind in fields.items():
                 value = row.get(key)
                 if value is None or not isinstance(value, kind) or (kind is int and isinstance(value, bool)):
                     raise ValueError(f"Pair {pid} side {side}: {key} missing or not {kind.__name__}")
+            if (side == "B" and row["gold"] not in ("YES", "NO")) or (side == "C" and row["gold"] != "UNKNOWN"):
+                raise ValueError(f"Pair {pid} side {side}: gold {row['gold']!r} not allowed on {side}")
+            if shallow:
+                f = row["shallow"]
+                bad = [k for k in counts if not _is_count(f.get(k))]
+                rules = f.get("rules")
+                if not isinstance(rules, list) or len(rules) != row["depth"] or any(
+                        not isinstance(r, dict) or not isinstance(r.get("op"), str)
+                        or any(not _is_count(r.get(k)) for k in ("sat", "unsat", "unc", "refs"))
+                        for r in rules):
+                    bad.append("rules")
+                if bad:
+                    raise ValueError(f"Pair {pid} side {side}: invalid shallow field(s) {', '.join(bad)}")
+
+
+def _is_count(value) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
 
 
 def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
@@ -496,8 +516,11 @@ def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
         for pid, pair in table.items():
             for key in PAIR_SHARED:
                 if key in pair["B"] or key in pair["C"]:
-                    if pair["B"].get(key) != pair["C"].get(key):
+                    # compared as JSON, so true and 1 differ
+                    if json.dumps(pair["B"].get(key), sort_keys=True) != json.dumps(pair["C"].get(key), sort_keys=True):
                         raise ValueError(f"Pair {pid}: B and C disagree on {key}")
+                    if key == "sat_target" and pair["B"].get(key) is not None and not isinstance(pair["B"][key], bool):
+                        raise ValueError(f"Pair {pid}: sat_target must be true, false or null")
     if not table:
         raise ValueError("No pairs")
     return table
@@ -543,9 +566,11 @@ def _w_ci(pairs: dict, scores: dict[str, float], *, n_bootstrap: int, seed: int)
     rows = [PairScore(p[s]["pair_id"], p[s]["block_id"], s, scores[p[s]["row_id"]])
             for p in pairs.values() for s in ("B", "C")]
     est = w_score(rows, n_bootstrap=n_bootstrap, seed=seed)
+    exact_ci = None if est.ci_lower is None else [est.ci_lower, est.ci_upper]
     return {"W": round(est.value, 4),
-            "ci95": None if est.ci_lower is None else [round(est.ci_lower, 4), round(est.ci_upper, 4)],
-            "n_pairs": est.n_pairs, "n_stories": est.n_blocks}
+            "ci95": None if exact_ci is None else [round(x, 4) for x in exact_ci],
+            "n_pairs": est.n_pairs, "n_stories": est.n_blocks,
+            "exact": {"W": est.value, "ci95": exact_ci}}
 
 
 def _tokens(text: str) -> list[str]:
@@ -680,7 +705,8 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
     """Per-cell shortcut and balance statistics, with cell sizes.
     Ideal: heuristic W near 0.5 and B gold near 50% YES in every cell."""
     pairs = pairs_by_id(rows)
-    require_fields(pairs, AUDIT_FIELDS)
+    require_fields(pairs, AUDIT_FIELDS, shallow=True)
+    rows = [r for p in pairs.values() for r in (p["B"], p["C"])]  # an iterator is read only once
     true_count = lambda row: row["prompt"].count("It is true")
     report = {"n_pairs": len(pairs), "n_stories": len({p["B"]["block_id"] for p in pairs.values()}),
               "minimal_pair_violations": 0, "min_n": min_n}
@@ -824,7 +850,7 @@ def _check_scores(score_rows, generated_rows, *, required):
 def _share_ci(items: list[tuple[str, bool]], *, n_bootstrap: int, seed: int) -> dict:
     """Pooled share with a story-cluster bootstrap 95% interval. items: (story, success)."""
     if not items:
-        return {"share": None, "ci95": None, "n": 0}
+        return {"share": None, "ci95": None, "n": 0, "share_exact": None}
     stories = defaultdict(list)
     for story, ok in items:
         stories[story].append(ok)
@@ -838,7 +864,7 @@ def _share_ci(items: list[tuple[str, bool]], *, n_bootstrap: int, seed: int) -> 
     samples.sort()
     ci = None if not samples else [round(samples[int(0.025 * (len(samples) - 1))], 4),
                                    round(samples[int(0.975 * (len(samples) - 1))], 4)]
-    return {"share": round(share, 4), "ci95": ci, "n": len(items)}
+    return {"share": round(share, 4), "ci95": ci, "n": len(items), "share_exact": share}
 
 
 def _rules_block(prompt: str) -> str:
@@ -868,19 +894,22 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
     has_prob = "score" in columns
     has_mass = "mass_total" in columns
     has_len = "prompt_tokens" in columns
+    rules_of, level_of = {}, {}
+    for p in generated.values():
+        story = p["B"]["block_id"]
+        rules = _rules_block(p["B"]["prompt"])
+        if _rules_block(p["C"]["prompt"]) != rules:
+            raise ValueError(f"Pair {p['B']['pair_id']}: B and C have different rules")
+        if rules_of.setdefault(story, rules) != rules:
+            raise ValueError(f"Story {story}: its B/C pairs have different rules")
+        if level_of.setdefault(story, p["B"]["level"]) != p["B"]["level"]:
+            raise ValueError(f"Story {story}: its B/C pairs have different levels")
     controls, ctl_by_id = {}, {}
     if control_answers is not None:
         if control_rows is None:
             raise ValueError("control answers need the controls file")
         ctl_by_id = {r["row_id"]: r for p in pairs_by_id(control_rows, sides=("D",)).values()
                      for r in p.values()}
-        rules_of, level_of = {}, {}
-        for p in generated.values():
-            story, rules = p["B"]["block_id"], _rules_block(p["B"]["prompt"])
-            if rules_of.setdefault(story, rules) != rules:
-                raise ValueError(f"Story {story}: its B/C pairs have different rules")
-            if level_of.setdefault(story, p["B"]["level"]) != p["B"]["level"]:
-                raise ValueError(f"Story {story}: its B/C pairs have different levels")
         seen_story = set()
         for r in ctl_by_id.values():
             story = r["block_id"]
@@ -891,7 +920,9 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
             seen_story.add(story)
             if not isinstance(r.get("prompt"), str) or _rules_block(r["prompt"]) != rules_of[story]:
                 raise ValueError(f"D control {r['row_id']}: rules differ from its story's B/C pairs")
-            if r.get("level") != level_of[story] or r.get("gold") not in ("YES", "NO"):
+            level = r.get("level")
+            if (not isinstance(level, int) or isinstance(level, bool) or level != level_of[story]
+                    or r.get("gold") not in ("YES", "NO")):
                 raise ValueError(f"D control {r['row_id']}: level or gold inconsistent with its story")
         controls, ctl_models, _ = _check_scores(control_answers, list(ctl_by_id.values()),
                                                 required=CONTROL_ANSWER_REQUIRED)
@@ -967,8 +998,8 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
         masses = [float(scores[r["row_id"]]["mass_total"]) for r in scored] if has_mass else []
         median_mass = statistics.median(masses) if masses else None
         entry["median_label_mass"] = None if median_mass is None else round(median_mass, 4)
-        gate = [entry["accuracy_B"]["share"], entry["accuracy_B_gold_YES"]["share"],
-                entry["accuracy_B_gold_NO"]["share"]]
+        gate = [entry["accuracy_B"]["share_exact"], entry["accuracy_B_gold_YES"]["share_exact"],
+                entry["accuracy_B_gold_NO"]["share_exact"]]  # gates use unrounded values
         eligible = len(primary) if has_prob else len(complete)
         below_coverage = eligible < 0.95 * len(cell)  # on counts, before rounding
         w = entry.get("W_p_unknown")
@@ -987,9 +1018,9 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
             entry["status_reason"] = "no prompt_tokens: the length check of the primary W cannot be applied"
         elif w is None:
             entry["status"] = "NO DATA"
-        elif w["W"] >= 0.60 and w["ci95"] and w["ci95"][0] > 0.5:
+        elif w["exact"]["W"] >= 0.60 and w["exact"]["ci95"] and w["exact"]["ci95"][0] > 0.5:
             entry["status"] = "CONFIRMED"
-        elif w["ci95"] and w["ci95"][1] <= 0.5:
+        elif w["exact"]["ci95"] and w["exact"]["ci95"][1] <= 0.5:
             entry["status"] = "NOT CONFIRMED"
         else:
             entry["status"] = "NOT CONCLUSIVE"

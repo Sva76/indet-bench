@@ -463,6 +463,51 @@ class ReportV2Test(unittest.TestCase):
         with self.assertRaises(ValueError):
             gen_v2.audit(mixed, baselines=False)
 
+    def test_gates_use_unrounded_values(self):
+        entry = {"W": 0.6, "ci95": [0.51, 0.7], "exact": {"W": 0.59996, "ci95": [0.51, 0.7]}}
+        rows = _scores(self.pairs, score=lambda r: float(r["gold"] == "UNKNOWN"), parsed=lambda r: r["gold"])
+        original = gen_v2._w_ci
+        try:
+            gen_v2._w_ci = lambda *a, **k: dict(entry, n_pairs=1, n_stories=1)
+            statuses = {e["status"] for e in self.run_report(rows)["levels"].values()}
+        finally:
+            gen_v2._w_ci = original
+        self.assertNotIn("CONFIRMED", statuses)
+        share = gen_v2._share_ci([("s", True)] * 5000 + [("s", False)] * 5001, n_bootstrap=5, seed=1)
+        self.assertEqual(share["share"], 0.5)  # displayed value rounds up
+        self.assertLess(share["share_exact"], 0.5)
+
+    def test_malformed_pair_files(self):
+        good = [dict(r) for r in self.pairs]
+        self.assertGreater(gen_v2.audit(iter(good), baselines=True)["n_pairs"], 0)  # iterator input
+        b = next(i for i, r in enumerate(good) if r["side"] == "B")
+        cases = {
+            "gold UNKNOWN on B": lambda rows: rows[b].update(gold="UNKNOWN"),
+            "empty shallow": lambda rows: rows[b].update(shallow={}),
+            "sat_target 1 vs true": lambda rows: [r.update(sat_target=1) for r in rows
+                                                  if r["pair_id"] == rows[b]["pair_id"] and r["side"] == "C"],
+        }
+        for name, mutate in cases.items():
+            rows = [dict(r) for r in good]
+            mutate(rows)
+            with self.assertRaises(ValueError, msg=name):
+                gen_v2.audit(rows, baselines=False)
+        rows = [dict(r) for r in good]
+        c = next(i for i, r in enumerate(rows) if r["side"] == "C")
+        rows[c]["prompt"] = rows[c]["prompt"].replace("Rule 1:", "Rule 1 :", 1)
+        scores = _scores(good, score=lambda r: 0.5, parsed=lambda r: r["gold"])
+        with self.assertRaises(ValueError):
+            gen_v2.report(rows, scores, n_bootstrap=10)  # no D file needed for the story check
+
+    def test_boolean_level_in_controls(self):
+        rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
+        first = next(i for i, r in enumerate(self.controls) if r["level"] == 1)
+        controls = [dict(r) for r in self.controls]
+        controls[first]["level"] = True
+        answers = [{"row_id": r["row_id"], "parsed": r["gold"]} for r in controls]
+        with self.assertRaises(ValueError):
+            self.run_report(rows, control_rows=controls, control_answers=answers)
+
     def test_controls_from_another_dataset(self):
         rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
         _, other_controls = gen_v2.generate(seed=22, stories_per_cell=12)
