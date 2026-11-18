@@ -492,6 +492,10 @@ def check_stories(pairs: dict, *, strict_minimal: bool) -> None:
             ops = p[side].get("ops")
             if ops is not None and (not isinstance(ops, list) or not all(isinstance(o, str) for o in ops)):
                 raise ValueError(f"Pair {pid} side {side}: ops must be a list of strings")
+        for side in ("B", "C"):
+            ops = p[side].get("ops")
+            if ops is not None and ops != ops_from_text(p[side]["prompt"]):
+                raise ValueError(f"Pair {pid} side {side}: ops disagree with the Rules block")
         story, rules = p["B"]["block_id"], _rules_block(p["B"]["prompt"])
         if _rules_block(p["C"]["prompt"]) != rules:
             raise ValueError(f"Pair {pid}: B and C have different rules")
@@ -505,6 +509,22 @@ def check_stories(pairs: dict, *, strict_minimal: bool) -> None:
 
 def _rules_block(prompt: str) -> str:
     return prompt.split("\nFacts:\n", 1)[0]
+
+
+_OP_PHRASES = (("both ", "AND"), ("all of these hold: ", "AND"), ("at least one of these holds: ", "OR"),
+               ("exactly one of these holds: ", "EXACTLY_ONE"), ("not all of these hold: ", "NOT_ALL"),
+               ("either both or neither of these hold: ", "BOTH_OR_NEITHER"))
+
+
+def ops_from_text(prompt: str) -> list[str]:
+    """Operators of the rules, read from the Rules block of the prompt."""
+    ops = []
+    for line in _rules_block(prompt).splitlines():
+        match = re.fullmatch(r"Rule \d+: .+? if and only if (.+)\.", line)
+        if match:
+            body = match.group(1)
+            ops.append(next((op for phrase, op in _OP_PHRASES if body.startswith(phrase)), "?"))
+    return ops
 
 
 def _is_count(value) -> bool:
@@ -568,8 +588,9 @@ def minimal_pair_ok(b_prompt: str, c_prompt: str) -> bool:
     if len(b_lines) != len(c_lines) or "Facts:" not in b_lines:
         return False
     start = b_lines.index("Facts:")
+    end = next((i for i in range(start + 1, len(b_lines)) if b_lines[i].startswith("Question:")), None)
     diff = [i for i, (x, y) in enumerate(zip(b_lines, c_lines)) if x != y]
-    if len(diff) != 1 or diff[0] <= start:
+    if end is None or len(diff) != 1 or not start < diff[0] < end:
         return False
     mb, mc = _FACT.fullmatch(b_lines[diff[0]]), _FACT.fullmatch(c_lines[diff[0]])
     return bool(mb and mc and mb.group(2) == mc.group(2) and mb.group(1) != mc.group(1))

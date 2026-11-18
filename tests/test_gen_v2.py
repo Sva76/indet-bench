@@ -537,6 +537,19 @@ class ReportV2Test(unittest.TestCase):
         bad_ops = [dict(r, ops=[["AND"]]) for r in self.pairs]
         with self.assertRaises(ValueError):
             gen_v2.audit(bad_ops, baselines=False)
+        wrong_ops = [dict(r, ops=["OR"] * len(r["ops"])) if r["level"] == 1 and r["ops"] != ["OR"] * len(r["ops"])
+                     else r for r in self.pairs]
+        with self.assertRaises(ValueError):
+            gen_v2.audit(wrong_ops, baselines=False)
+        for row in self.pairs[:200]:
+            self.assertEqual(gen_v2.ops_from_text(row["prompt"]), row["ops"])
+
+    def test_change_after_question_is_not_minimal(self):
+        b = next(r for r in self.pairs if r["side"] == "B")
+        head, question = b["prompt"].rsplit("\n\nQuestion: ", 1)
+        same_facts_b = head + "\n\nQuestion: It is true that the x is y."
+        same_facts_c = head + "\n\nQuestion: It is false that the x is y."
+        self.assertFalse(gen_v2.minimal_pair_ok(same_facts_b, same_facts_c))
 
     def test_answers_only_coverage_ignores_token_counts(self):
         rows = [{"row_id": r["row_id"], "pair_id": r["pair_id"], "block_id": r["block_id"], "side": r["side"],
