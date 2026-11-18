@@ -219,6 +219,16 @@ class GeneratorV2Test(unittest.TestCase):
             gen_v2._write_jsonl(path, self.pairs)
             self.assertEqual(len(load_pairs(path)), len(self.pairs))
 
+    def test_confirmation_file_checksum(self):
+        """The confirmation set of results/v2_draft_audit_2026-11-18 is rebuilt bit for bit."""
+        import hashlib
+        pairs, _ = gen_v2.generate(seed=20261119, stories_per_cell=40)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "pairs.jsonl"
+            gen_v2._write_jsonl(path, pairs)
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.assertEqual(digest, "074057c43b56dbcbe24db4dd1f3538e8f46eeda227982918e7e07bd9dd044ae1")
+
     def test_cli_generate_and_audit(self):
         with tempfile.TemporaryDirectory() as tmp:
             out, ctl = Path(tmp) / "p.jsonl", Path(tmp) / "c.jsonl"
