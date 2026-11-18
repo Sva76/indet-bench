@@ -91,6 +91,19 @@ Each entry was checked against the page in the "Source checked" column. Authors,
 
 The DOI `10.18653/2026.emnlp-main.549` has no `v1/` segment. This matches the pattern the ACL Anthology uses for 2026 proceedings, so it was kept as published.
 
+## Verification log, v2 generator (18 November 2026)
+
+Entries added for the design of the v2 generator ([V2_GENERATOR_SPEC.md](V2_GENERATOR_SPEC.md)). Each was checked field by field against the page in the "Source checked" column, as above.
+
+| Key | Source checked | Notes |
+|---|---|---|
+| `clark2020ruletaker` | IJCAI 2020 proceedings page 537 (DOI 10.24963/ijcai.2020/537); arXiv 2002.05867 | added. RuleTaker: synthetic rule bases with controlled chaining depth |
+| `zhang2023paradox` | IJCAI 2023 proceedings page 375 (DOI 10.24963/ijcai.2023/375); arXiv 2205.11502 | added. Statistical features inherent in synthetic logic data (SimpleLogic) |
+| `parmar2024logicbench` | ACL Anthology 2024.acl-long.739 | added |
+| `mccoy2019right` | ACL Anthology P19-1334 | added. HANS: heuristic-targeted evaluation |
+| `gururangan2018artifacts` | ACL Anthology N18-2017 | added. Hypothesis-only baselines |
+| `xiong2024confidence` | arXiv 2306.13063; ICLR 2024 poster page | added. Black-box confidence elicitation (verbalised, consistency-based) |
+
 ## Still to do before a formal release
 
 - Replace `yan2026wrongprediction` with its ACL Anthology record once it is listed.

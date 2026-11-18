@@ -95,6 +95,10 @@ They are covered by the root licence.
 
 The Test C generator ([`gen_testC.py`](../research_originals/step2/scripts/gen_testC.py)) uses three packages: `geonamescache` (MIT; data from [GeoNames](https://www.geonames.org/), CC BY 4.0), `faker` (MIT) and `english-words` (MIT; word lists *web2* and *GCIDE*). They serve **only to build an exclusion list**, so that the invented entity names never coincide with a real place, person or English word. No entry from these lists appears in the published data.
 
+## v2 generator (draft, 18 November 2026)
+
+[`src/indetbench/gen_v2.py`](../src/indetbench/gen_v2.py) uses only the Python standard library. Its vocabulary (entities, predicates, conditions, domains and uncertainty markers) and its templates were written for this project; no third-party dataset, text or model output is used to build v2 prompts. The generator, the prompts it produces and [V2_GENERATOR_SPEC.md](V2_GENERATOR_SPEC.md) are original IndetBench material under the PolyForm Noncommercial License 1.0.0. No v2 data file is distributed yet. Model answers to v2 prompts, once collected, will be third-party model outputs as described in [Model outputs](#model-outputs).
+
 ## Software libraries
 
 | Library | Licence (package metadata) |

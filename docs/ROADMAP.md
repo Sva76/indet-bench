@@ -28,6 +28,16 @@ Not required for alpha, planned for the preprint: a preregistered experiment tha
 6. Keep LM-Polygraph/SIRIN/Obeso external and optional; do not bundle their weights or source.
 7. Produce method cards that distinguish **measured** from **self-reported** positive controls, family-level divergences, coverage, baseline ceiling, and limits.
 
+## v2: graded generator (draft, 18 November 2026)
+
+Specification: [V2_GENERATOR_SPEC.md](V2_GENERATOR_SPEC.md). A separate set: v1 data, results and archives are unchanged. Before any model run on v2:
+
+- [x] Generator with difficulty levels, minimal-pair checks, solver-derived labels and a shortcut audit (draft).
+- [ ] Owner decisions in §8 of the specification (levels, size, binding thresholds, models, primary outcome).
+- [ ] Human review of the wording of the rule renderings.
+- [ ] Preregistered protocol, frozen files with SHA-256 and a git tag.
+- [ ] Generation-only runner for D controls and black-box measures (track B).
+
 ## Scientific cautions
 
 Four English-language mid-size open-weight models, mostly template-generated data; baseline ceiling; strong operator/format effects. HC4 within B cannot be evaluated with zero wrong B answers; within C is confounded by family and annotation uncertainty. Natural DUE sample human review was not fully documented. Exploratory subgroup findings require independent replication.

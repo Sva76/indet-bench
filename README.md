@@ -63,6 +63,7 @@ Details and sources: [Scientific status](docs/SCIENTIFIC_STATUS.md), [new-model 
 ## Documentation
 
 - [Protocol](docs/PROTOCOL.md) · [Scientific status](docs/SCIENTIFIC_STATUS.md) · [Verify on a new model](docs/VERIFY_ON_NEW_MODELS.md) · [Test your model](docs/RUN_YOUR_MODEL.md) · [Reproducibility](docs/REPRODUCIBILITY_STATUS.md)
+- [v2 generator specification (draft)](docs/V2_GENERATOR_SPEC.md): graded difficulty, the same B/C minimal pairs, a false-abstention control and a black-box track for API models; v1 is unchanged
 - [Related work](docs/RELATED_WORK.md) (IndetBench is not the first or broadest benchmark on abstention and uncertainty; [2018–2026 precedents](docs/NOVELTY_AND_RELATED_WORK_2026.md)) · [References](docs/REFERENCES.md) ([BibTeX](docs/REFERENCES.bib)) · [Roadmap](docs/ROADMAP.md)
 - [Use of AI tools](docs/AI_USAGE.md): research conceived and directed by the author; all Python code generated to her specifications by AI tools (ChatGPT; Claude Opus 5.5 via Claude Code) and validated by execution. Limits of the checks are stated.
 - [Third-party terms](docs/THIRD_PARTY.md) · [Security](SECURITY.md) · [Citation](CITATION.cff)
