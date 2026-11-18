@@ -416,6 +416,7 @@ def generate(*, seed: int, stories_per_cell: int, levels=tuple(LEVELS), domains=
     each marker twice, each gold target 4 times and each satisfaction target 4 times.
     flip_location applies only to levels with a chain (depth >= 2); depth-1 levels
     have no intermediate rule and are generated without the constraint."""
+    levels, domains = tuple(levels), tuple(domains)  # iterables are read once
     rng = random.Random(seed)
     tag = dataset_tag(seed=seed, stories_per_cell=stories_per_cell,
                       pairs_per_story=pairs_per_story, flip_location=flip_location,
@@ -444,7 +445,25 @@ REQUIRED = ("row_id", "pair_id", "block_id", "side")
 # Story and pair metadata that B and C must share (spec section 5.1).
 PAIR_SHARED = ("level", "domain", "marker", "ops", "root_op", "outcome_polarity", "depth",
                "flip_location_constraint", "flipped_fact", "flipped_rule", "flipped_rule_op",
-               "flipped_location", "flipped_sign", "c_flipped_word", "c_flipped_satisfied")
+               "flipped_location", "flipped_sign", "c_flipped_word", "c_flipped_satisfied",
+               "sat_target", "sat_both_available")
+# Fields the audit and the report read; required on every row, with these types.
+AUDIT_FIELDS = {"level": int, "depth": int, "domain": str, "root_op": str, "ops": list,
+                "outcome_polarity": str, "gold": str, "prompt": str, "flipped_rule_op": str,
+                "flipped_location": str, "flipped_sign": str, "c_flipped_satisfied": bool,
+                "sat_both_available": bool, "shallow": dict}
+REPORT_FIELDS = {"level": int, "gold": str, "flipped_rule_op": str, "flipped_location": str,
+                 "prompt": str}
+
+
+def require_fields(pairs: dict, fields: dict) -> None:
+    """Every B and C row must carry each field, non-null and of the given type."""
+    for pid, pair in pairs.items():
+        for side, row in pair.items():
+            for key, kind in fields.items():
+                value = row.get(key)
+                if value is None or not isinstance(value, kind) or (kind is int and isinstance(value, bool)):
+                    raise ValueError(f"Pair {pid} side {side}: {key} missing or not {kind.__name__}")
 
 
 def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
@@ -661,6 +680,7 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
     """Per-cell shortcut and balance statistics, with cell sizes.
     Ideal: heuristic W near 0.5 and B gold near 50% YES in every cell."""
     pairs = pairs_by_id(rows)
+    require_fields(pairs, AUDIT_FIELDS)
     true_count = lambda row: row["prompt"].count("It is true")
     report = {"n_pairs": len(pairs), "n_stories": len({p["B"]["block_id"] for p in pairs.values()}),
               "minimal_pair_violations": 0, "min_n": min_n}
@@ -842,6 +862,7 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
     prompt_tokens, so the length check cannot be applied); then the v1 verdict
     rule applied provisionally."""
     generated = pairs_by_id(pair_rows)
+    require_fields(generated, REPORT_FIELDS)
     all_rows = [r for p in generated.values() for r in (p["B"], p["C"])]
     scores, models, columns = _check_scores(score_rows, all_rows, required=PAIR_SCORE_REQUIRED)
     has_prob = "score" in columns
@@ -853,12 +874,25 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
             raise ValueError("control answers need the controls file")
         ctl_by_id = {r["row_id"]: r for p in pairs_by_id(control_rows, sides=("D",)).values()
                      for r in p.values()}
-        rules_of = {p["B"]["block_id"]: _rules_block(p["B"]["prompt"]) for p in generated.values()}
+        rules_of, level_of = {}, {}
+        for p in generated.values():
+            story, rules = p["B"]["block_id"], _rules_block(p["B"]["prompt"])
+            if rules_of.setdefault(story, rules) != rules:
+                raise ValueError(f"Story {story}: its B/C pairs have different rules")
+            if level_of.setdefault(story, p["B"]["level"]) != p["B"]["level"]:
+                raise ValueError(f"Story {story}: its B/C pairs have different levels")
+        seen_story = set()
         for r in ctl_by_id.values():
-            if r["block_id"] not in rules_of:
+            story = r["block_id"]
+            if story not in rules_of:
                 raise ValueError(f"D control {r['row_id']}: story not in the B/C file")
-            if _rules_block(r["prompt"]) != rules_of[r["block_id"]]:
+            if story in seen_story:
+                raise ValueError(f"D control {r['row_id']}: a second D control for story {story}")
+            seen_story.add(story)
+            if not isinstance(r.get("prompt"), str) or _rules_block(r["prompt"]) != rules_of[story]:
                 raise ValueError(f"D control {r['row_id']}: rules differ from its story's B/C pairs")
+            if r.get("level") != level_of[story] or r.get("gold") not in ("YES", "NO"):
+                raise ValueError(f"D control {r['row_id']}: level or gold inconsistent with its story")
         controls, ctl_models, _ = _check_scores(control_answers, list(ctl_by_id.values()),
                                                 required=CONTROL_ANSWER_REQUIRED)
         if ctl_models and models and ctl_models != models:

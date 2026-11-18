@@ -427,6 +427,42 @@ class ReportV2Test(unittest.TestCase):
         self.assertLess(entry["n_pairs_primary"], 0.95 * n)
         self.assertEqual(entry["status"], "DESCRIPTIVE")
 
+    def test_coverage_that_rounds_to_95_percent(self):
+        """1,019 pairs, 968 complete: 0.94995 displays as 0.95 but is below the gate."""
+        many, _ = gen_v2.generate(seed=31, stories_per_cell=110, levels=(2,))
+        keep = sorted({r["pair_id"] for r in many})[:1019]
+        pairs = [r for r in many if r["pair_id"] in set(keep)]
+        drop = {r["row_id"] for r in pairs if r["side"] == "C" and r["pair_id"] in set(keep[968:])}
+        rows = _scores(pairs, score=lambda r: float(r["gold"] == "UNKNOWN"), parsed=lambda r: r["gold"], drop=drop)
+        entry = gen_v2.report(pairs, rows, n_bootstrap=50)["levels"]["L2"]
+        self.assertEqual(entry["coverage_primary"], 0.95)
+        self.assertEqual(entry["status"], "DESCRIPTIVE")
+
+    def test_one_shot_iterables(self):
+        pairs, controls = gen_v2.generate(seed=5, stories_per_cell=2, levels=iter([1]),
+                                          domains=iter(["approval"]))
+        same, _ = gen_v2.generate(seed=5, stories_per_cell=2, levels=(1,), domains=("approval",))
+        self.assertTrue(pairs and controls)
+        self.assertEqual(pairs, same)
+
+    def test_control_story_checks(self):
+        rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
+        copy = dict(self.controls[0], row_id="copy|D", pair_id="copy|D")
+        wrong_level = [dict(self.controls[0], level=self.controls[0]["level"] + 1)] + self.controls[1:]
+        for controls in (self.controls + [copy], wrong_level):
+            answers = [{"row_id": r["row_id"], "parsed": r["gold"]} for r in controls]
+            with self.assertRaises(ValueError):
+                self.run_report(rows, control_rows=controls, control_answers=answers)
+
+    def test_missing_metadata_is_rejected(self):
+        broken = [{k: v for k, v in r.items() if k != "c_flipped_satisfied"} for r in self.pairs]
+        with self.assertRaises(ValueError):
+            gen_v2.audit(broken, baselines=False)
+        mixed = [dict(r) for r in self.pairs]
+        mixed[0]["sat_both_available"] = not mixed[0]["sat_both_available"]
+        with self.assertRaises(ValueError):
+            gen_v2.audit(mixed, baselines=False)
+
     def test_controls_from_another_dataset(self):
         rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
         _, other_controls = gen_v2.generate(seed=22, stories_per_cell=12)
