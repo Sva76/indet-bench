@@ -33,6 +33,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import random
 import re
+import statistics
 
 GENERATOR_VERSION = "0.1.0-draft"
 
@@ -250,19 +251,23 @@ def shallow_features(conditions, values: dict[int, bool | None]) -> dict:
     """Counts a shallow reader can take from the text without chaining rules:
     for each rule literal, is it satisfied, unsatisfied or uncertain given the facts."""
     out = {"root_sat": 0, "root_unsat": 0, "root_unc": 0, "root_refs": 0,
-           "all_sat": 0, "all_unsat": 0, "all_unc": 0}
+           "all_sat": 0, "all_unsat": 0, "all_unc": 0, "rules": []}
     last = len(conditions) - 1
     for index, condition in enumerate(conditions):
+        rule = {"op": condition.op, "sat": 0, "unsat": 0, "unc": 0, "refs": 0}
         for item in condition.items:
             if item[0] == "ref":
+                rule["refs"] += 1
                 if index == last:
                     out["root_refs"] += 1
                 continue
             value = values[item[1]]
             kind = "unc" if value is None else "sat" if value == item[2] else "unsat"
+            rule[kind] += 1
             out[f"all_{kind}"] += 1
             if index == last:
                 out[f"root_{kind}"] += 1
+        out["rules"].append(rule)
     return out
 
 
@@ -292,13 +297,15 @@ def make_story(story_id: str, *, level: int, domain: str, marker: int, target: s
     if flip_location == "intermediate" and depth < 2:
         raise ValueError(f"Level {level} has no intermediate rule")
 
+    def location_ok(candidate, where, last):
+        flip = candidate[1]
+        return flip_location is None or (where[flip][0] == last) == (flip_location == "root")
+
     def admissible(candidate, where, last):
         base, flip = candidate
         if sat_target is not None and ((not base[flip]) == where[flip][1]) != sat_target:
             return False
-        if flip_location is not None and (where[flip][0] == last) != (flip_location == "root"):
-            return False
-        return True
+        return location_ok(candidate, where, last)
 
     for _ in range(max_tries):
         entities = rng.sample(ENTITIES, n_vars + n_dis)
@@ -344,7 +351,10 @@ def make_story(story_id: str, *, level: int, domain: str, marker: int, target: s
         base, flip = candidate
         return (not base[flip]) == where[flip][1]
 
-    both_available = len({c_satisfied(c) for c in candidates[target]}) == 2
+    # Feasibility of within-story balancing, over the candidates this run may draw
+    # from (B target and location constraint), before the satisfaction target.
+    both_available = len({c_satisfied(c) for c in candidates[target]
+                          if location_ok(c, where, depth - 1)}) == 2
     pool = [c for c in candidates[target] if admissible(c, where, depth - 1)]
     chosen = rng.sample(pool, min(pairs_per_story, len(pool)))
 
@@ -385,6 +395,14 @@ def make_story(story_id: str, *, level: int, domain: str, marker: int, target: s
     return pair_rows, [control]
 
 
+def dataset_tag(*, seed: int, stories_per_cell: int, pairs_per_story: int,
+                flip_location: str | None) -> str:
+    """Prefix of every story id. It binds ids to the generator version and to the
+    arguments, so a score file made on another seed or setting cannot match."""
+    return (f"v2g{GENERATOR_VERSION}-s{seed}-{flip_location or 'any'}"
+            f"-c{stories_per_cell}-p{pairs_per_story}")
+
+
 def generate(*, seed: int, stories_per_cell: int, levels=tuple(LEVELS), domains=tuple(DOMAINS),
              pairs_per_story: int = 2, flip_location: str | None = None):
     """Deterministic for a given seed and arguments. A cell is (level, domain).
@@ -394,11 +412,13 @@ def generate(*, seed: int, stories_per_cell: int, levels=tuple(LEVELS), domains=
     flip_location applies only to levels with a chain (depth >= 2); depth-1 levels
     have no intermediate rule and are generated without the constraint."""
     rng = random.Random(seed)
+    tag = dataset_tag(seed=seed, stories_per_cell=stories_per_cell,
+                      pairs_per_story=pairs_per_story, flip_location=flip_location)
     pairs, controls = [], []
     for level in levels:
         for domain in domains:
             for number in range(stories_per_cell):
-                story_id = f"v2-L{level}-{domain}-{number:04d}"
+                story_id = f"{tag}-L{level}-{domain}-{number:04d}"
                 marker, gold = number % 4, (number % 8) // 4
                 p, c = make_story(story_id, level=level, domain=domain, marker=marker,
                                   target=("YES", "NO")[gold],
@@ -424,9 +444,11 @@ def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
     table: dict[str, dict[str, dict]] = {}
     seen, blocks = set(), {}
     for number, row in enumerate(rows, 1):
+        if not isinstance(row, dict):
+            raise ValueError(f"Row {number}: not a JSON object")
         for key in REQUIRED:
-            if not isinstance(row.get(key), str) or not row[key]:
-                raise ValueError(f"Row {number}: missing or invalid {key}")
+            if not isinstance(row.get(key), str) or not row[key].strip():
+                raise ValueError(f"Row {number}: missing or blank {key}")
         if row["side"] not in sides:
             raise ValueError(f"Row {number}: side {row['side']!r} not allowed here")
         if row["row_id"] in seen:
@@ -438,7 +460,7 @@ def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
         if row["side"] in pair:
             raise ValueError(f"Row {number}: duplicate side {row['side']} in {row['pair_id']}")
         pair[row["side"]] = row
-    incomplete = sorted(k for k, v in table.items() if set(v) != {"B", "C"})
+    incomplete = sorted(k for k, v in table.items() if set(v) != {"B", "C"}) if "B" in sides else []
     if incomplete:
         raise ValueError(f"{len(incomplete)} incomplete pair(s), first: {incomplete[0]}")
     if not table:
@@ -449,6 +471,26 @@ def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
 # ---------------------------------------------------------------------------
 # Shortcut audit (spec section 5): run on the generated text, before any model.
 # ---------------------------------------------------------------------------
+
+_FACT = re.compile(r"It is (true|false) that (.+)\.")
+
+
+def minimal_pair_ok(b_prompt: str, c_prompt: str) -> bool:
+    """True if the prompts differ in exactly one word and that word is the truth
+    value of the same stated fact, in the Facts block."""
+    b_words, c_words = b_prompt.split(), c_prompt.split()
+    if len(b_words) != len(c_words) or sum(x != y for x, y in zip(b_words, c_words)) != 1:
+        return False
+    b_lines, c_lines = b_prompt.splitlines(), c_prompt.splitlines()
+    if len(b_lines) != len(c_lines) or "Facts:" not in b_lines:
+        return False
+    start = b_lines.index("Facts:")
+    diff = [i for i, (x, y) in enumerate(zip(b_lines, c_lines)) if x != y]
+    if len(diff) != 1 or diff[0] <= start:
+        return False
+    mb, mc = _FACT.fullmatch(b_lines[diff[0]]), _FACT.fullmatch(c_lines[diff[0]])
+    return bool(mb and mc and mb.group(2) == mc.group(2) and mb.group(1) != mc.group(1))
+
 
 def _story_w(pairs: dict, score) -> float:
     """W as in the v1 protocol: C>B = 1, tie = 0.5, averaged within stories."""
@@ -526,6 +568,19 @@ def _key_without_operator(row):
     return (row["level"], f["all_sat"], f["all_unsat"], f["all_unc"])
 
 
+def _key_single_rule(k: int):
+    """One rule read on its own: rule k (0 = Rule 1), with the root operator and
+    outcome polarity; rows whose story has fewer rules get a constant key."""
+    def key(row):
+        rules = row["shallow"]["rules"]
+        if k >= len(rules):
+            return ("absent",)
+        r = rules[k]
+        return (row["level"], row["outcome_polarity"], row["root_op"], k, r["op"],
+                r["sat"], r["unsat"], r["unc"], r["refs"])
+    return key
+
+
 def _lookup(keyfunc):
     def fit(train):
         table = defaultdict(lambda: [0, 0])
@@ -540,11 +595,16 @@ def _lookup(keyfunc):
     return fit, apply
 
 
-def _by_level(pairs: dict, scores: dict, *, n_bootstrap: int, seed: int) -> dict:
+def _by_level(pairs: dict, scores: dict, *, n_bootstrap: int, seed: int,
+              by_root_op: bool = False) -> dict:
     out = {}
     for level in sorted({p["B"]["level"] for p in pairs.values()}):
         sub = {k: p for k, p in pairs.items() if p["B"]["level"] == level}
         out[f"L{level}"] = _w_ci(sub, scores, n_bootstrap=n_bootstrap, seed=seed)
+        if by_root_op:
+            for op in sorted({p["B"]["root_op"] for p in sub.values()}):
+                cell = {k: p for k, p in sub.items() if p["B"]["root_op"] == op}
+                out[f"L{level}|{op}"] = _w_ci(cell, scores, n_bootstrap=n_bootstrap, seed=seed)
     return out
 
 
@@ -564,10 +624,15 @@ def heldout_baselines(rows, *, k: int = 5, seed: int = 20261118, n_bootstrap: in
         "shallow_without_operator|story_folds": (story, *without_op),
         "shallow_without_operator|structure_folds": (structure, *without_op),
     }
+    depth = max(p["B"]["depth"] for p in pairs.values())
+    for k in range(depth):
+        plans[f"single_rule_{k + 1}|story_folds"] = (story, *_lookup(_key_single_rule(k)))
     out = {}
     for name, (folds, fit, apply) in plans.items():
         scores = _crossfit(pairs, folds, fit, apply)
         out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed)
+        if name.startswith("single_rule_"):
+            out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed, by_root_op=True)
         if name == "shallow_with_operator|story_folds":
             for loc in ("root", "intermediate"):
                 sub = {k: p for k, p in pairs.items() if p["B"]["flipped_location"] == loc}
@@ -585,8 +650,7 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
     report = {"n_pairs": len(pairs), "n_stories": len({p["B"]["block_id"] for p in pairs.values()}),
               "minimal_pair_violations": 0, "min_n": min_n}
     for pair in pairs.values():
-        b, c = pair["B"]["prompt"].split(), pair["C"]["prompt"].split()
-        if len(b) != len(c) or sum(x != y for x, y in zip(b, c)) != 1:
+        if not minimal_pair_ok(pair["B"]["prompt"], pair["C"]["prompt"]):
             report["minimal_pair_violations"] += 1
         if pair["B"]["gold"] not in ("YES", "NO") or pair["C"]["gold"] != "UNKNOWN":
             report["minimal_pair_violations"] += 1
@@ -655,6 +719,8 @@ def audit(rows, *, min_n: int = 10, baselines: bool = True) -> dict:
 # ---------------------------------------------------------------------------
 
 LABELS = ("YES", "NO", "UNKNOWN", "ALTRO")
+PAIR_SCORE_REQUIRED = ("row_id", "pair_id", "block_id", "side", "parsed")
+CONTROL_ANSWER_REQUIRED = ("row_id", "parsed")
 
 
 def _read_csv(path) -> list[dict]:
@@ -663,13 +729,35 @@ def _read_csv(path) -> list[dict]:
         return list(csv.DictReader(file))
 
 
-def _check_scores(score_rows, pair_rows, *, sides):
-    """Score rows must match generated rows exactly (ids, pair, story, side), with
-    no duplicates and a single model. Returns row_id -> score row."""
-    by_id = {r["row_id"]: r for r in pair_rows}
+def _finite(value, what: str, number: int) -> float:
+    try:
+        x = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"Score row {number}: {what} is not a number") from None
+    if not math.isfinite(x):
+        raise ValueError(f"Score row {number}: {what} is not finite")
+    return x
+
+
+def _check_scores(score_rows, generated_rows, *, required):
+    """Score rows must name generated rows (ids are dataset-specific, see
+    dataset_tag), repeat their pair, story and side, carry every required field,
+    have no duplicates, one model, labels in LABELS and finite numbers. A column
+    present in some rows must be present in all. Returns row_id -> row."""
+    by_id = {r["row_id"]: r for r in generated_rows}
     out, models = {}, set()
+    columns = None
     for number, row in enumerate(score_rows, 1):
-        rid = row.get("row_id")
+        missing = [k for k in required if not str(row.get(k) or "").strip()]
+        if missing:
+            raise ValueError(f"Score row {number}: missing {', '.join(missing)}")
+        present = {k for k in ("score", "mass_total", "prompt_tokens", "model_id", "model_revision")
+                   if str(row.get(k) or "").strip()}
+        if columns is None:
+            columns = present
+        elif present != columns:
+            raise ValueError(f"Score row {number}: optional columns differ from the first row")
+        rid = row["row_id"]
         if rid not in by_id:
             raise ValueError(f"Score row {number}: row_id {rid!r} is not in the generated file")
         if rid in out:
@@ -678,15 +766,17 @@ def _check_scores(score_rows, pair_rows, *, sides):
         for key in ("pair_id", "block_id", "side"):
             if key in row and row[key] != ref[key]:
                 raise ValueError(f"Score row {number}: {key} differs from the generated row")
-        if ref["side"] not in sides:
-            raise ValueError(f"Score row {number}: side {ref['side']} not expected here")
-        if row.get("parsed", "ALTRO") not in LABELS:
+        if row["parsed"] not in LABELS:
             raise ValueError(f"Score row {number}: parsed must be one of {LABELS}")
-        models.add((row.get("model_id", ""), row.get("model_revision", "")))
+        for key in ("score", "mass_total"):
+            if key in present:
+                _finite(row[key], key, number)
+        if "model_id" in present or "model_revision" in present:
+            models.add((row.get("model_id", ""), row.get("model_revision", "")))
         out[rid] = row
     if len(models) > 1:
         raise ValueError(f"Scores mix models: {sorted(models)}")
-    return out
+    return out, models, columns or set()
 
 
 def _share_ci(items: list[tuple[str, bool]], *, n_bootstrap: int, seed: int) -> dict:
@@ -711,96 +801,118 @@ def _share_ci(items: list[tuple[str, bool]], *, n_bootstrap: int, seed: int) -> 
 
 def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
            n_bootstrap: int = 2000, seed: int = 20261108) -> dict:
-    """Per-level report of one model. Statuses, in this order: NOT MEASURABLE
-    (median label mass < 0.5), NOT EVALUABLE (accuracy on B < 0.5 overall or on
-    gold YES or gold NO), DESCRIPTIVE (coverage < 95% of pairs), then the v1
-    verdict rule applied provisionally (spec section 8, decision 3)."""
+    """Per-level report of one model (spec section 6).
+
+    Populations: answer measures (accuracy, abstention) use every scored row of
+    the side concerned; W of the generated answer uses complete pairs; W of
+    p(UNKNOWN), the primary measure, uses complete pairs whose B and C prompts
+    have the same token count (all complete pairs as a sensitivity value).
+
+    Statuses, in this order: NOT MEASURABLE (median label mass < 0.5); NOT
+    EVALUABLE (accuracy on B < 0.5 overall, on gold YES or on gold NO);
+    DESCRIPTIVE (the primary population, or complete pairs for an answer-only
+    file, below 95% of generated pairs); then, with probability scores, the v1
+    verdict rule applied provisionally; without them, ANSWERS ONLY (no verdict)."""
     generated = pairs_by_id(pair_rows)
-    scores = _check_scores(score_rows, pair_rows, sides=("B", "C"))
-    controls = {}
+    all_rows = [r for p in generated.values() for r in (p["B"], p["C"])]
+    scores, models, columns = _check_scores(score_rows, all_rows, required=PAIR_SCORE_REQUIRED)
+    has_prob = "score" in columns
+    has_mass = "mass_total" in columns
+    has_len = "prompt_tokens" in columns
+    controls, ctl_by_id = {}, {}
     if control_answers is not None:
         if control_rows is None:
             raise ValueError("control answers need the controls file")
-        controls = _check_scores(control_answers, control_rows, sides=("D",))
-    ctl_by_id = {r["row_id"]: r for r in control_rows or []}
-    result = {"model": sorted({(r.get("model_id", ""), r.get("model_revision", ""))
-                               for r in scores.values()}), "levels": {},
-              "rules": "statuses: NOT MEASURABLE > NOT EVALUABLE > DESCRIPTIVE > verdict "
-                       "(v1 thresholds, provisional for v2)"}
+        ctl_by_id = {r["row_id"]: r for p in pairs_by_id(control_rows, sides=("D",)).values()
+                     for r in p.values()}
+        controls, ctl_models, _ = _check_scores(control_answers, list(ctl_by_id.values()),
+                                                required=CONTROL_ANSWER_REQUIRED)
+        if ctl_models and models and ctl_models != models:
+            raise ValueError(f"D answers come from another model: {sorted(ctl_models)}")
+    boot = {"n_bootstrap": n_bootstrap, "seed": seed}
+
+    def parsed(row):
+        return scores[row["row_id"]]["parsed"]
+
+    def answer_block(pairs_in, b_rows, c_rows):
+        out = {
+            "W_generated_answer": _w_ci(pairs_in, {r["row_id"]: float(parsed(r) == "UNKNOWN")
+                                                   for p in pairs_in.values()
+                                                   for r in (p["B"], p["C"])}, **boot)
+            if pairs_in else None,
+            "abstention_C": _share_ci([(r["block_id"], parsed(r) == "UNKNOWN") for r in c_rows], **boot),
+            "false_abstention_B": _share_ci([(r["block_id"], parsed(r) == "UNKNOWN") for r in b_rows], **boot),
+        }
+        return out
+
+    def prob_block(primary, complete):
+        if not has_prob:
+            return {}
+        p_unknown = {r["row_id"]: float(scores[r["row_id"]]["score"])
+                     for p in complete.values() for r in (p["B"], p["C"])}
+        return {"W_p_unknown": _w_ci(primary, p_unknown, **boot) if primary else None,
+                "W_p_unknown_sensitivity_all_lengths": _w_ci(complete, p_unknown, **boot)
+                if complete else None}
+
+    result = {"model": sorted(models), "levels": {},
+              "has_probability_scores": has_prob, "has_label_mass": has_mass,
+              "length_check": "prompt_tokens" if has_len else "unavailable (no prompt_tokens column)",
+              "rules": report.__doc__.split("Statuses,", 1)[1].strip()}
     for level in sorted({p["B"]["level"] for p in generated.values()}):
         cell = {k: p for k, p in generated.items() if p["B"]["level"] == level}
+        b_rows = [p["B"] for p in cell.values() if p["B"]["row_id"] in scores]
+        c_rows = [p["C"] for p in cell.values() if p["C"]["row_id"] in scores]
         complete = {k: p for k, p in cell.items()
                     if p["B"]["row_id"] in scores and p["C"]["row_id"] in scores}
-        coverage = len(complete) / len(cell)
+        primary = {k: p for k, p in complete.items()
+                   if not has_len or scores[p["B"]["row_id"]]["prompt_tokens"]
+                   == scores[p["C"]["row_id"]]["prompt_tokens"]}
         entry = {"n_pairs_generated": len(cell), "n_pairs_complete": len(complete),
-                 "coverage": round(coverage, 4)}
-        if not complete:
-            entry["status"] = "NO DATA"
-            result["levels"][f"L{level}"] = entry
-            continue
-
-        def sc(row, key="score"):
-            return float(scores[row["row_id"]][key])
-
-        def parsed(row):
-            return scores[row["row_id"]].get("parsed", "ALTRO")
-
-        same_len = {k: p for k, p in complete.items()
-                    if "prompt_tokens" not in scores[p["B"]["row_id"]]
-                    or scores[p["B"]["row_id"]]["prompt_tokens"] == scores[p["C"]["row_id"]]["prompt_tokens"]}
-        p_unknown = {r["row_id"]: sc(r) for p in complete.values() for r in (p["B"], p["C"])}
-        answer = {r["row_id"]: float(parsed(r) == "UNKNOWN")
-                  for p in complete.values() for r in (p["B"], p["C"])}
-        boot = {"n_bootstrap": n_bootstrap, "seed": seed}
-        entry["n_pairs_length_excluded"] = len(complete) - len(same_len)
-        entry["W_p_unknown"] = _w_ci(same_len, p_unknown, **boot) if same_len else None
-        entry["W_p_unknown_including_length_excluded"] = _w_ci(complete, p_unknown, **boot)
-        entry["W_generated_answer"] = _w_ci(complete, answer, **boot)
-        b_rows = [p["B"] for p in complete.values()]
-        c_rows = [p["C"] for p in complete.values()]
+                 "n_pairs_primary": len(primary), "n_B_scored": len(b_rows), "n_C_scored": len(c_rows),
+                 "coverage_complete": round(len(complete) / len(cell), 4),
+                 "coverage_primary": round(len(primary) / len(cell), 4)}
+        entry.update(prob_block(primary, complete))
+        entry.update(answer_block(complete, b_rows, c_rows))
         entry["accuracy_B"] = _share_ci([(r["block_id"], parsed(r) == r["gold"]) for r in b_rows], **boot)
         for gold in ("YES", "NO"):
             entry[f"accuracy_B_gold_{gold}"] = _share_ci(
                 [(r["block_id"], parsed(r) == gold) for r in b_rows if r["gold"] == gold], **boot)
-        entry["abstention_C"] = _share_ci([(r["block_id"], parsed(r) == "UNKNOWN") for r in c_rows], **boot)
-        entry["false_abstention_B"] = _share_ci([(r["block_id"], parsed(r) == "UNKNOWN") for r in b_rows], **boot)
-        entry["share_ALTRO"] = round(sum(parsed(r) == "ALTRO" for r in b_rows + c_rows)
-                                     / (2 * len(complete)), 4)
-        d_rows = [ctl_by_id[rid] for rid in controls if ctl_by_id[rid]["level"] == level]
+        scored = b_rows + c_rows
+        entry["share_ALTRO"] = round(sum(parsed(r) == "ALTRO" for r in scored) / len(scored), 4) \
+            if scored else None
+        d_rows = [r for rid, r in ctl_by_id.items() if rid in controls and r["level"] == level]
         if d_rows:
             entry["false_abstention_D"] = _share_ci(
-                [(r["block_id"], controls[r["row_id"]].get("parsed") == "UNKNOWN") for r in d_rows], **boot)
+                [(r["block_id"], controls[r["row_id"]]["parsed"] == "UNKNOWN") for r in d_rows], **boot)
             entry["accuracy_D"] = _share_ci(
-                [(r["block_id"], controls[r["row_id"]].get("parsed") == r["gold"]) for r in d_rows], **boot)
-        by_loc = defaultdict(dict)
-        for k, p in complete.items():
-            by_loc[p["B"]["flipped_location"]][k] = p
-        entry["by_flipped_location"] = {
-            loc: {"W_p_unknown": _w_ci(sub, p_unknown, **boot),
-                  "abstention_C": _share_ci([(p["C"]["block_id"], parsed(p["C"]) == "UNKNOWN")
-                                             for p in sub.values()], **boot)}
-            for loc, sub in sorted(by_loc.items())}
-        by_op = defaultdict(dict)
-        for k, p in complete.items():
-            by_op[p["B"]["flipped_rule_op"]][k] = p
-        entry["by_flipped_rule_op"] = {
-            op: {"W_p_unknown": _w_ci(sub, p_unknown, **boot),
-                 "abstention_C": _share_ci([(p["C"]["block_id"], parsed(p["C"]) == "UNKNOWN")
-                                            for p in sub.values()], **boot)}
-            for op, sub in sorted(by_op.items())}
-        masses = sorted(float(scores[r["row_id"]]["mass_total"]) for r in b_rows + c_rows
-                        if scores[r["row_id"]].get("mass_total") not in (None, ""))
-        median_mass = masses[len(masses) // 2] if masses else None
+                [(r["block_id"], controls[r["row_id"]]["parsed"] == r["gold"]) for r in d_rows], **boot)
+        for name, field in (("by_flipped_rule_op", "flipped_rule_op"),
+                            ("by_flipped_location", "flipped_location")):
+            groups = sorted({p["B"][field] for p in cell.values()})
+            entry[name] = {}
+            for g in groups:
+                sel = lambda d: {k: p for k, p in d.items() if p["B"][field] == g}
+                entry[name][g] = {**prob_block(sel(primary), sel(complete)),
+                                  **answer_block(sel(complete),
+                                                 [r for r in b_rows if r[field] == g],
+                                                 [r for r in c_rows if r[field] == g])}
+        masses = [float(scores[r["row_id"]]["mass_total"]) for r in scored] if has_mass else []
+        median_mass = statistics.median(masses) if masses else None
         entry["median_label_mass"] = None if median_mass is None else round(median_mass, 4)
         gate = [entry["accuracy_B"]["share"], entry["accuracy_B_gold_YES"]["share"],
                 entry["accuracy_B_gold_NO"]["share"]]
-        w = entry["W_p_unknown"]
-        if median_mass is not None and median_mass < 0.5:
+        coverage = entry["coverage_primary"] if has_prob else entry["coverage_complete"]
+        w = entry.get("W_p_unknown")
+        if not scored:
+            entry["status"] = "NO DATA"
+        elif median_mass is not None and median_mass < 0.5:
             entry["status"] = "NOT MEASURABLE"
         elif any(g is None or g < 0.5 for g in gate):
             entry["status"] = "NOT EVALUABLE"
         elif coverage < 0.95:
             entry["status"] = "DESCRIPTIVE"
+        elif not has_prob:
+            entry["status"] = "ANSWERS ONLY"
         elif w is None:
             entry["status"] = "NO DATA"
         elif w["W"] >= 0.60 and w["ci95"] and w["ci95"][0] > 0.5:

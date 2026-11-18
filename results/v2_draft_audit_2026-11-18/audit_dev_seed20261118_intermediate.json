@@ -229,7 +229,7 @@
     },
     "L3|NOT_ALL": {
       "n_pairs": 41,
-      "share_story_has_both_kinds": 0.122
+      "share_story_has_both_kinds": 0.0
     },
     "L3|OR": {
       "n_pairs": 85,
@@ -249,7 +249,7 @@
     },
     "L4|NOT_ALL": {
       "n_pairs": 54,
-      "share_story_has_both_kinds": 0.2963
+      "share_story_has_both_kinds": 0.0
     },
     "L4|OR": {
       "n_pairs": 80,
@@ -257,7 +257,7 @@
     },
     "L5|AND": {
       "n_pairs": 78,
-      "share_story_has_both_kinds": 0.1538
+      "share_story_has_both_kinds": 0.1026
     },
     "L5|BOTH_OR_NEITHER": {
       "n_pairs": 20,
@@ -265,15 +265,15 @@
     },
     "L5|EXACTLY_ONE": {
       "n_pairs": 55,
-      "share_story_has_both_kinds": 0.7455
+      "share_story_has_both_kinds": 0.6364
     },
     "L5|NOT_ALL": {
       "n_pairs": 90,
-      "share_story_has_both_kinds": 0.4333
+      "share_story_has_both_kinds": 0.2444
     },
     "L5|OR": {
       "n_pairs": 102,
-      "share_story_has_both_kinds": 0.1667
+      "share_story_has_both_kinds": 0.1176
     }
   },
   "cells_level_flipped_location": {
@@ -891,6 +891,741 @@
         ],
         "n_pairs": 345,
         "n_stories": 200
+      }
+    },
+    "single_rule_1|story_folds": {
+      "L1": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 200,
+        "n_stories": 200
+      },
+      "L1|AND": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 47,
+        "n_stories": 47
+      },
+      "L1|NOT_ALL": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 53,
+        "n_stories": 53
+      },
+      "L1|OR": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 100,
+        "n_stories": 100
+      },
+      "L2": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 400,
+        "n_stories": 200
+      },
+      "L2|AND": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 108,
+        "n_stories": 54
+      },
+      "L2|EXACTLY_ONE": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 80,
+        "n_stories": 40
+      },
+      "L2|NOT_ALL": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 92,
+        "n_stories": 46
+      },
+      "L2|OR": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 120,
+        "n_stories": 60
+      },
+      "L3": {
+        "W": 0.97,
+        "ci95": [
+          0.9525,
+          0.985
+        ],
+        "n_pairs": 273,
+        "n_stories": 200
+      },
+      "L3|AND": {
+        "W": 0.9545,
+        "ci95": [
+          0.9091,
+          0.9886
+        ],
+        "n_pairs": 69,
+        "n_stories": 44
+      },
+      "L3|BOTH_OR_NEITHER": {
+        "W": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "n_pairs": 37,
+        "n_stories": 37
+      },
+      "L3|EXACTLY_ONE": {
+        "W": 0.9844,
+        "ci95": [
+          0.9531,
+          1.0
+        ],
+        "n_pairs": 32,
+        "n_stories": 32
+      },
+      "L3|NOT_ALL": {
+        "W": 0.9659,
+        "ci95": [
+          0.9205,
+          1.0
+        ],
+        "n_pairs": 72,
+        "n_stories": 44
+      },
+      "L3|OR": {
+        "W": 0.9535,
+        "ci95": [
+          0.907,
+          0.9884
+        ],
+        "n_pairs": 63,
+        "n_stories": 43
+      },
+      "L4": {
+        "W": 0.93,
+        "ci95": [
+          0.905,
+          0.955
+        ],
+        "n_pairs": 263,
+        "n_stories": 200
+      },
+      "L4|AND": {
+        "W": 0.8788,
+        "ci95": [
+          0.803,
+          0.9398
+        ],
+        "n_pairs": 50,
+        "n_stories": 33
+      },
+      "L4|BOTH_OR_NEITHER": {
+        "W": 0.9773,
+        "ci95": [
+          0.9313,
+          1.0
+        ],
+        "n_pairs": 22,
+        "n_stories": 22
+      },
+      "L4|EXACTLY_ONE": {
+        "W": 0.963,
+        "ci95": [
+          0.9259,
+          0.9907
+        ],
+        "n_pairs": 54,
+        "n_stories": 54
+      },
+      "L4|NOT_ALL": {
+        "W": 0.8684,
+        "ci95": [
+          0.8023,
+          0.9342
+        ],
+        "n_pairs": 57,
+        "n_stories": 38
+      },
+      "L4|OR": {
+        "W": 0.9528,
+        "ci95": [
+          0.9151,
+          0.9906
+        ],
+        "n_pairs": 80,
+        "n_stories": 53
+      },
+      "L5": {
+        "W": 0.5375,
+        "ci95": [
+          0.5125,
+          0.565
+        ],
+        "n_pairs": 345,
+        "n_stories": 200
+      },
+      "L5|AND": {
+        "W": 0.5592,
+        "ci95": [
+          0.4803,
+          0.6252
+        ],
+        "n_pairs": 63,
+        "n_stories": 38
+      },
+      "L5|BOTH_OR_NEITHER": {
+        "W": 0.5676,
+        "ci95": [
+          0.5203,
+          0.6216
+        ],
+        "n_pairs": 70,
+        "n_stories": 37
+      },
+      "L5|EXACTLY_ONE": {
+        "W": 0.5479,
+        "ci95": [
+          0.4681,
+          0.6225
+        ],
+        "n_pairs": 80,
+        "n_stories": 47
+      },
+      "L5|NOT_ALL": {
+        "W": 0.4942,
+        "ci95": [
+          0.4477,
+          0.5407
+        ],
+        "n_pairs": 74,
+        "n_stories": 43
+      },
+      "L5|OR": {
+        "W": 0.5214,
+        "ci95": [
+          0.5,
+          0.5571
+        ],
+        "n_pairs": 58,
+        "n_stories": 35
+      }
+    },
+    "single_rule_2|story_folds": {
+      "L1": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 200,
+        "n_stories": 200
+      },
+      "L1|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 47,
+        "n_stories": 47
+      },
+      "L1|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 53,
+        "n_stories": 53
+      },
+      "L1|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 100,
+        "n_stories": 100
+      },
+      "L2": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 400,
+        "n_stories": 200
+      },
+      "L2|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 108,
+        "n_stories": 54
+      },
+      "L2|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 80,
+        "n_stories": 40
+      },
+      "L2|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 92,
+        "n_stories": 46
+      },
+      "L2|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 120,
+        "n_stories": 60
+      },
+      "L3": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 273,
+        "n_stories": 200
+      },
+      "L3|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 69,
+        "n_stories": 44
+      },
+      "L3|BOTH_OR_NEITHER": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 37,
+        "n_stories": 37
+      },
+      "L3|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 32,
+        "n_stories": 32
+      },
+      "L3|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 72,
+        "n_stories": 44
+      },
+      "L3|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 63,
+        "n_stories": 43
+      },
+      "L4": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 263,
+        "n_stories": 200
+      },
+      "L4|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 50,
+        "n_stories": 33
+      },
+      "L4|BOTH_OR_NEITHER": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 22,
+        "n_stories": 22
+      },
+      "L4|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 54,
+        "n_stories": 54
+      },
+      "L4|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 57,
+        "n_stories": 38
+      },
+      "L4|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 80,
+        "n_stories": 53
+      },
+      "L5": {
+        "W": 0.6225,
+        "ci95": [
+          0.59,
+          0.6538
+        ],
+        "n_pairs": 345,
+        "n_stories": 200
+      },
+      "L5|AND": {
+        "W": 0.5132,
+        "ci95": [
+          0.4474,
+          0.5789
+        ],
+        "n_pairs": 63,
+        "n_stories": 38
+      },
+      "L5|BOTH_OR_NEITHER": {
+        "W": 0.7432,
+        "ci95": [
+          0.6689,
+          0.8176
+        ],
+        "n_pairs": 70,
+        "n_stories": 37
+      },
+      "L5|EXACTLY_ONE": {
+        "W": 0.633,
+        "ci95": [
+          0.5691,
+          0.7021
+        ],
+        "n_pairs": 80,
+        "n_stories": 47
+      },
+      "L5|NOT_ALL": {
+        "W": 0.5988,
+        "ci95": [
+          0.5349,
+          0.6628
+        ],
+        "n_pairs": 74,
+        "n_stories": 43
+      },
+      "L5|OR": {
+        "W": 0.6286,
+        "ci95": [
+          0.5643,
+          0.7002
+        ],
+        "n_pairs": 58,
+        "n_stories": 35
+      }
+    },
+    "single_rule_3|story_folds": {
+      "L1": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 200,
+        "n_stories": 200
+      },
+      "L1|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 47,
+        "n_stories": 47
+      },
+      "L1|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 53,
+        "n_stories": 53
+      },
+      "L1|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 100,
+        "n_stories": 100
+      },
+      "L2": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 400,
+        "n_stories": 200
+      },
+      "L2|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 108,
+        "n_stories": 54
+      },
+      "L2|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 80,
+        "n_stories": 40
+      },
+      "L2|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 92,
+        "n_stories": 46
+      },
+      "L2|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 120,
+        "n_stories": 60
+      },
+      "L3": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 273,
+        "n_stories": 200
+      },
+      "L3|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 69,
+        "n_stories": 44
+      },
+      "L3|BOTH_OR_NEITHER": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 37,
+        "n_stories": 37
+      },
+      "L3|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 32,
+        "n_stories": 32
+      },
+      "L3|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 72,
+        "n_stories": 44
+      },
+      "L3|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 63,
+        "n_stories": 43
+      },
+      "L4": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 263,
+        "n_stories": 200
+      },
+      "L4|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 50,
+        "n_stories": 33
+      },
+      "L4|BOTH_OR_NEITHER": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 22,
+        "n_stories": 22
+      },
+      "L4|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 54,
+        "n_stories": 54
+      },
+      "L4|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 57,
+        "n_stories": 38
+      },
+      "L4|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 80,
+        "n_stories": 53
+      },
+      "L5": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 345,
+        "n_stories": 200
+      },
+      "L5|AND": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 63,
+        "n_stories": 38
+      },
+      "L5|BOTH_OR_NEITHER": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 70,
+        "n_stories": 37
+      },
+      "L5|EXACTLY_ONE": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 80,
+        "n_stories": 47
+      },
+      "L5|NOT_ALL": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 74,
+        "n_stories": 43
+      },
+      "L5|OR": {
+        "W": 0.5,
+        "ci95": [
+          0.5,
+          0.5
+        ],
+        "n_pairs": 58,
+        "n_stories": 35
       }
     }
   },

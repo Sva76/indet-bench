@@ -122,15 +122,26 @@ class GeneratorV2Test(unittest.TestCase):
             by_pair.setdefault(row["pair_id"], {})[row["side"]] = row
         for pair in by_pair.values():
             b, c = pair["B"], pair["C"]
-            rules, _, _, _, _ = parse_text(b["prompt"])
-            hits = [(i, sign) for i, (_, _, lits) in enumerate(rules)
-                    for clause, sign in lits if clause == b["flipped_fact"]]
+            rules, b_known, _, _, _ = parse_text(b["prompt"])
+            _, c_known, _, _, _ = parse_text(c["prompt"])
+            changed = [k for k in b_known if b_known[k] != c_known.get(k)]
+            self.assertEqual(len(changed), 1, b["row_id"])  # found from the text, not the metadata
+            fact = changed[0]
+            hits = [(i, sign, rules[i][1]) for i, (_, _, lits) in enumerate(rules)
+                    for clause, sign in lits if clause == fact]
             self.assertEqual(len(hits), 1, b["row_id"])
-            index, sign = hits[0]
-            self.assertEqual(b["flipped_rule"], index)
-            self.assertEqual(b["flipped_sign"], "positive" if sign else "negative")
-            self.assertEqual(b["flipped_location"], "root" if index == len(rules) - 1 else "intermediate")
-            self.assertEqual(b["c_flipped_satisfied"], (c["c_flipped_word"] == "true") == sign)
+            index, sign, _ = hits[0]
+            ops = {"AND", "OR", "EXACTLY_ONE", "NOT_ALL", "BOTH_OR_NEITHER"}
+            for row in (b, c):
+                self.assertEqual(row["flipped_fact"], fact)
+                self.assertEqual(row["c_flipped_word"], "true" if c_known[fact] else "false")
+                self.assertEqual(row["flipped_rule"], index)
+                self.assertIn(row["flipped_rule_op"], ops)
+                self.assertEqual(row["flipped_rule_op"], row["ops"][index])
+                self.assertEqual(row["flipped_sign"], "positive" if sign else "negative")
+                self.assertEqual(row["flipped_location"],
+                                 "root" if index == len(rules) - 1 else "intermediate")
+                self.assertEqual(row["c_flipped_satisfied"], c_known[fact] == sign)
             for row in (b, c):
                 rules, known, unknown, _, _ = parse_text(row["prompt"])
                 counts = Counter()
@@ -145,6 +156,10 @@ class GeneratorV2Test(unittest.TestCase):
                             counts[f"root_{kind}"] += 1
                 for key in ("root_sat", "root_unsat", "root_unc", "all_sat", "all_unsat", "all_unc"):
                     self.assertEqual(row["shallow"][key], counts[key], (row["row_id"], key))
+                for i, (_, _, lits) in enumerate(rules):
+                    per = row["shallow"]["rules"][i]
+                    self.assertEqual(per["op"], row["ops"][i])
+                    self.assertEqual(per["sat"] + per["unsat"] + per["unc"] + per["refs"], len(lits))
 
     def test_integrity_errors(self):
         good = [dict(r) for r in self.pairs[:4]]
@@ -154,10 +169,32 @@ class GeneratorV2Test(unittest.TestCase):
             "side D in pair file": good + [{**good[0], "row_id": "x|D", "pair_id": "x", "side": "D"}],
             "pair across stories": good[:1] + [{**good[1], "block_id": "other"}] + good[2:],
             "missing field": good[:3] + [{k: v for k, v in good[3].items() if k != "pair_id"}],
+            "blank id": good[:3] + [{**good[3], "block_id": " "}],
+            "non-object record": good + [None],
         }
         for name, rows in cases.items():
             with self.assertRaises(ValueError, msg=name):
                 gen_v2.audit(rows, baselines=False)
+
+    def test_minimal_pair_check_rejects_other_changes(self):
+        b = next(r for r in self.pairs if r["side"] == "B")
+        c = next(r for r in self.pairs if r["pair_id"] == b["pair_id"] and r["side"] == "C")
+        self.assertTrue(gen_v2.minimal_pair_ok(b["prompt"], c["prompt"]))
+        # One word changed in a rule instead of a fact value: same word count, one diff.
+        rule_line = next(l for l in b["prompt"].splitlines() if l.startswith("Rule 1:"))
+        word = rule_line.split()[-1]
+        broken = b["prompt"].replace(rule_line, rule_line[: -len(word)] + "x" + word, 1)
+        self.assertFalse(gen_v2.minimal_pair_ok(b["prompt"], broken))
+        rows = [b, {**c, "prompt": broken}]
+        self.assertGreater(gen_v2.audit(rows, baselines=False)["minimal_pair_violations"], 0)
+
+    def test_ids_bind_to_dataset(self):
+        other, _ = gen_v2.generate(seed=20261117, stories_per_cell=40)
+        self.assertFalse({r["row_id"] for r in other} & {r["row_id"] for r in self.pairs})
+        scores = [{"row_id": r["row_id"], "pair_id": r["pair_id"], "block_id": r["block_id"],
+                   "side": r["side"], "parsed": "YES"} for r in other]
+        with self.assertRaises(ValueError):
+            gen_v2.report(self.pairs, scores, n_bootstrap=10)
 
     def test_flip_location_constraint(self):
         pairs, _ = gen_v2.generate(seed=5, stories_per_cell=8, flip_location="intermediate")
@@ -219,15 +256,24 @@ class GeneratorV2Test(unittest.TestCase):
             gen_v2._write_jsonl(path, self.pairs)
             self.assertEqual(len(load_pairs(path)), len(self.pairs))
 
-    def test_confirmation_file_checksum(self):
-        """The confirmation set of results/v2_draft_audit_2026-11-18 is rebuilt bit for bit."""
+    def test_confirmation_files_checksum(self):
+        """The four confirmation files of results/v2_draft_audit_2026-11-18 are rebuilt bit for bit."""
         import hashlib
-        pairs, _ = gen_v2.generate(seed=20261119, stories_per_cell=40)
-        with tempfile.TemporaryDirectory() as tmp:
-            path = Path(tmp) / "pairs.jsonl"
-            gen_v2._write_jsonl(path, pairs)
-            digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        self.assertEqual(digest, "074057c43b56dbcbe24db4dd1f3538e8f46eeda227982918e7e07bd9dd044ae1")
+        expected = {
+            ("any", "pairs"): "bee7a517939e11efefbfac303cd1f0f92573b4cc61df0d726d7c641655d055d0",
+            ("any", "controls"): "6aaf431cbbd7fc0069d9312e82cb855a89af1915454209a2170c06df3f94f2e8",
+            ("intermediate", "pairs"): "2e08ffb97a5a9175abd1bd4944504643fb1efa0d6470a6e2994fd5689ad5ae6c",
+            ("intermediate", "controls"): "36aa53122606f4ed60d92e77952e5cd5ba3794df47ed7dc9cf12d784ae65e5e2",
+        }
+        for loc in ("any", "intermediate"):
+            pairs, controls = gen_v2.generate(seed=20261119, stories_per_cell=40,
+                                              flip_location=None if loc == "any" else loc)
+            for kind, rows in (("pairs", pairs), ("controls", controls)):
+                with tempfile.TemporaryDirectory() as tmp:
+                    path = Path(tmp) / "f.jsonl"
+                    gen_v2._write_jsonl(path, rows)
+                    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                self.assertEqual(digest, expected[(loc, kind)], (loc, kind))
 
     def test_cli_generate_and_audit(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -285,6 +331,69 @@ class ReportV2Test(unittest.TestCase):
         statuses = {e["status"] for e in self.run_report(partial)["levels"].values()}
         self.assertIn("DESCRIPTIVE", statuses)
 
+    def test_answers_only_file(self):
+        rows = [{"row_id": r["row_id"], "pair_id": r["pair_id"], "block_id": r["block_id"],
+                 "side": r["side"], "parsed": r["gold"]} for r in self.pairs]
+        result = self.run_report(rows)
+        self.assertFalse(result["has_probability_scores"])
+        for entry in result["levels"].values():
+            self.assertEqual(entry["status"], "ANSWERS ONLY")
+            self.assertNotIn("W_p_unknown", entry)
+            self.assertEqual(entry["W_generated_answer"]["W"], 1.0)
+
+    def test_answer_measures_use_all_scored_rows(self):
+        """A B answer counts even when its C partner is missing."""
+        level1 = [r for r in self.pairs if r["level"] == 1]
+        no_b = [r for r in level1 if r["side"] == "B" and r["gold"] == "NO"]
+        wrong = {r["row_id"] for r in no_b[: len(no_b) // 2 + 1]}
+        drop = {r["pair_id"] for r in no_b if r["row_id"] in wrong}
+        scores = _scores(self.pairs, score=lambda r: 0.5,
+                         parsed=lambda r: "YES" if r["row_id"] in wrong else r["gold"],
+                         drop={r["row_id"] for r in self.pairs if r["side"] == "C" and r["pair_id"] in drop})
+        entry = self.run_report(scores)["levels"]["L1"]
+        self.assertEqual(entry["accuracy_B_gold_NO"]["n"], len(no_b))
+        self.assertLess(entry["accuracy_B_gold_NO"]["share"], 0.5)
+        self.assertEqual(entry["status"], "NOT EVALUABLE")
+
+    def test_median_and_nonfinite_mass(self):
+        masses = iter([0.1, 0.1, 0.8, 0.8] * 10000)
+        rows = _scores(self.pairs, score=lambda r: float(r["gold"] == "UNKNOWN"), parsed=lambda r: r["gold"])
+        for row in rows:
+            row["mass_total"] = str(next(masses))
+        for entry in self.run_report(rows)["levels"].values():
+            self.assertEqual(entry["status"], "NOT MEASURABLE")  # median 0.45
+        rows[0]["mass_total"] = "nan"
+        with self.assertRaises(ValueError):
+            self.run_report(rows)
+
+    def test_primary_population_sets_coverage_and_splits(self):
+        rows = _scores(self.pairs, score=lambda r: float(r["gold"] == "UNKNOWN"), parsed=lambda r: r["gold"])
+        b_ids = sorted(r["row_id"] for r in self.pairs if r["side"] == "B")
+        mismatched = set(b_ids[: len(b_ids) // 4])
+        for row in rows:
+            if row["row_id"] in mismatched:
+                row["prompt_tokens"] = "101"
+        result = self.run_report(rows)
+        self.assertIn("DESCRIPTIVE", {e["status"] for e in result["levels"].values()})
+        for entry in result["levels"].values():
+            self.assertLessEqual(entry["n_pairs_primary"], entry["n_pairs_complete"])
+            for split in entry["by_flipped_location"].values():
+                self.assertIn("W_p_unknown_sensitivity_all_lengths", split)
+                self.assertIn("W_generated_answer", split)
+                self.assertIn("false_abstention_B", split)
+
+    def test_control_file_checks(self):
+        rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
+        answers = [{"row_id": r["row_id"], "parsed": r["gold"], "model_id": "other",
+                    "model_revision": "1" * 40} for r in self.controls]
+        with self.assertRaises(ValueError):
+            self.run_report(rows, control_rows=self.controls, control_answers=answers)
+        dup = self.controls + [dict(self.controls[0], gold="NO" if self.controls[0]["gold"] == "YES" else "YES")]
+        two_col = [{"row_id": r["row_id"], "parsed": r["gold"]} for r in self.controls]
+        with self.assertRaises(ValueError):
+            self.run_report(rows, control_rows=dup, control_answers=two_col)
+        self.run_report(rows, control_rows=self.controls, control_answers=two_col)
+
     def test_input_errors(self):
         good = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
         bad_cases = {
@@ -293,6 +402,9 @@ class ReportV2Test(unittest.TestCase):
             "side mismatch": [{**good[0], "side": "C" if good[0]["side"] == "B" else "B"}] + good[1:],
             "two models": [{**good[0], "model_id": "other"}] + good[1:],
             "bad label": [{**good[0], "parsed": "maybe"}] + good[1:],
+            "missing side": [{k: v for k, v in good[0].items() if k != "side"}] + good[1:],
+            "missing parsed": [{k: v for k, v in good[0].items() if k != "parsed"}] + good[1:],
+            "non-finite score": [{**good[0], "score": "inf"}] + good[1:],
         }
         for name, rows in bad_cases.items():
             with self.assertRaises(ValueError, msg=name):
