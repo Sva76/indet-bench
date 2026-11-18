@@ -33,7 +33,9 @@ Not required for alpha, planned for the preprint: a preregistered experiment tha
 Specification: [V2_GENERATOR_SPEC.md](V2_GENERATOR_SPEC.md). A separate set: v1 data, results and archives are unchanged. Before any model run on v2:
 
 - [x] Generator with difficulty levels, minimal-pair checks, solver-derived labels and a shortcut audit (draft).
-- [ ] Owner decisions in §8 of the specification (levels, size, binding thresholds, models, primary outcome).
+- [x] Strict input checks, fine-grained audit, baselines on unseen stories and structures, balancing across stories, per-level report (revision of 18 November 2026; audits in `results/v2_draft_audit_2026-11-18/`).
+- [ ] Owner decisions in §8 of the specification (levels, size, binding thresholds, models, primary outcome, `flip_location`, the level-2 shortcut).
+- [ ] Pilot of difficulty on a separate seed (one knob at a time for causal attribution).
 - [ ] Human review of the wording of the rule renderings.
 - [ ] Preregistered protocol, frozen files with SHA-256 and a git tag.
 - [ ] Generation-only runner for D controls and black-box measures (track B).

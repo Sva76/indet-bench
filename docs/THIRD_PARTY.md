@@ -97,7 +97,7 @@ The Test C generator ([`gen_testC.py`](../research_originals/step2/scripts/gen_t
 
 ## v2 generator (draft, 18 November 2026)
 
-[`src/indetbench/gen_v2.py`](../src/indetbench/gen_v2.py) uses only the Python standard library. Its vocabulary (entities, predicates, conditions, domains and uncertainty markers) and its templates were written for this project; no third-party dataset, text or model output is used to build v2 prompts. The generator, the prompts it produces and [V2_GENERATOR_SPEC.md](V2_GENERATOR_SPEC.md) are original IndetBench material under the PolyForm Noncommercial License 1.0.0. No v2 data file is distributed yet. Model answers to v2 prompts, once collected, will be third-party model outputs as described in [Model outputs](#model-outputs).
+[`src/indetbench/gen_v2.py`](../src/indetbench/gen_v2.py) uses only the Python standard library. Its vocabulary (entities, predicates, conditions, domains and uncertainty markers) and its templates were written for this project; no third-party dataset, text or model output is used to build v2 prompts. The generator, the prompts it produces and [V2_GENERATOR_SPEC.md](V2_GENERATOR_SPEC.md) are original IndetBench material under the PolyForm Noncommercial License 1.0.0. No v2 data file is distributed yet; `results/v2_draft_audit_2026-11-18/` holds only audit statistics of generated text, with the SHA-256 of the files they were computed on. Model answers to v2 prompts, once collected, will be third-party model outputs as described in [Model outputs](#model-outputs).
 
 ## Software libraries
 
