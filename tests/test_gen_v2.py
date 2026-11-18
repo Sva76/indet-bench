@@ -553,6 +553,42 @@ class ReportV2Test(unittest.TestCase):
         with self.assertRaises(ValueError):
             gen_v2.ops_from_text(unknown)
 
+    def test_rule_parsing_regressions(self):
+        """CodeRabbit, PR #25, seventh review: malformed rules, the 'both' form,
+        and the rule recorded as holding the changed fact."""
+        two_rule = next(r for r in self.pairs if r["depth"] == 2 and r["side"] == "B")
+        lines = two_rule["prompt"].splitlines()
+        i = next(k for k, l in enumerate(lines) if l.startswith("Rule 2:"))
+        lines[i] = lines[i].rstrip(".")
+        with self.assertRaises(ValueError):
+            gen_v2.ops_from_text("\n".join(lines))
+        fake = two_rule["prompt"].replace("Rule 1: ", "Rule 1: ", 1)
+        rule1 = next(l for l in fake.splitlines() if l.startswith("Rule 1:"))
+        head = rule1.split(" if and only if ")[0]
+        bad = fake.replace(rule1, head + " if and only if both or neither of these hold: the anvil is cleaned; the kiln is locked.")
+        with self.assertRaises(ValueError):
+            gen_v2.ops_from_text(bad)
+        # Every generated "both ... and ..." rule still parses as AND.
+        for row in self.pairs[:400]:
+            for op, items in gen_v2.rules_from_text(row["prompt"]):
+                self.assertTrue(all(item.startswith("the ") for item in items), (row["row_id"], items))
+        # flipped_rule must point at the rule that holds the changed fact.
+        pair = [r for r in self.pairs if r["pair_id"] == two_rule["pair_id"]]
+        other = 1 - pair[0]["flipped_rule"]
+        ops = pair[0]["ops"]
+        forged = [dict(r, flipped_rule=other, flipped_rule_op=ops[other]) for r in pair]
+        with self.assertRaises(ValueError):
+            gen_v2.audit(forged, baselines=False)
+
+    def test_results_unchanged_by_validation(self):
+        """The validation added in PR #25 changes no audit number on the confirmation seed."""
+        import hashlib
+        pairs, _ = gen_v2.generate(seed=20261119, stories_per_cell=40)
+        result = gen_v2.audit(pairs)
+        stored = Path(__file__).resolve().parents[1] / "results" / "v2_draft_audit_2026-11-18" / \
+            "audit_confirm_seed20261119_any.json"
+        self.assertEqual(json.loads(stored.read_text(encoding="utf-8")), json.loads(json.dumps(result)))
+
     def test_change_after_question_is_not_minimal(self):
         b = next(r for r in self.pairs if r["side"] == "B")
         head, question = b["prompt"].rsplit("\n\nQuestion: ", 1)

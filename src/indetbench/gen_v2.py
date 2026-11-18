@@ -505,6 +505,19 @@ def check_stories(pairs: dict, *, strict_minimal: bool) -> None:
                 if (not isinstance(index, int) or isinstance(index, bool) or not 0 <= index < len(text_ops)
                         or row.get("flipped_rule_op") != text_ops[index]):
                     raise ValueError(f"Pair {pid} side {side}: flipped_rule/flipped_rule_op disagree with the rules")
+        # For a single fact flip, the recorded rule must be the one that holds the
+        # changed fact (non-minimal pairs are left to the audit's violation count).
+        changed = _changed_fact(p["B"]["prompt"], p["C"]["prompt"])
+        if changed is not None:
+            negated = re.sub(r"^(the \w+) is ", r"\1 is not ", changed)
+            holders = [i for i, (_, items) in enumerate(rules_from_text(p["B"]["prompt"]))
+                       if changed in items or negated in items]
+            for side in ("B", "C"):
+                row = p[side]
+                if "flipped_rule" in row and holders != [row["flipped_rule"]]:
+                    raise ValueError(f"Pair {pid} side {side}: flipped_rule is not the rule that holds the changed fact")
+                if "flipped_fact" in row and row["flipped_fact"] != changed:
+                    raise ValueError(f"Pair {pid} side {side}: flipped_fact is not the fact that changed")
         story, rules = p["B"]["block_id"], _rules_block(p["B"]["prompt"])
         if _rules_block(p["C"]["prompt"]) != rules:
             raise ValueError(f"Pair {pid}: B and C have different rules")
@@ -525,22 +538,50 @@ _OP_PHRASES = (("both ", "AND"), ("all of these hold: ", "AND"), ("at least one 
                ("either both or neither of these hold: ", "BOTH_OR_NEITHER"))
 
 
-def ops_from_text(prompt: str) -> list[str]:
-    """Operators of the rules, read only between "Rules:" and "Facts:".
-    Raises ValueError on a rule line whose operator phrase is not recognised."""
+_BOTH = re.compile(r"both (the [^;]+?) and (the [^;]+)")
+
+
+def rules_from_text(prompt: str) -> list[tuple[str, list[str]]]:
+    """(operator, item texts) of every rule, read only between "Rules:" and
+    "Facts:". A line there that starts with "Rule " must be a well-formed rule
+    with a recognised operator phrase; other lines (closing sentences) are skipped."""
     lines = prompt.splitlines()
     if "Rules:" not in lines or "Facts:" not in lines:
         raise ValueError("Prompt has no Rules or Facts section")
-    ops = []
+    rules = []
     for line in lines[lines.index("Rules:") + 1: lines.index("Facts:")]:
+        if not line.startswith("Rule "):
+            continue
         match = re.fullmatch(r"Rule \d+: .+? if and only if (.+)\.", line)
-        if match:
-            body = match.group(1)
-            op = next((op for phrase, op in _OP_PHRASES if body.startswith(phrase)), None)
-            if op is None:
-                raise ValueError(f"Unrecognised operator phrase: {line}")
-            ops.append(op)
-    return ops
+        if not match:
+            raise ValueError(f"Malformed rule line: {line}")
+        body = match.group(1)
+        both = _BOTH.fullmatch(body)
+        if both and not body.startswith("both or neither"):
+            rules.append(("AND", [both.group(1), both.group(2)]))
+            continue
+        for phrase, op in _OP_PHRASES:
+            if phrase != "both " and body.startswith(phrase):
+                rules.append((op, body[len(phrase):].split("; ")))
+                break
+        else:
+            raise ValueError(f"Unrecognised operator phrase: {line}")
+    return rules
+
+
+def ops_from_text(prompt: str) -> list[str]:
+    """Operators of the rules, in order (see rules_from_text)."""
+    return [op for op, _ in rules_from_text(prompt)]
+
+
+def _changed_fact(b_prompt: str, c_prompt: str) -> str | None:
+    """Clause of the stated fact whose truth value differs, for a minimal pair."""
+    if not minimal_pair_ok(b_prompt, c_prompt):
+        return None
+    for x, y in zip(b_prompt.splitlines(), c_prompt.splitlines()):
+        if x != y:
+            return _FACT.fullmatch(x).group(2)
+    return None
 
 
 def _is_count(value) -> bool:
