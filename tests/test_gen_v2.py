@@ -156,10 +156,22 @@ class GeneratorV2Test(unittest.TestCase):
                             counts[f"root_{kind}"] += 1
                 for key in ("root_sat", "root_unsat", "root_unc", "all_sat", "all_unsat", "all_unc"):
                     self.assertEqual(row["shallow"][key], counts[key], (row["row_id"], key))
+                heads = {head for head, _, _ in rules}
                 for i, (_, _, lits) in enumerate(rules):
                     per = row["shallow"]["rules"][i]
                     self.assertEqual(per["op"], row["ops"][i])
-                    self.assertEqual(per["sat"] + per["unsat"] + per["unc"] + per["refs"], len(lits))
+                    expected = Counter()
+                    for clause, sgn in lits:
+                        if clause in heads:
+                            expected["refs"] += 1
+                        elif clause in unknown:
+                            expected["unc"] += 1
+                        elif known[clause] == sgn:
+                            expected["sat"] += 1
+                        else:
+                            expected["unsat"] += 1
+                    for key in ("sat", "unsat", "unc", "refs"):
+                        self.assertEqual(per[key], expected[key], (row["row_id"], i, key))
 
     def test_integrity_errors(self):
         good = [dict(r) for r in self.pairs[:4]]
@@ -171,6 +183,7 @@ class GeneratorV2Test(unittest.TestCase):
             "missing field": good[:3] + [{k: v for k, v in good[3].items() if k != "pair_id"}],
             "blank id": good[:3] + [{**good[3], "block_id": " "}],
             "non-object record": good + [None],
+            "B and C disagree": [good[0], {**good[1], "flipped_rule_op": "OR" if good[0]["flipped_rule_op"] != "OR" else "AND"}] + good[2:],
         }
         for name, rows in cases.items():
             with self.assertRaises(ValueError, msg=name):
@@ -191,6 +204,9 @@ class GeneratorV2Test(unittest.TestCase):
     def test_ids_bind_to_dataset(self):
         other, _ = gen_v2.generate(seed=20261117, stories_per_cell=40)
         self.assertFalse({r["row_id"] for r in other} & {r["row_id"] for r in self.pairs})
+        reordered, _ = gen_v2.generate(seed=20261118, stories_per_cell=40,
+                                       domains=tuple(reversed(gen_v2.DOMAINS)))
+        self.assertFalse({r["row_id"] for r in reordered} & {r["row_id"] for r in self.pairs})
         scores = [{"row_id": r["row_id"], "pair_id": r["pair_id"], "block_id": r["block_id"],
                    "side": r["side"], "parsed": "YES"} for r in other]
         with self.assertRaises(ValueError):
@@ -260,10 +276,10 @@ class GeneratorV2Test(unittest.TestCase):
         """The four confirmation files of results/v2_draft_audit_2026-11-18 are rebuilt bit for bit."""
         import hashlib
         expected = {
-            ("any", "pairs"): "bee7a517939e11efefbfac303cd1f0f92573b4cc61df0d726d7c641655d055d0",
-            ("any", "controls"): "6aaf431cbbd7fc0069d9312e82cb855a89af1915454209a2170c06df3f94f2e8",
-            ("intermediate", "pairs"): "2e08ffb97a5a9175abd1bd4944504643fb1efa0d6470a6e2994fd5689ad5ae6c",
-            ("intermediate", "controls"): "36aa53122606f4ed60d92e77952e5cd5ba3794df47ed7dc9cf12d784ae65e5e2",
+            ("any", "pairs"): "9c1358c8a978ab0750f8fb877b6cd26c7b8cd54d59d64b0c7f05bc4728a0e6ba",
+            ("any", "controls"): "ceeb73f42adf844951bc2c88dea6973252e85e08c2898b756c627f01684550f7",
+            ("intermediate", "pairs"): "f8da8b118bcd944551910bf2dacd949d50357caf8ed91cc102e8876a53d989e1",
+            ("intermediate", "controls"): "2e8c19f21e112807a71d21a285c4b65fd52167697fe3f99c2294d5cc717f6294",
         }
         for loc in ("any", "intermediate"):
             pairs, controls = gen_v2.generate(seed=20261119, stories_per_cell=40,
@@ -381,6 +397,42 @@ class ReportV2Test(unittest.TestCase):
                 self.assertIn("W_p_unknown_sensitivity_all_lengths", split)
                 self.assertIn("W_generated_answer", split)
                 self.assertIn("false_abstention_B", split)
+
+    def test_length_check_rules(self):
+        rows = _scores(self.pairs, score=lambda r: float(r["gold"] == "UNKNOWN"), parsed=lambda r: r["gold"])
+        for row in rows:
+            if row["side"] == "C":
+                row["prompt_tokens"] = "0100"  # same count as "100"
+        for entry in self.run_report(rows)["levels"].values():
+            self.assertEqual(entry["n_pairs_primary"], entry["n_pairs_complete"])
+            self.assertEqual(entry["status"], "CONFIRMED")
+        no_len = [{k: v for k, v in r.items() if k != "prompt_tokens"} for r in rows]
+        for entry in self.run_report(no_len)["levels"].values():
+            self.assertEqual(entry["status"], "DESCRIPTIVE")
+            self.assertIn("prompt_tokens", entry["status_reason"])
+        bad = [dict(r) for r in rows]
+        bad[0]["prompt_tokens"] = "-3"
+        with self.assertRaises(ValueError):
+            self.run_report(bad)
+
+    def test_coverage_gate_on_counts(self):
+        level = [r for r in self.pairs if r["level"] == 2]
+        pair_ids = sorted({r["pair_id"] for r in level})
+        n = len(pair_ids)
+        keep = int(0.95 * n) - 1 if int(0.95 * n) == 0.95 * n else int(0.95 * n)  # strictly below 95%
+        drop = {r["row_id"] for r in level if r["side"] == "C" and r["pair_id"] in set(pair_ids[keep:])}
+        rows = _scores(self.pairs, score=lambda r: float(r["gold"] == "UNKNOWN"), parsed=lambda r: r["gold"],
+                       drop=drop)
+        entry = self.run_report(rows)["levels"]["L2"]
+        self.assertLess(entry["n_pairs_primary"], 0.95 * n)
+        self.assertEqual(entry["status"], "DESCRIPTIVE")
+
+    def test_controls_from_another_dataset(self):
+        rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])
+        _, other_controls = gen_v2.generate(seed=22, stories_per_cell=12)
+        answers = [{"row_id": r["row_id"], "parsed": r["gold"]} for r in other_controls]
+        with self.assertRaises(ValueError):
+            self.run_report(rows, control_rows=other_controls, control_answers=answers)
 
     def test_control_file_checks(self):
         rows = _scores(self.pairs, score=lambda r: 0.5, parsed=lambda r: r["gold"])

@@ -396,11 +396,16 @@ def make_story(story_id: str, *, level: int, domain: str, marker: int, target: s
 
 
 def dataset_tag(*, seed: int, stories_per_cell: int, pairs_per_story: int,
-                flip_location: str | None) -> str:
-    """Prefix of every story id. It binds ids to the generator version and to the
-    arguments, so a score file made on another seed or setting cannot match."""
+                flip_location: str | None, levels=tuple(LEVELS), domains=tuple(DOMAINS)) -> str:
+    """Prefix of every story id. It binds ids to the generator version and to every
+    argument that changes the prompts, including the order of levels and domains
+    (one random stream runs across cells), so a score file made on another
+    dataset cannot match."""
+    import hashlib
+    cells = json.dumps({"levels": list(levels), "domains": list(domains)}, sort_keys=True)
+    digest = hashlib.sha256(cells.encode("utf-8")).hexdigest()[:8]
     return (f"v2g{GENERATOR_VERSION}-s{seed}-{flip_location or 'any'}"
-            f"-c{stories_per_cell}-p{pairs_per_story}")
+            f"-c{stories_per_cell}-p{pairs_per_story}-{digest}")
 
 
 def generate(*, seed: int, stories_per_cell: int, levels=tuple(LEVELS), domains=tuple(DOMAINS),
@@ -413,7 +418,8 @@ def generate(*, seed: int, stories_per_cell: int, levels=tuple(LEVELS), domains=
     have no intermediate rule and are generated without the constraint."""
     rng = random.Random(seed)
     tag = dataset_tag(seed=seed, stories_per_cell=stories_per_cell,
-                      pairs_per_story=pairs_per_story, flip_location=flip_location)
+                      pairs_per_story=pairs_per_story, flip_location=flip_location,
+                      levels=levels, domains=domains)
     pairs, controls = [], []
     for level in levels:
         for domain in domains:
@@ -435,6 +441,10 @@ def generate(*, seed: int, stories_per_cell: int, levels=tuple(LEVELS), domains=
 # ---------------------------------------------------------------------------
 
 REQUIRED = ("row_id", "pair_id", "block_id", "side")
+# Story and pair metadata that B and C must share (spec section 5.1).
+PAIR_SHARED = ("level", "domain", "marker", "ops", "root_op", "outcome_polarity", "depth",
+               "flip_location_constraint", "flipped_fact", "flipped_rule", "flipped_rule_op",
+               "flipped_location", "flipped_sign", "c_flipped_word", "c_flipped_satisfied")
 
 
 def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
@@ -463,6 +473,12 @@ def pairs_by_id(rows, *, sides=("B", "C")) -> dict[str, dict[str, dict]]:
     incomplete = sorted(k for k, v in table.items() if set(v) != {"B", "C"}) if "B" in sides else []
     if incomplete:
         raise ValueError(f"{len(incomplete)} incomplete pair(s), first: {incomplete[0]}")
+    if "B" in sides:
+        for pid, pair in table.items():
+            for key in PAIR_SHARED:
+                if key in pair["B"] or key in pair["C"]:
+                    if pair["B"].get(key) != pair["C"].get(key):
+                        raise ValueError(f"Pair {pid}: B and C disagree on {key}")
     if not table:
         raise ValueError("No pairs")
     return table
@@ -630,9 +646,8 @@ def heldout_baselines(rows, *, k: int = 5, seed: int = 20261118, n_bootstrap: in
     out = {}
     for name, (folds, fit, apply) in plans.items():
         scores = _crossfit(pairs, folds, fit, apply)
-        out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed)
-        if name.startswith("single_rule_"):
-            out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed, by_root_op=True)
+        out[name] = _by_level(pairs, scores, n_bootstrap=n_bootstrap, seed=seed,
+                              by_root_op=name.startswith("single_rule_"))
         if name == "shallow_with_operator|story_folds":
             for loc in ("root", "intermediate"):
                 sub = {k: p for k, p in pairs.items() if p["B"]["flipped_location"] == loc}
@@ -771,6 +786,13 @@ def _check_scores(score_rows, generated_rows, *, required):
         for key in ("score", "mass_total"):
             if key in present:
                 _finite(row[key], key, number)
+        if "prompt_tokens" in present:
+            try:
+                tokens = int(str(row["prompt_tokens"]).strip())
+            except ValueError:
+                raise ValueError(f"Score row {number}: prompt_tokens is not an integer") from None
+            if tokens <= 0:
+                raise ValueError(f"Score row {number}: prompt_tokens must be positive")
         if "model_id" in present or "model_revision" in present:
             models.add((row.get("model_id", ""), row.get("model_revision", "")))
         out[rid] = row
@@ -799,6 +821,10 @@ def _share_ci(items: list[tuple[str, bool]], *, n_bootstrap: int, seed: int) -> 
     return {"share": round(share, 4), "ci95": ci, "n": len(items)}
 
 
+def _rules_block(prompt: str) -> str:
+    return prompt.split("\nFacts:\n", 1)[0]
+
+
 def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
            n_bootstrap: int = 2000, seed: int = 20261108) -> dict:
     """Per-level report of one model (spec section 6).
@@ -811,8 +837,10 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
     Statuses, in this order: NOT MEASURABLE (median label mass < 0.5); NOT
     EVALUABLE (accuracy on B < 0.5 overall, on gold YES or on gold NO);
     DESCRIPTIVE (the primary population, or complete pairs for an answer-only
-    file, below 95% of generated pairs); then, with probability scores, the v1
-    verdict rule applied provisionally; without them, ANSWERS ONLY (no verdict)."""
+    file, below 95% of generated pairs, compared on counts); ANSWERS ONLY (no
+    probability scores: no verdict); DESCRIPTIVE (probability scores without
+    prompt_tokens, so the length check cannot be applied); then the v1 verdict
+    rule applied provisionally."""
     generated = pairs_by_id(pair_rows)
     all_rows = [r for p in generated.values() for r in (p["B"], p["C"])]
     scores, models, columns = _check_scores(score_rows, all_rows, required=PAIR_SCORE_REQUIRED)
@@ -825,6 +853,12 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
             raise ValueError("control answers need the controls file")
         ctl_by_id = {r["row_id"]: r for p in pairs_by_id(control_rows, sides=("D",)).values()
                      for r in p.values()}
+        rules_of = {p["B"]["block_id"]: _rules_block(p["B"]["prompt"]) for p in generated.values()}
+        for r in ctl_by_id.values():
+            if r["block_id"] not in rules_of:
+                raise ValueError(f"D control {r['row_id']}: story not in the B/C file")
+            if _rules_block(r["prompt"]) != rules_of[r["block_id"]]:
+                raise ValueError(f"D control {r['row_id']}: rules differ from its story's B/C pairs")
         controls, ctl_models, _ = _check_scores(control_answers, list(ctl_by_id.values()),
                                                 required=CONTROL_ANSWER_REQUIRED)
         if ctl_models and models and ctl_models != models:
@@ -865,8 +899,8 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
         complete = {k: p for k, p in cell.items()
                     if p["B"]["row_id"] in scores and p["C"]["row_id"] in scores}
         primary = {k: p for k, p in complete.items()
-                   if not has_len or scores[p["B"]["row_id"]]["prompt_tokens"]
-                   == scores[p["C"]["row_id"]]["prompt_tokens"]}
+                   if not has_len or int(scores[p["B"]["row_id"]]["prompt_tokens"])
+                   == int(scores[p["C"]["row_id"]]["prompt_tokens"])}
         entry = {"n_pairs_generated": len(cell), "n_pairs_complete": len(complete),
                  "n_pairs_primary": len(primary), "n_B_scored": len(b_rows), "n_C_scored": len(c_rows),
                  "coverage_complete": round(len(complete) / len(cell), 4),
@@ -901,7 +935,8 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
         entry["median_label_mass"] = None if median_mass is None else round(median_mass, 4)
         gate = [entry["accuracy_B"]["share"], entry["accuracy_B_gold_YES"]["share"],
                 entry["accuracy_B_gold_NO"]["share"]]
-        coverage = entry["coverage_primary"] if has_prob else entry["coverage_complete"]
+        eligible = len(primary) if has_prob else len(complete)
+        below_coverage = eligible < 0.95 * len(cell)  # on counts, before rounding
         w = entry.get("W_p_unknown")
         if not scored:
             entry["status"] = "NO DATA"
@@ -909,10 +944,13 @@ def report(pair_rows, score_rows, *, control_rows=None, control_answers=None,
             entry["status"] = "NOT MEASURABLE"
         elif any(g is None or g < 0.5 for g in gate):
             entry["status"] = "NOT EVALUABLE"
-        elif coverage < 0.95:
+        elif below_coverage:
             entry["status"] = "DESCRIPTIVE"
         elif not has_prob:
             entry["status"] = "ANSWERS ONLY"
+        elif not has_len:
+            entry["status"] = "DESCRIPTIVE"
+            entry["status_reason"] = "no prompt_tokens: the length check of the primary W cannot be applied"
         elif w is None:
             entry["status"] = "NO DATA"
         elif w["W"] >= 0.60 and w["ci95"] and w["ci95"][0] > 0.5:
